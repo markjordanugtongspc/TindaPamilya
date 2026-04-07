@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* ENTERPRISE THEME — fonts loaded in index.html to keep @import order valid */
+@import "flowbite/src/themes/enterprise";
+
+@plugin "flowbite/plugin";
+
+@source "../node_modules/flowbite";
+@source "..";
+
+@theme {
+  /* Light Mode Colors */
+  --color-primary: #15803d; /* green-700 */
+  --color-secondary: #ffffff; /* white */
+  --color-background: #f9fafb; /* light gray background for clarity */
+  --color-accent: #16a34a; /* green-600 for emphasis */
+  --color-text: #111827; /* dark/black for readability */
+
+  /* Font */
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Dark mode setup */
+@custom-variant dark (&:where(.dark, .dark *));
+@layer base {
+  @variant dark {
+    --color-primary: #15803d; /* green-700 */
+    --color-secondary: #1f2937; /* gray-800 background */
+    --color-background: #111827; /* near-black background */
+    --color-accent: #4ade80; /* lighter green accent */
+    --color-text: #f9fafb; /* light text for readability */
+  }
+}
+
+/* Dark mode: raster SVG icons in inputs read as white (see data-form-icon on <img>) */
+@layer utilities {
+  .dark img[data-form-icon] {
+    filter: brightness(0) invert(1);
+    opacity: 0.92;
+  }
+}
