@@ -58,8 +58,27 @@ function initLogoRefresh() {
   });
 }
 
+/** Mobile bottom bar: navigate for primary routes (buttons are not links). */
+function initBottomNavRoutes() {
+  const routes = {
+    menu: "/pages/menu/",
+    products: "/pages/products/",
+  };
+  document.querySelectorAll("[data-bottom-nav-link]").forEach((el) => {
+    const key = el.getAttribute("data-bottom-nav-link");
+    const href = key ? routes[key] : undefined;
+    if (!href) return;
+    el.addEventListener("click", () => {
+      window.location.href = href;
+    });
+  });
+}
+
 function applyActiveState() {
-  const active = "menu";
+  const path = window.location.pathname.replace(/\/index\.html$/, "/");
+  let active = "menu";
+  if (path.includes("/pages/products")) active = "products";
+
   document.querySelectorAll("[data-nav-link], [data-bottom-nav-link]").forEach((el) => {
     const key = el.getAttribute("data-nav-link") || el.getAttribute("data-bottom-nav-link");
     if (key === active) {
@@ -88,6 +107,7 @@ export async function initMenuNavigations() {
 
   initDesktopSidebar();
   initLogoRefresh();
+  initBottomNavRoutes();
   applyActiveState();
   injectVersionLabels();
 }

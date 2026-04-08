@@ -6,6 +6,7 @@ import {
 } from "./modules/animations.js";
 import * as auth from "./modules/auth.js";
 import { initMenuPage } from "./modules/menu.js";
+import { initProductsPage } from "./modules/products.js";
 import {
   saveEncryptedCredentials,
   loadEncryptedCredentials,
@@ -13,7 +14,7 @@ import {
 } from "./modules/db-manager.js";
 
 const DEV_DEBUG = false;
-const APP_VERSION = "0.5.13";
+const APP_VERSION = "0.5.17";
 // Use data-tp-version on <html> — NOT data-app-version — or injectAppVersionLabels would
 // match <html> and setting textContent would wipe the entire document.
 document.documentElement.dataset.tpVersion = APP_VERSION;
@@ -308,14 +309,20 @@ async function handleLoginPage() {
   });
 }
 
+const { pathname } = window.location;
 const isMenuPage =
-  window.location.pathname.endsWith("/pages/menu/") ||
-  window.location.pathname.endsWith("/pages/menu/index.html");
-debugLog("boot route detection", { pathname: window.location.pathname, isMenuPage });
+  pathname.endsWith("/pages/menu/") || pathname.endsWith("/pages/menu/index.html");
+const isProductsPage =
+  pathname.endsWith("/pages/products/") || pathname.endsWith("/pages/products/index.html");
+debugLog("boot route detection", { pathname, isMenuPage, isProductsPage });
 if (isMenuPage) {
   initMenuPage()
     .then(() => debugLog("initMenuPage: OK"))
     .catch((error) => console.error("initMenuPage failed", error));
+} else if (isProductsPage) {
+  initProductsPage()
+    .then(() => debugLog("initProductsPage: OK"))
+    .catch((error) => console.error("initProductsPage failed", error));
 } else {
   ensureLoginPageVisibleFallback();
   handleLoginPage()

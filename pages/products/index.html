@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TindaPamilya — Product Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="/js/main.js"></script>
+  </head>
+  <body class="font-sans min-h-full bg-background text-text antialiased">
+    <div id="menu-sidebar-root"></div>
+
+    <main
+      id="menu-content"
+      class="mx-auto w-full px-4 pb-28 pt-30 transition-[margin,max-width] duration-200 ease-out lg:ml-64 lg:max-w-[calc(100vw-18rem)] lg:mr-0 lg:pt-24"
+    >
+      <div id="products-loading-skeleton" class="space-y-6 lg:space-y-8" aria-live="polite" aria-busy="true">
+        <section
+          role="status"
+          class="animate-pulse rounded-3xl border border-default/70 bg-secondary/85 p-6 shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+        >
+          <div class="h-8 w-48 rounded-full bg-neutral-quaternary"></div>
+          <div class="mt-6 space-y-3">
+            <div class="h-12 rounded-xl bg-neutral-quaternary"></div>
+            <div class="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div class="h-40 rounded-2xl bg-neutral-quaternary"></div>
+              <div class="h-40 rounded-2xl bg-neutral-quaternary"></div>
+              <div class="hidden h-40 rounded-2xl bg-neutral-quaternary sm:block"></div>
+              <div class="hidden h-40 rounded-2xl bg-neutral-quaternary lg:block"></div>
+            </div>
+          </div>
+          <span class="sr-only">Loading…</span>
+        </section>
+      </div>
+
+      <div id="products-dashboard" class="hidden space-y-6 lg:space-y-8" aria-hidden="true">
+        <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-primary">Sari-sari store</p>
+            <h1 class="mt-2 text-3xl font-bold tracking-tight text-text sm:text-4xl">Product Management</h1>
+            <p class="mt-2 max-w-xl text-sm leading-relaxed text-text/75">
+              Browse inventory, filter by category, and review the current sale (sample data).
+            </p>
+          </div>
+          <div class="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+            <button
+              type="button"
+              class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-emerald-200 px-4 py-2.5 text-sm font-semibold text-text shadow-sm ring-1 ring-emerald-400/40 transition hover:bg-primary hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-emerald-500/20 dark:ring-emerald-400/25 dark:hover:bg-primary dark:hover:text-white sm:w-auto"
+            >
+              <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Add Product
+            </button>
+            <button
+              id="tp-view-orders-btn"
+              type="button"
+              class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-border-default bg-secondary px-4 py-2.5 text-sm font-semibold text-text shadow-sm ring-1 ring-black/5 transition hover:bg-neutral-quaternary/80 dark:border-white/10 dark:hover:bg-white/10 sm:w-auto"
+            >
+              <svg class="h-5 w-5 shrink-0 text-text/70" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5h6l1 3h3v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8h3l1-3Z" />
+              </svg>
+              View Orders
+            </button>
+          </div>
+        </header>
+
+        <section aria-labelledby="products-filter-label" class="space-y-4">
+          <h2 id="products-filter-label" class="sr-only">Search and categories</h2>
+          <div class="flex flex-col gap-3 lg:flex-row lg:items-stretch lg:gap-4">
+            <label class="relative min-w-0 flex-1">
+              <span class="sr-only">Search products</span>
+              <svg
+                class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-text/45"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <input
+                type="search"
+                name="products-search"
+                placeholder="Search products…"
+                class="w-full cursor-text rounded-xl border border-border-default bg-secondary py-3 pl-11 pr-4 text-sm text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90 dark:ring-white/10"
+                autocomplete="off"
+              />
+            </label>
+            <div class="relative w-full lg:min-w-[min(100%,280px)] lg:max-w-md lg:flex-1">
+              <label for="products-category" class="sr-only">Categories</label>
+              <select
+                id="products-category"
+                class="w-full cursor-pointer appearance-none rounded-xl border border-border-default bg-secondary py-3 pl-4 pr-11 text-sm font-semibold text-text shadow-sm ring-1 ring-black/5 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90"
+              >
+                <option value="">All categories</option>
+                <option value="dry-goods">Dry goods &amp; groceries</option>
+                <option value="beverages">Beverages</option>
+                <option value="snacks">Snacks &amp; chips</option>
+                <option value="household">Household</option>
+                <option value="personal-care">Personal care</option>
+              </select>
+              <svg
+                class="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-text/55"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="products-grid-label" class="min-w-0 space-y-4">
+            <div class="flex items-end justify-between gap-2">
+              <h2 id="products-grid-label" class="text-sm font-bold uppercase tracking-wider text-text/60">Store shelf</h2>
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">Rice (Rice 5kg)</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-001</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 265.00</p>
+                </div>
+              </article>
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">Cooking oil (1L)</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-014</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 145.00</p>
+                </div>
+              </article>
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">Lucky Me Pancit Canton (Spicy)</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-088</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 15.00</p>
+                </div>
+              </article>
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">Coca-Cola 1.5L PET</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-102</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 75.00</p>
+                </div>
+              </article>
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">Surf Powder (1 sachet)</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-201</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 12.00</p>
+                </div>
+              </article>
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">Battery AA (2-pack)</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-310</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 35.00</p>
+                </div>
+              </article>
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">555 Sardines (Tomato Sauce)</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-322</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 28.00</p>
+                </div>
+              </article>
+              <article class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10">
+                <div class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+                  <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+                </div>
+                <div class="p-4">
+                  <p class="font-semibold text-text">Skyflakes Crackers (10×25g)</p>
+                  <p class="mt-1 text-xs text-text/55">SKU-TP-401</p>
+                  <p class="mt-2 text-lg font-bold text-primary">₱ 42.00</p>
+                </div>
+              </article>
+            </div>
+          </section>
+      </div>
+    </main>
+
+    <template id="tp-cart-drawer-template">
+            <div class="space-y-6 pt-4">
+            <button
+              type="button"
+              class="group mt-4 flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-emerald-200 px-4 py-3.5 text-sm font-bold uppercase tracking-wide text-text shadow-sm ring-1 ring-emerald-400/40 transition hover:bg-primary hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-emerald-500/20 dark:ring-emerald-400/25 dark:hover:bg-primary dark:hover:text-white"
+            >
+              <img src="/assets/svg/barcode-scanner.svg" alt="" class="h-6 w-6 shrink-0 opacity-80 brightness-0 group-hover:invert dark:opacity-90" />
+              SCAN PRODUCT
+            </button>
+
+            <div class="border-t border-text/10 pt-5 dark:border-white/10">
+              <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-2 gap-y-1 text-xs font-bold uppercase tracking-wide text-text/60">
+                <span>Items</span>
+                <span class="text-center">Qty</span>
+                <span class="text-end">Price</span>
+              </div>
+
+              <ul class="mt-4 space-y-4" role="list">
+                <li class="border-b border-text/10 pb-4 last:border-0 dark:border-white/10">
+                  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-semibold text-text">Lucky Me Pancit Canton (Spicy)</p>
+                      <p class="text-xs text-text/55">Amount ₱15.00</p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
+                      <div class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
+                        <button
+                          type="button"
+                          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          aria-label="Decrease quantity"
+                        >
+                          <span class="text-lg leading-none">−</span>
+                        </button>
+                        <span class="min-w-[2rem] text-center text-sm font-semibold tabular-nums text-text">2</span>
+                        <button
+                          type="button"
+                          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          aria-label="Increase quantity"
+                        >
+                          <span class="text-lg leading-none">+</span>
+                        </button>
+                      </div>
+                      <p class="text-sm font-semibold tabular-nums text-text sm:min-w-[4.5rem] sm:text-end">₱ 30.00</p>
+                      <button
+                        type="button"
+                        class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
+                        aria-label="Remove line"
+                      >
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+                <li class="border-b border-text/10 pb-4 last:border-0 dark:border-white/10">
+                  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-semibold text-text">Coca-Cola 1.5L PET</p>
+                      <p class="text-xs text-text/55">Amount ₱75.00</p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
+                      <div class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
+                        <button
+                          type="button"
+                          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          aria-label="Decrease quantity"
+                        >
+                          <span class="text-lg leading-none">−</span>
+                        </button>
+                        <span class="min-w-[2rem] text-center text-sm font-semibold tabular-nums text-text">1</span>
+                        <button
+                          type="button"
+                          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          aria-label="Increase quantity"
+                        >
+                          <span class="text-lg leading-none">+</span>
+                        </button>
+                      </div>
+                      <p class="text-sm font-semibold tabular-nums text-text sm:min-w-[4.5rem] sm:text-end">₱ 75.00</p>
+                      <button
+                        type="button"
+                        class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
+                        aria-label="Remove line"
+                      >
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+                    <div class="min-w-0 flex-1">
+                      <p class="font-semibold text-text">Super Crunch Chicharon (Large)</p>
+                      <p class="text-xs text-text/55">Amount ₱25.00</p>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
+                      <div class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
+                        <button
+                          type="button"
+                          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          aria-label="Decrease quantity"
+                        >
+                          <span class="text-lg leading-none">−</span>
+                        </button>
+                        <span class="min-w-[2rem] text-center text-sm font-semibold tabular-nums text-text">2</span>
+                        <button
+                          type="button"
+                          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                          aria-label="Increase quantity"
+                        >
+                          <span class="text-lg leading-none">+</span>
+                        </button>
+                      </div>
+                      <p class="text-sm font-semibold tabular-nums text-text sm:min-w-[4.5rem] sm:text-end">₱ 50.00</p>
+                      <button
+                        type="button"
+                        class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
+                        aria-label="Remove line"
+                      >
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="space-y-2 border-t border-text/10 pt-5 text-sm dark:border-white/10">
+              <div class="flex justify-between gap-4 text-text/80">
+                <span>Total items</span>
+                <span class="font-medium tabular-nums text-text">5 items</span>
+              </div>
+              <div class="flex justify-between gap-4 text-text/80">
+                <span>Subtotal</span>
+                <span class="font-medium tabular-nums text-text">₱ 155.00</span>
+              </div>
+              <div class="flex justify-between gap-4 text-text/80">
+                <span>Tax 12%</span>
+                <span class="font-medium tabular-nums text-text">₱ 18.60</span>
+              </div>
+              <div class="flex justify-between gap-4 border-t border-text/10 pt-3 text-base font-bold text-text dark:border-white/10">
+                <span>Total payment</span>
+                <span class="tabular-nums font-bold text-emerald-600 dark:text-emerald-400">₱ 173.60</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="w-full cursor-pointer rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-white shadow-sm ring-1 ring-black/10 transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              Place order
+            </button>
+            </div>
+    </template>
+
+    <div
+      id="tp-orders-drawer-right"
+      class="fixed right-0 top-0 z-[50] flex h-full max-h-screen w-full max-w-md translate-x-full flex-col overflow-hidden rounded-none border-s border-border-default bg-secondary shadow-2xl lg:max-w-xl dark:border-white/10 dark:bg-secondary/95"
+      tabindex="-1"
+      aria-labelledby="tp-orders-drawer-title"
+    >
+      <div class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10 sm:px-6">
+        <h2 id="tp-orders-drawer-title" class="text-lg font-semibold leading-tight text-text">Current sale</h2>
+        <button
+          type="button"
+          data-tp-drawer-close="right"
+          aria-controls="tp-orders-drawer-right"
+          class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500"
+        >
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+          </svg>
+          <span class="sr-only">Close panel</span>
+        </button>
+      </div>
+      <div data-tp-cart-mount class="min-h-0 flex-1 overflow-y-auto px-4 pb-6 sm:px-6"></div>
+    </div>
+
+    <div
+      id="tp-orders-drawer-bottom"
+      class="fixed bottom-0 left-0 right-0 z-[50] flex max-h-[90vh] translate-y-full flex-col rounded-t-2xl border-t border-border-default bg-secondary shadow-[0_-12px_40px_-12px_rgba(0,0,0,0.25)] dark:border-white/10 dark:bg-secondary/95"
+      tabindex="-1"
+      aria-labelledby="tp-orders-drawer-bottom-title"
+    >
+      <div class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10">
+        <h2 id="tp-orders-drawer-bottom-title" class="text-lg font-semibold leading-tight text-text">Current sale</h2>
+        <button
+          type="button"
+          data-tp-drawer-close="bottom"
+          aria-controls="tp-orders-drawer-bottom"
+          class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500"
+        >
+          <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+          </svg>
+          <span class="sr-only">Close panel</span>
+        </button>
+      </div>
+      <div data-tp-cart-mount class="min-h-0 flex-1 overflow-y-auto px-4 pb-8"></div>
+    </div>
+
+    <div id="menu-bottom-nav-root"></div>
+  </body>
+</html>
