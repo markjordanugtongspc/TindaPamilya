@@ -41,6 +41,30 @@
 
 /* Dark mode: raster SVG icons in inputs read as white (see data-form-icon on <img>) */
 @layer utilities {
+  /* Professional Retail Optic Styling for html5-qrcode internal regions */
+  #reader {
+    min-height: 15rem;
+    overflow: hidden !important;
+  }
+
+  /* Shaded region: The semi-transparent overlay around the scan box */
+  #reader #qr-shaded-region {
+    border-width: 0 !important;
+  }
+
+  /* The actual 'Focus Box' borders from the library */
+  #reader #qr-shaded-region > div {
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.5); /* Create the 'dimmed' effect correctly */
+  }
+
+  /* Professional Scan Guides (Thin Slate Markers) */
+  #reader #qr-shaded-region > div::before,
+  #reader #qr-shaded-region > div::after {
+    display: none !important; /* Remove library 'braces' to use our custom clean ones */
+  }
+
   .dark img[data-form-icon] {
     filter: brightness(0) invert(1);
     opacity: 0.92;
@@ -297,6 +321,27 @@
     opacity: 0;
     transform: rotateX(200deg) rotateZ(360deg) scale(0.15);
   }
+}
+
+@keyframes scan-line {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @media (max-width: 1023px) {

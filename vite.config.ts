@@ -65,6 +65,24 @@ function authApiPlugin() {
       return;
     }
 
+    if (req.url === "/api/auth/profile" && req.method === "POST") {
+      const { id = "", email = "" } = await readJsonBody(req);
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.end(
+        JSON.stringify({
+          success: true,
+          user: {
+            id: id || "",
+            email: email || "",
+            full_name: "TindaPamilya User",
+            role: "Seller",
+          },
+        }),
+      );
+      return;
+    }
+
     next();
   };
 

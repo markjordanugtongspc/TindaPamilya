@@ -13,9 +13,10 @@ import {
   clearSavedCredentials,
 } from "./modules/db-manager.js";
 import { initFlowbite } from "flowbite";
+import { initScannerModal } from "./modules/scanner-modal.js";
 
 const DEV_DEBUG = false;
-const APP_VERSION = "0.5.23";
+const APP_VERSION = "0.5.36";
 // Use data-tp-version on <html> — NOT data-app-version — or injectAppVersionLabels would
 // match <html> and setting textContent would wipe the entire document.
 document.documentElement.dataset.tpVersion = APP_VERSION;
@@ -331,3 +332,4 @@ if (isMenuPage) {
     .catch((error) => console.error("handleLoginPage failed", error));
 }
 safeInit("initFlowbite", () => initFlowbite());
+safeInit("initScannerModal", () => initScannerModal());

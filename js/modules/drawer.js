@@ -6,6 +6,19 @@ const DESKTOP_TOP_OFFSET_FALLBACK_PX = 76;
 
 const backdropClasses =
   "bg-black/45 fixed inset-0 z-[45] backdrop-blur-[1px] dark:bg-black/60";
+const ORDERS_DRAWER_STATE_KEY = "tp_orders_drawer_restore";
+const PRODUCT_INFO_DRAWER_STATE_KEY = "tp_product_info_drawer_restore";
+
+function isDrawerVisible(drawerEl, hiddenClass) {
+  return !drawerEl.classList.contains(hiddenClass);
+}
+
+function blurFocusedWithin(rootEl) {
+  const active = document.activeElement;
+  if (active instanceof HTMLElement && rootEl.contains(active)) {
+    active.blur();
+  }
+}
 
 function measureTopBarHeightPx() {
   const nav = document.querySelector("nav.fixed.top-0.z-50");
@@ -95,11 +108,40 @@ export function initProductOrdersDrawers() {
 
   viewBtn?.addEventListener("click", openOrdersDrawer);
 
+  window.addEventListener("tp:scanner-modal-open", () => {
+    if (isDrawerVisible(rightEl, "translate-x-full")) {
+      localStorage.setItem(ORDERS_DRAWER_STATE_KEY, "right");
+      blurFocusedWithin(rightEl);
+      drawerRight.hide();
+      return;
+    }
+    if (isDrawerVisible(bottomEl, "translate-y-full")) {
+      localStorage.setItem(ORDERS_DRAWER_STATE_KEY, "bottom");
+      blurFocusedWithin(bottomEl);
+      drawerBottom.hide();
+      return;
+    }
+    localStorage.removeItem(ORDERS_DRAWER_STATE_KEY);
+  });
+
+  window.addEventListener("tp:scanner-modal-close", () => {
+    const restore = localStorage.getItem(ORDERS_DRAWER_STATE_KEY);
+    localStorage.removeItem(ORDERS_DRAWER_STATE_KEY);
+    if (restore === "right" && mq.matches) drawerRight.show();
+    if (restore === "bottom" && !mq.matches) drawerBottom.show();
+  });
+
   document.querySelectorAll("[data-tp-drawer-close]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const which = btn.getAttribute("data-tp-drawer-close");
-      if (which === "right") drawerRight.hide();
-      if (which === "bottom") drawerBottom.hide();
+      if (which === "right") {
+        blurFocusedWithin(rightEl);
+        drawerRight.hide();
+      }
+      if (which === "bottom") {
+        blurFocusedWithin(bottomEl);
+        drawerBottom.hide();
+      }
     });
   });
 }
@@ -209,9 +251,38 @@ function initProductInfoDrawer() {
   document.querySelectorAll("[data-tp-product-info-close]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const which = btn.getAttribute("data-tp-product-info-close");
-      if (which === "right") drawerRight.hide();
-      if (which === "bottom") drawerBottom.hide();
+      if (which === "right") {
+        blurFocusedWithin(rightEl);
+        drawerRight.hide();
+      }
+      if (which === "bottom") {
+        blurFocusedWithin(bottomEl);
+        drawerBottom.hide();
+      }
     });
+  });
+
+  window.addEventListener("tp:scanner-modal-open", () => {
+    if (isDrawerVisible(rightEl, "translate-x-full")) {
+      localStorage.setItem(PRODUCT_INFO_DRAWER_STATE_KEY, "right");
+      blurFocusedWithin(rightEl);
+      drawerRight.hide();
+      return;
+    }
+    if (isDrawerVisible(bottomEl, "translate-y-full")) {
+      localStorage.setItem(PRODUCT_INFO_DRAWER_STATE_KEY, "bottom");
+      blurFocusedWithin(bottomEl);
+      drawerBottom.hide();
+      return;
+    }
+    localStorage.removeItem(PRODUCT_INFO_DRAWER_STATE_KEY);
+  });
+
+  window.addEventListener("tp:scanner-modal-close", () => {
+    const restore = localStorage.getItem(PRODUCT_INFO_DRAWER_STATE_KEY);
+    localStorage.removeItem(PRODUCT_INFO_DRAWER_STATE_KEY);
+    if (restore === "right" && mq.matches) drawerRight.show();
+    if (restore === "bottom" && !mq.matches) drawerBottom.show();
   });
 }
 

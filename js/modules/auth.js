@@ -2,11 +2,19 @@ const AUTH_STORAGE_KEY = "tp_auth_session";
 const API_BASE = "/api/auth";
 
 async function browserPost(path, body) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Network request failed",
+    };
+  }
 
   let data = {};
   try {
