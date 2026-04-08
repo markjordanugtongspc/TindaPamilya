@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import { loginWithPostgres } from "./server/auth.server.js";
+import { cpSync, existsSync } from "node:fs";
+import { resolve } from "node:path";
 
 function readJsonBody(req: any): Promise<any> {
   return new Promise((resolve) => {
@@ -77,6 +79,27 @@ function authApiPlugin() {
   };
 }
 
+function copyPagesComponentsPlugin() {
+  return {
+    name: "copy-pages-components-plugin",
+    closeBundle() {
+      const src = resolve(__dirname, "pages/components");
+      const dest = resolve(__dirname, "dist/pages/components");
+      if (!existsSync(src)) return;
+      cpSync(src, dest, { recursive: true });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [tailwindcss(), authApiPlugin()],
+  plugins: [tailwindcss(), authApiPlugin(), copyPagesComponentsPlugin()],
+  build: {
+    rollupOptions: {
+      input: {
+        index: resolve(__dirname, "index.html"),
+        menu: resolve(__dirname, "pages/menu/index.html"),
+        products: resolve(__dirname, "pages/products/index.html"),
+      },
+    },
+  },
 });

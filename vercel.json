@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/pages/menu", "destination": "/pages/menu/index.html" },
+    { "source": "/pages/products", "destination": "/pages/products/index.html" },
+    { "source": "/pages/menu/(.*)", "destination": "/pages/menu/$1" },
+    { "source": "/pages/products/(.*)", "destination": "/pages/products/$1" },
+    { "source": "/pages/components/(.*)", "destination": "/pages/components/$1" }
+  ]
+}

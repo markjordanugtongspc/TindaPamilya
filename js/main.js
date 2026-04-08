@@ -12,9 +12,10 @@ import {
   loadEncryptedCredentials,
   clearSavedCredentials,
 } from "./modules/db-manager.js";
+import { initFlowbite } from "flowbite";
 
 const DEV_DEBUG = false;
-const APP_VERSION = "0.5.21";
+const APP_VERSION = "0.5.23";
 // Use data-tp-version on <html> — NOT data-app-version — or injectAppVersionLabels would
 // match <html> and setting textContent would wipe the entire document.
 document.documentElement.dataset.tpVersion = APP_VERSION;
@@ -329,3 +330,4 @@ if (isMenuPage) {
     .then(() => debugLog("handleLoginPage: OK"))
     .catch((error) => console.error("handleLoginPage failed", error));
 }
+safeInit("initFlowbite", () => initFlowbite());
