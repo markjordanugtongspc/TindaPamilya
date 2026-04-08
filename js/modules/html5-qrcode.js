@@ -28,6 +28,9 @@ export function createBarcodeScanner(readerId, onStatus) {
   const getReaderElement = () => document.getElementById(readerId);
 
   const toggleFullScreen = async (enable) => {
+    // Only auto-fullscreen on Desktop/Large Tablets, skip for mobile
+    if (window.innerWidth < 768) return;
+
     const el = getReaderElement();
     if (!el) return;
     try {
@@ -40,7 +43,7 @@ export function createBarcodeScanner(readerId, onStatus) {
         }
       }
     } catch (err) {
-      console.warn("[Fullscreen Policy]", "Could not toggle fullscreen automatically.", err);
+      console.warn("[Fullscreen Policy]", "Skipped/Blocked.", err);
     }
   };
 

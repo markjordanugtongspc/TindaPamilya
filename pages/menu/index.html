@@ -353,8 +353,8 @@
       aria-hidden="true"
       class="fixed inset-0 z-50 hidden h-[calc(100%-1rem)] max-h-full w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0"
     >
-      <div class="relative mx-auto w-full max-w-4xl py-4 md:py-8">
-        <div class="relative rounded-2xl border border-border-default bg-secondary shadow-xl dark:border-white/10 dark:bg-secondary/95">
+    <div class="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-2xl py-4 md:py-8">
+      <div class="relative rounded-2xl border border-border-default bg-secondary shadow-2xl dark:border-white/10 dark:bg-secondary/95">
           <div class="flex items-center justify-between border-b border-border-default p-4 dark:border-white/10 md:p-5">
             <h3 class="text-lg font-semibold text-text">Scan product barcode</h3>
             <button
@@ -369,18 +369,26 @@
             </button>
           </div>
         <div class="space-y-6 p-4 md:p-6 text-text">
-          <div class="flex items-center justify-between gap-4">
-            <div class="space-y-1">
-              <div class="flex items-center gap-2">
+          <div class="flex items-center justify-between gap-4 overflow-x-auto pb-2 scrollbar-none">
+            <div class="shrink-0 space-y-1">
+              <div class="flex items-center gap-2 whitespace-nowrap">
                 <span class="h-2 w-2 rounded-full bg-slate-400"></span>
-                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-text/40">POS Optical Reader v2.1</p>
+                <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-text/40">POS Optical Reader v2.1</p>
               </div>
-              <p class="text-lg font-bold tracking-tight">Barcode Scanner</p>
+              <p class="text-base font-bold tracking-tight whitespace-nowrap">Barcode Scanner</p>
             </div>
-            <div class="flex flex-col items-end gap-1 text-end">
-              <span class="rounded bg-slate-100 dark:bg-white/5 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-text/60 ring-1 ring-text/10">MARKET-ST-HD</span>
-              <p class="text-[8px] font-medium text-text/30 uppercase tracking-tighter italic">Ready to sell</p>
+            <div class="flex shrink-0 flex-col items-end gap-1 text-end whitespace-nowrap">
+              <span class="rounded bg-slate-100 dark:bg-white/5 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-text/60 ring-1 ring-text/10">MARKET-ST-HD</span>
+              <p class="text-[7px] font-medium text-text/30 uppercase tracking-tighter italic">Ready to sell</p>
             </div>
+          </div>
+          
+          <!-- Live Result Display (Visual Feedback) -->
+          <div class="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 dark:bg-emerald-500/10 transition-all duration-300">
+             <div class="flex items-center justify-between gap-4">
+               <p class="text-[10px] font-black uppercase tracking-widest text-emerald-600/70 dark:text-emerald-400/70 whitespace-nowrap">Feedback Status:</p>
+               <p data-scanner-status class="text-xs font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap truncate text-end">Waiting for scan...</p>
+             </div>
           </div>
           
           <div class="relative overflow-hidden rounded-3xl border border-border-default bg-black/95 shadow-2xl dark:border-white/10">
@@ -419,18 +427,19 @@
         <div class="flex items-center justify-end gap-3 border-t border-border-default p-4 dark:border-white/10 md:p-5">
           <p data-scanner-status class="me-auto text-xs font-medium text-text/60">Scanner ready</p>
           
+        <div class="flex items-center justify-between gap-3 border-t border-border-default p-4 dark:border-white/10 md:p-5">
           <input type="file" id="tp-scanner-file-input" class="hidden" accept="image/*" />
           
           <button type="button" 
             onclick="document.getElementById('tp-scanner-file-input').click()"
-            class="flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-emerald-600 cursor-pointer transition hover:bg-emerald-500 hover:text-white dark:text-emerald-400 dark:hover:bg-emerald-500/20">
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-3 py-2.5 text-[10px] font-bold uppercase tracking-widest text-emerald-600 cursor-pointer transition whitespace-nowrap hover:bg-emerald-500 hover:text-white dark:text-emerald-400 dark:hover:bg-emerald-500/20">
+            <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
             </svg>
-            Upload Barcode Image
+            Upload
           </button>
           
-          <button type="button" data-scanner-close="true" class="rounded-xl border border-red-500/20 bg-red-500/10 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-red-600 cursor-pointer transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_20px_rgba(220,38,38,0.3)]">
+          <button type="button" data-scanner-close="true" class="flex flex-1 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2.5 text-[10px] font-bold uppercase tracking-widest text-red-600 cursor-pointer transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_20px_rgba(220,38,38,0.3)] whitespace-nowrap">
             Cancel
           </button>
         </div>
