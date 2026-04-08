@@ -1,5 +1,85 @@
 import * as auth from "./auth.js";
 import { initMenuNavigations } from "./navigations.js";
+import { initMenuKpiAnimations } from "./animations.js";
+
+function initStoreClock() {
+  const clockEl = document.getElementById("tp-pos-clock");
+  const dateEl = document.getElementById("tp-pos-date");
+  if (!clockEl || !dateEl) return;
+
+  const tick = () => {
+    const now = new Date();
+    clockEl.textContent = now.toLocaleTimeString("en-PH", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+    dateEl.textContent = now.toLocaleDateString("en-PH", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  tick();
+  window.setInterval(tick, 1000);
+}
+
+function revealMenuDashboard() {
+  const skeleton = document.getElementById("menu-loading-skeleton");
+  const dashboard = document.getElementById("menu-dashboard");
+  if (!skeleton || !dashboard) return;
+  window.setTimeout(() => {
+    skeleton.classList.add("hidden");
+    skeleton.setAttribute("aria-hidden", "true");
+    dashboard.classList.remove("hidden");
+    dashboard.setAttribute("aria-hidden", "false");
+  }, 650);
+}
+
+function initMobileKpiCarousel() {
+  const root = document.getElementById("pos-kpi-carousel");
+  if (!root) return;
+  const track = root.querySelector("[data-kpi-carousel-track]");
+  if (!track) return;
+  const slides = Array.from(track.children);
+  const dots = Array.from(root.querySelectorAll("[data-kpi-slide-to]"));
+  const prev = root.querySelector("[data-kpi-carousel-prev]");
+  const next = root.querySelector("[data-kpi-carousel-next]");
+  if (!slides.length) return;
+
+  let index = 0;
+  const max = slides.length - 1;
+
+  const render = () => {
+    track.style.transform = `translateX(-${index * 100}%)`;
+    dots.forEach((dot, i) => {
+      dot.setAttribute("aria-current", String(i === index));
+      dot.classList.toggle("bg-primary", i === index);
+      dot.classList.toggle("bg-text/25", i !== index);
+    });
+  };
+
+  prev?.addEventListener("click", () => {
+    index = index <= 0 ? max : index - 1;
+    render();
+  });
+
+  next?.addEventListener("click", () => {
+    index = index >= max ? 0 : index + 1;
+    render();
+  });
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener("click", () => {
+      index = i;
+      render();
+    });
+  });
+
+  render();
+}
 
 function initNotificationState() {
   const raw = localStorage.getItem("tp_unread_notifications");
@@ -28,7 +108,8 @@ export async function initMenuPage() {
 
   await initMenuNavigations();
 
-  const user = status.user || {};
+  const refreshed = await auth.fetchUserProfile(status.user || {});
+  const user = refreshed.success ? refreshed.user || {} : status.user || {};
   const nameEl = document.getElementById("user-full-name");
   const roleEl = document.getElementById("user-role");
   const profileEl = document.getElementById("user-profile-image");
@@ -57,6 +138,10 @@ export async function initMenuPage() {
   }
 
   initNotificationState();
+  initStoreClock();
+  initMenuKpiAnimations();
+  initMobileKpiCarousel();
+  revealMenuDashboard();
 
   const logoutButton = document.getElementById("logout-button");
   if (logoutButton) {

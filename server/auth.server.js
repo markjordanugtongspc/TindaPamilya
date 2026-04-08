@@ -54,3 +54,28 @@ export async function loginWithPostgres(email, password) {
     }),
   };
 }
+
+export async function getUserProfileFromUsersTable({ id = "", email = "" }) {
+  let profileRows = [];
+  if (id) {
+    profileRows = await sql`
+      select id, email, role, full_name, profile_image
+      from public.users
+      where id = ${id}
+      limit 1
+    `;
+  } else if (email) {
+    profileRows = await sql`
+      select id, email, role, full_name, profile_image
+      from public.users
+      where lower(email) = lower(${email})
+      limit 1
+    `;
+  }
+
+  if (!profileRows.length) {
+    return { success: false, error: "User profile not found" };
+  }
+
+  return { success: true, user: normalizeUser(profileRows[0]) };
+}

@@ -52,3 +52,15 @@ export async function isAuthenticated() {
     return { authenticated: false, user: null };
   }
 }
+
+export async function fetchUserProfile(user) {
+  if (!user?.id && !user?.email) return { success: false, user: null };
+  const result = await browserPost("/profile", {
+    id: user?.id || "",
+    email: user?.email || "",
+  });
+  if (!result.success) return { success: false, user: null };
+  const mergedUser = { ...user, ...result.user };
+  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(mergedUser));
+  return { success: true, user: mergedUser };
+}

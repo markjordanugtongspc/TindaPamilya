@@ -15,6 +15,7 @@ function setSidebarState(open) {
 
   sidebar.classList.toggle("translate-x-0", open);
   sidebar.classList.toggle("-translate-x-full", !open);
+  sidebar.setAttribute("aria-hidden", String(!open));
   content.classList.toggle("lg:ml-64", open);
   content.classList.toggle("lg:ml-6", !open);
   content.classList.toggle("lg:max-w-[calc(100vw-18rem)]", open);
@@ -25,10 +26,27 @@ function initDesktopSidebar() {
   const toggle = document.getElementById("menu-sidebar-toggle");
   if (!toggle) return;
   const desktop = window.matchMedia("(min-width: 1024px)");
-  if (!desktop.matches) return;
+  let desktopOpen = true;
 
-  setSidebarState(true);
-  initSidebarHamburgerAnimation(toggle, (open) => setSidebarState(open));
+  const syncWithViewport = (matches) => {
+    if (!matches) {
+      desktopOpen = false;
+      setSidebarState(false);
+      return;
+    }
+    desktopOpen = true;
+    setSidebarState(true);
+  };
+
+  syncWithViewport(desktop.matches);
+  initSidebarHamburgerAnimation(toggle, (open) => {
+    if (!desktop.matches) return;
+    desktopOpen = open;
+    setSidebarState(open);
+  });
+  desktop.addEventListener("change", (event) => {
+    syncWithViewport(event.matches);
+  });
 }
 
 function initLogoRefresh() {

@@ -13,7 +13,7 @@ import {
 } from "./modules/db-manager.js";
 
 const DEV_DEBUG = false;
-const APP_VERSION = "0.5.7";
+const APP_VERSION = "0.5.13";
 // Use data-tp-version on <html> — NOT data-app-version — or injectAppVersionLabels would
 // match <html> and setting textContent would wipe the entire document.
 document.documentElement.dataset.tpVersion = APP_VERSION;

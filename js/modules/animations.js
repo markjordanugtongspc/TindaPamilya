@@ -238,3 +238,12 @@ export function initFormAnimations() {
   initPasswordToggle();
   initMobileIntroSequence();
 }
+
+export function initMenuKpiAnimations() {
+  document.querySelectorAll("[data-kpi-trend-icon='up']").forEach((icon) => {
+    icon.classList.add("animate-pulse");
+  });
+  document.querySelectorAll("[data-kpi-trend-icon='down']").forEach((icon) => {
+    icon.classList.add("animate-pulse");
+  });
+}
