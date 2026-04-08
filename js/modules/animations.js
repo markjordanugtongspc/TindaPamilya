@@ -118,6 +118,121 @@ function initMobileIntroSequence() {
   }, 2900);
 }
 
+/**
+ * POS-style sync line + progress bar under the login success check.
+ * @param {{ labelEl: HTMLElement | null; progressBarEl?: HTMLElement | null; onComplete?: () => void }} opts
+ * @returns {Promise<void>}
+ */
+export function runLoginSuccessAssetLoading(opts) {
+  const labelEl = opts.labelEl;
+  const progressBarEl = opts.progressBarEl ?? null;
+  if (!labelEl) {
+    opts.onComplete?.();
+    return Promise.resolve();
+  }
+
+  const setBar = (pct) => {
+    if (progressBarEl) progressBarEl.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  };
+
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (prefersReducedMotion) {
+    labelEl.textContent = "SUCCESS LOGGING IN";
+    labelEl.classList.remove("text-gray-900", "dark:text-gray-50");
+    labelEl.classList.add(
+      "font-bold",
+      "uppercase",
+      "tracking-[0.12em]",
+      "text-emerald-600",
+      "dark:text-emerald-400",
+    );
+    setBar(100);
+    opts.onComplete?.();
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    let progress = 0;
+    const tick = () => {
+      const bump = 2 + Math.random() * 9;
+      progress = Math.min(100, progress + bump);
+      const n = Math.floor(progress);
+      labelEl.textContent = `Syncing workspace… ${n}%`;
+      labelEl.classList.add("text-gray-900", "dark:text-gray-50");
+      labelEl.classList.remove(
+        "font-bold",
+        "uppercase",
+        "tracking-[0.12em]",
+        "text-emerald-600",
+        "dark:text-emerald-400",
+      );
+      setBar(n);
+      if (progress >= 100) {
+        window.setTimeout(() => {
+          labelEl.textContent = "SUCCESS LOGGING IN";
+          labelEl.classList.remove("text-gray-900", "dark:text-gray-50");
+          labelEl.classList.add(
+            "font-bold",
+            "uppercase",
+            "tracking-[0.12em]",
+            "text-emerald-600",
+            "dark:text-emerald-400",
+          );
+          setBar(100);
+          opts.onComplete?.();
+          resolve();
+        }, 200);
+        return;
+      }
+      window.setTimeout(tick, 60 + Math.random() * 70);
+    };
+    labelEl.textContent = "Syncing workspace… 0%";
+    setBar(0);
+    window.setTimeout(tick, 90);
+  });
+}
+
+// -----------------------------------------------------------------------------
+// Navigation animations
+// -----------------------------------------------------------------------------
+/**
+ * Animated hamburger icon for sidebar toggle.
+ * @param {HTMLButtonElement | null} button
+ * @param {(open: boolean) => void} [onToggle]
+ */
+export function initSidebarHamburgerAnimation(button, onToggle) {
+  if (!button) return;
+  const top = button.querySelector("[data-hb-top]");
+  const mid = button.querySelector("[data-hb-mid]");
+  const bot = button.querySelector("[data-hb-bot]");
+  if (!top || !mid || !bot) return;
+
+  [top, mid, bot].forEach((line) => {
+    line.style.transition =
+      "transform 260ms cubic-bezier(0.4, 0, 0.2, 1), opacity 220ms ease";
+    line.style.transformOrigin = "50% 50%";
+  });
+
+  let open = false;
+  const render = () => {
+    top.style.transform = open ? "translateY(5px) rotate(45deg)" : "";
+    mid.style.opacity = open ? "0" : "1";
+    bot.style.transform = open ? "translateY(-5px) rotate(-45deg)" : "";
+    button.setAttribute("aria-pressed", String(open));
+  };
+
+  button.addEventListener("click", () => {
+    open = !open;
+    render();
+    onToggle?.(open);
+  });
+
+  render();
+}
+
 export function initFormAnimations() {
   initEmailIconSwap();
   initPasswordToggle();

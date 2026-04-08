@@ -2,14 +2,16 @@
  * Toggles `class="dark"` on `<html>` (persisted). Raster form icons use
  * `data-form-icon`; their light appearance in dark mode is styled in
  * `styles/tailwind.css` (`.dark img[data-form-icon]`).
+ * Theme is stored in cookies + localStorage via `db-manager.js`.
  */
-const STORAGE_KEY = "tindapamilya-theme";
+import { getThemePreference, setThemePreference } from "./db-manager.js";
+
 const LOGO_LIGHT_MODE_SRC = "/assets/svg/logo-store-dark.svg";
 const LOGO_DARK_MODE_SRC = "/assets/svg/logo-store-light.svg";
 
 function applyStoredTheme() {
   const root = document.documentElement;
-  const stored = localStorage.getItem(STORAGE_KEY);
+  const stored = getThemePreference();
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
   if (stored === "dark" || (!stored && prefersDark)) {
@@ -45,7 +47,7 @@ export function initDarkMode() {
       const mode = document.documentElement.classList.contains("dark")
         ? "dark"
         : "light";
-      localStorage.setItem(STORAGE_KEY, mode);
+      setThemePreference(mode);
       syncToggleUi();
       syncLogos();
     });
@@ -54,7 +56,7 @@ export function initDarkMode() {
   window
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", () => {
-      if (!localStorage.getItem(STORAGE_KEY)) {
+      if (!getThemePreference()) {
         applyStoredTheme();
         syncToggleUi();
         syncLogos();

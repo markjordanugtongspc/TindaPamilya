@@ -15,6 +15,7 @@
   --color-background: #f9fafb; /* light gray background for clarity */
   --color-accent: #16a34a; /* green-600 for emphasis */
   --color-text: #111827; /* dark/black for readability */
+  /* Light tint for glass surfaces (primary mixed toward white) */
 
   /* Font */
   --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
@@ -37,5 +38,272 @@
   .dark img[data-form-icon] {
     filter: brightness(0) invert(1);
     opacity: 0.92;
+  }
+
+  /* Login success: two frosted panels only (no grid); motion in media queries below */
+  .tp-login-drawer,
+  .tp-login-gate {
+    transition: transform 1.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+
+  .animate-tp-success-check-in {
+    animation: tp-success-check-in 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .animate-tp-success-check-roll-out {
+    animation: tp-success-check-roll-out 0.72s cubic-bezier(0.45, 0, 0.2, 1) forwards;
+  }
+
+  .tp-nav-link {
+    position: relative;
+  }
+
+  .tp-nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.2rem;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 250ms ease;
+    opacity: 0.85;
+  }
+
+  .tp-nav-link:hover::after,
+  .tp-nav-link.is-active-nav::after {
+    transform: scaleX(1);
+  }
+
+  /* Primary sidebar: white links + underline (desktop) */
+  #menu-sidebar .tp-nav-link {
+    color: rgb(255 255 255 / 0.95);
+  }
+
+  #menu-sidebar .tp-nav-link::after {
+    background: rgb(255 255 255 / 0.92);
+  }
+
+  #menu-sidebar .tp-nav-link svg,
+  #menu-sidebar .tp-nav-link img {
+    transition: transform 200ms ease;
+  }
+
+  #menu-sidebar .tp-nav-link.is-active-nav .tp-nav-label {
+    font-weight: 800;
+  }
+
+  #menu-sidebar .tp-nav-link.is-active-nav svg,
+  #menu-sidebar .tp-nav-link.is-active-nav img {
+    transform: scale(1.1);
+  }
+
+  .tp-nav-link-mobile svg {
+    transition: transform 200ms ease, color 200ms ease;
+  }
+
+  .tp-nav-link-mobile.is-active-nav svg {
+    transform: scale(1.1);
+  }
+
+  .tp-nav-link-mobile.is-active-nav .tp-nav-label {
+    font-weight: 800;
+  }
+
+  .tp-bottom-nav-scan img {
+    transition: transform 200ms ease;
+  }
+
+  .tp-bottom-nav-scan.is-active-nav img {
+    transform: scale(1.08);
+  }
+
+  .tp-bottom-nav-scan.is-active-nav .tp-nav-label {
+    font-weight: 800;
+  }
+
+  /* Mobile bottom bar: top accent bar (primary), hover preview + active state */
+  .tp-nav-link-mobile {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .tp-nav-link-mobile::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0.35rem;
+    right: 0.35rem;
+    height: 3px;
+    border-radius: 9999px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    opacity: 0;
+    transition:
+      transform 220ms cubic-bezier(0.34, 1.2, 0.64, 1),
+      opacity 220ms ease;
+    z-index: 1;
+  }
+
+  .tp-nav-link-mobile:hover:not(.is-active-nav)::before {
+    transform: scaleX(1);
+    opacity: 0.4;
+  }
+
+  .tp-nav-link-mobile:hover:not(.is-active-nav) {
+    color: var(--color-primary);
+  }
+
+  .tp-nav-link-mobile.is-active-nav::before {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+
+  .tp-nav-link-mobile.is-active-nav {
+    color: var(--color-primary);
+  }
+
+  .dark .tp-nav-link-mobile::before {
+    background: var(--color-accent);
+  }
+
+  .dark .tp-nav-link-mobile:hover:not(.is-active-nav),
+  .dark .tp-nav-link-mobile.is-active-nav {
+    color: var(--color-accent);
+  }
+
+  html:not(.dark) .tp-nav-link-mobile {
+    color: #374151;
+  }
+
+  .dark .tp-nav-link-mobile {
+    color: #d1d5db;
+  }
+
+  /* Center Scan: floats above the bar */
+  .tp-bottom-nav-scan {
+    position: relative;
+    z-index: 2;
+    margin-top: -2.85rem;
+    margin-bottom: 0.125rem;
+    min-height: 4.5rem;
+    width: 100%;
+    max-width: 4.75rem;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .tp-bottom-nav-scan:hover {
+    transform: translateY(-2px);
+  }
+
+  /* Notification bell states */
+  .tp-notification-btn .tp-notif-icon-default,
+  .tp-notification-btn .tp-notif-icon-hover,
+  .tp-notification-btn .tp-notif-icon-new {
+    transition: opacity 180ms ease;
+  }
+
+  .tp-notification-btn .tp-notif-icon-default {
+    opacity: 1;
+  }
+
+  .tp-notification-btn .tp-notif-icon-hover {
+    opacity: 0;
+  }
+
+  .tp-notification-btn[data-has-new="true"] .tp-notif-icon-default {
+    opacity: 0;
+  }
+
+  .tp-notification-btn[data-has-new="true"] .tp-notif-icon-new {
+    display: block;
+  }
+
+  .tp-notification-btn[data-has-new="false"] .tp-notif-icon-new {
+    display: none;
+  }
+
+  .tp-notification-btn:hover .tp-notif-icon-hover {
+    opacity: 1;
+  }
+
+  .tp-notification-btn:hover .tp-notif-icon-default,
+  .tp-notification-btn:hover .tp-notif-icon-new {
+    opacity: 0;
+  }
+
+  .tp-notification-btn[data-has-new="false"] .tp-notif-icon-default {
+    opacity: 1;
+  }
+
+  .tp-notification-btn[data-has-new="false"] [data-notification-badge] {
+    display: none;
+  }
+
+  .tp-bottom-nav-scan.is-active-nav {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.38);
+  }
+
+  .tp-nav-link.is-active-nav .tp-nav-label {
+    font-weight: 700;
+  }
+
+  .dark .tp-nav-link {
+    color: #fff;
+  }
+
+  html:not(.dark) .tp-nav-link {
+    color: #111827;
+  }
+}
+
+@keyframes tp-success-check-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Desktop: 3D roll + spin exit on success check */
+@keyframes tp-success-check-roll-out {
+  0% {
+    opacity: 1;
+    transform: rotateX(0deg) rotateZ(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotateX(200deg) rotateZ(360deg) scale(0.15);
+  }
+}
+
+@media (max-width: 1023px) {
+  .tp-login-success--drawers-open [data-login-drawer-top] {
+    transform: translateY(-100%);
+  }
+
+  .tp-login-success--drawers-open [data-login-drawer-bottom] {
+    transform: translateY(100%);
+  }
+}
+
+@media (min-width: 1024px) {
+  .tp-login-success--gates-open [data-login-gate-left] {
+    transform: translateX(-100%);
+  }
+
+  .tp-login-success--gates-open [data-login-gate-right] {
+    transform: translateX(100%);
   }
 }

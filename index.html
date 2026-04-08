@@ -22,7 +22,7 @@
 
     <div
       data-intro-splash
-      class="fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-primary opacity-100 transition-opacity duration-700 lg:hidden"
+      class="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-4 bg-primary opacity-100 transition-opacity duration-700 lg:hidden"
     >
       <img
         data-intro-logo
@@ -135,7 +135,7 @@
 
           <div
             data-auth-main
-            class="pointer-events-none flex flex-1 translate-y-4 flex-col justify-center px-5 py-12 opacity-0 transition-all duration-500 sm:px-8 md:px-12 lg:pointer-events-auto lg:translate-y-0 lg:px-14 lg:py-14 lg:opacity-100 xl:px-20"
+            class="flex flex-1 flex-col justify-center px-5 py-12 transition-all duration-500 sm:px-8 md:px-12 lg:px-14 lg:py-14 xl:px-20"
           >
             <div class="mx-auto w-full max-w-md">
               <div class="mb-5 flex items-center justify-center lg:hidden">
@@ -323,16 +323,95 @@
                 </div>
 
                 <p
+                  data-app-version
                   class="mt-6 text-center text-xs text-text/60 transition-colors duration-300 dark:text-text/45"
-                >
-                  TindaPamilya v0.4.1
-                </p>
+                ></p>
               </form>
             </div>
           </div>
         </section>
       </div>
     </main>
+
+    <!-- Login success: light glass veil (form stays visible); rounded floats only — max-lg drawers / lg+ doors -->
+    <div
+      id="login-success-overlay"
+      class="pointer-events-none fixed inset-0 z-[100] hidden flex-col items-center justify-center opacity-0 transition-none"
+      aria-hidden="true"
+    >
+      <div
+        class="absolute inset-0 bg-white/35 backdrop-blur-md dark:bg-gray-950/25 dark:backdrop-blur-lg"
+        aria-hidden="true"
+      ></div>
+      <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          data-login-drawer-top
+          class="tp-login-drawer absolute left-0 right-0 top-0 h-[44vh] bg-gradient-to-b from-white/30 to-transparent backdrop-blur-sm sm:h-[46vh] lg:hidden"
+        ></div>
+        <div
+          data-login-drawer-bottom
+          class="tp-login-drawer absolute bottom-0 left-0 right-0 h-[44vh] bg-gradient-to-t from-white/30 to-transparent backdrop-blur-sm sm:h-[46vh] lg:hidden"
+        ></div>
+        <div
+          data-login-gate-left
+          class="tp-login-gate absolute inset-y-0 left-0 hidden w-1/2 bg-gradient-to-r from-white/25 to-transparent backdrop-blur-sm lg:block lg:backdrop-blur-md"
+        ></div>
+        <div
+          data-login-gate-right
+          class="tp-login-gate absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-white/25 to-transparent backdrop-blur-sm lg:block lg:backdrop-blur-md"
+        ></div>
+      </div>
+      <div
+        class="relative z-10 flex w-full max-w-md flex-col items-center px-5 perspective-[900px]"
+      >
+        <p
+          class="mb-8 text-center text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-gray-900 drop-shadow-sm dark:text-white"
+        >
+          Point of sale
+        </p>
+        <div
+          class="flex flex-col items-center justify-center opacity-0"
+          data-login-success-icon
+        >
+          <div
+            class="transform-gpu [transform-style:preserve-3d]"
+            data-login-success-roll-target
+          >
+            <div
+              class="flex h-24 w-24 items-center justify-center rounded-full bg-accent p-4 shadow-xl ring-4 ring-white/40 dark:ring-white/10"
+            >
+              <svg
+                class="h-12 w-12 text-white"
+                aria-hidden="true"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <p
+            data-login-loading-label
+            class="mt-8 min-h-[1.35rem] text-center text-sm font-semibold tracking-tight text-gray-900 dark:text-gray-50"
+            aria-live="polite"
+          ></p>
+          <div
+            class="mt-5 h-2.5 w-full max-w-[min(100%,18rem)] overflow-hidden rounded-full bg-gray-400/35 shadow-inner dark:bg-white/20"
+            aria-hidden="true"
+          >
+            <div
+              data-login-progress-bar
+              class="h-full w-0 rounded-full bg-accent shadow-sm transition-[width] duration-200 ease-out"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/js/main.js"></script>
   </body>
