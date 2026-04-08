@@ -103,3 +103,118 @@ export function initProductOrdersDrawers() {
     });
   });
 }
+
+function upsertProductInfoTemplates() {
+  const template = document.getElementById("tp-product-info-template");
+  if (!template) return;
+  document.querySelectorAll("[data-tp-product-info-mount]").forEach((mount) => {
+    if (mount.childElementCount > 0) return;
+    mount.appendChild(template.content.cloneNode(true));
+  });
+}
+
+function setText(root, selector, value) {
+  const el = root.querySelector(selector);
+  if (!el) return;
+  el.textContent = value;
+}
+
+function setStocksCount(root, value) {
+  const el = root.querySelector("[data-pi-stocks-count]");
+  if (!el) return;
+  el.textContent = String(value ?? "0");
+}
+
+function initProductInfoDrawer() {
+  upsertProductInfoTemplates();
+
+  const rightEl = document.getElementById("tp-product-info-drawer-right");
+  const bottomEl = document.getElementById("tp-product-info-drawer-bottom");
+  if (!rightEl || !bottomEl) return;
+
+  const drawerOpts = {
+    backdrop: true,
+    bodyScrolling: false,
+    backdropClasses,
+  };
+
+  const drawerRight = new Drawer(
+    rightEl,
+    { ...drawerOpts, placement: "right" },
+    { id: "tp-product-info-drawer-right", override: true },
+  );
+  const drawerBottom = new Drawer(
+    bottomEl,
+    { ...drawerOpts, placement: "bottom" },
+    { id: "tp-product-info-drawer-bottom", override: true },
+  );
+
+  const mq = window.matchMedia(`(min-width: ${DESKTOP_MIN_WIDTH}px)`);
+
+  applyRightDrawerDesktopLayout(rightEl);
+
+  const open = (data) => {
+    const root = mq.matches ? rightEl : bottomEl;
+    const mount = root.querySelector("[data-tp-product-info-mount]");
+    if (!(mount instanceof HTMLElement)) return;
+
+    setText(mount, "[data-pi-barcode]", data.barcode || "—");
+    setText(mount, "[data-pi-name]", data.name || "Product");
+    setStocksCount(mount, data.quantity ?? 0);
+    setText(mount, "[data-pi-category]", data.category || "—");
+    setText(mount, "[data-pi-exp]", data.expirationDate || "N/A");
+    setText(mount, "[data-pi-sale]", data.salePrice || "N/A");
+    setText(mount, "[data-pi-purchase]", data.purchasePrice || "N/A");
+    setText(mount, "[data-pi-desc]", data.description || "N/A");
+
+    if (mq.matches) {
+      drawerBottom.hide();
+      drawerRight.show();
+    } else {
+      drawerRight.hide();
+      drawerBottom.show();
+    }
+  };
+
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest("[data-product-delete]")) return;
+    const card = target.closest("[data-product-card]");
+    if (!(card instanceof HTMLElement)) return;
+
+    const barcode = card.getAttribute("data-product-barcode") || "";
+    const name =
+      card.querySelector("[data-product-name]")?.textContent?.trim() || "";
+    const sku =
+      card.querySelector("[data-product-sku]")?.textContent?.trim() || "";
+    const price =
+      card.querySelector("[data-product-price]")?.textContent?.trim() || "";
+    const qtyRaw = card.getAttribute("data-product-quantity");
+    const qty = qtyRaw ? Number.parseInt(qtyRaw, 10) : 1;
+
+    open({
+      barcode,
+      name,
+      quantity: Number.isFinite(qty) ? qty : 1,
+      category: "N/A",
+      expirationDate: "N/A",
+      salePrice: price || "N/A",
+      purchasePrice: "N/A",
+      description: "N/A",
+      sku,
+    });
+  });
+
+  document.querySelectorAll("[data-tp-product-info-close]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const which = btn.getAttribute("data-tp-product-info-close");
+      if (which === "right") drawerRight.hide();
+      if (which === "bottom") drawerBottom.hide();
+    });
+  });
+}
+
+export function initProductInfoDrawers() {
+  initProductInfoDrawer();
+}
