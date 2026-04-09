@@ -344,22 +344,11 @@
   animation: scan-line 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-@media (max-width: 1023px) {
-  .tp-login-success--drawers-open [data-login-drawer-top] {
-    transform: translateY(-100%);
-  }
-
-  .tp-login-success--drawers-open [data-login-drawer-bottom] {
-    transform: translateY(100%);
-  }
+/* Login success: gate animations (slide left/right) on all screen sizes */
+.tp-login-success--gates-open [data-login-gate-left] {
+  transform: translateX(-100%);
 }
 
-@media (min-width: 1024px) {
-  .tp-login-success--gates-open [data-login-gate-left] {
-    transform: translateX(-100%);
-  }
-
-  .tp-login-success--gates-open [data-login-gate-right] {
-    transform: translateX(100%);
-  }
+.tp-login-success--gates-open [data-login-gate-right] {
+  transform: translateX(100%);
 }

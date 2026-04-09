@@ -15,11 +15,12 @@
     "vite": "^8.0.5"
   },
   "dependencies": {
+    "@ericblade/quagga2": "^1.12.1",
     "@tailwindcss/vite": "^4.2.2",
     "dotenv": "^17.4.1",
     "flowbite": "^4.0.1",
-    "html5-qrcode": "^2.3.8",
     "postgres": "^3.4.9",
+    "sweetalert2": "^11.26.24",
     "tailwindcss": "^4.2.2"
   }
 }

@@ -291,10 +291,11 @@
                 </div>
 
                 <button
+                  id="login-btn"
                   type="submit"
                   class="w-full cursor-pointer rounded-xl bg-accent px-4 py-4 text-center text-base font-semibold text-white shadow-md transition hover:bg-primary hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-accent/35 active:scale-[0.99] dark:bg-accent dark:hover:bg-primary dark:focus:ring-primary/40"
                 >
-                  LOG IN
+                  <span id="login-btn-text">LOG IN</span>
                 </button>
 
                 <div class="space-y-4 pt-2">
@@ -339,33 +340,21 @@
       class="pointer-events-none fixed inset-0 z-[100] hidden flex-col items-center justify-center opacity-0 transition-none"
       aria-hidden="true"
     >
-      <div
-        class="absolute inset-0 bg-white/35 backdrop-blur-md dark:bg-gray-950/25 dark:backdrop-blur-lg"
-        aria-hidden="true"
-      ></div>
       <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div
-          data-login-drawer-top
-          class="tp-login-drawer absolute left-0 right-0 top-0 h-[44vh] bg-gradient-to-b from-white/30 to-transparent backdrop-blur-sm sm:h-[46vh] lg:hidden"
-        ></div>
-        <div
-          data-login-drawer-bottom
-          class="tp-login-drawer absolute bottom-0 left-0 right-0 h-[44vh] bg-gradient-to-t from-white/30 to-transparent backdrop-blur-sm sm:h-[46vh] lg:hidden"
-        ></div>
-        <div
           data-login-gate-left
-          class="tp-login-gate absolute inset-y-0 left-0 hidden w-1/2 bg-gradient-to-r from-white/25 to-transparent backdrop-blur-sm lg:block lg:backdrop-blur-md"
+          class="tp-login-gate absolute inset-y-0 left-0 w-[51%] bg-gradient-to-r from-white/35 to-white/10 backdrop-blur-md dark:from-gray-900/40 dark:to-transparent"
         ></div>
         <div
           data-login-gate-right
-          class="tp-login-gate absolute inset-y-0 right-0 hidden w-1/2 bg-gradient-to-l from-white/25 to-transparent backdrop-blur-sm lg:block lg:backdrop-blur-md"
+          class="tp-login-gate absolute inset-y-0 right-0 w-[51%] bg-gradient-to-l from-white/35 to-white/10 backdrop-blur-md dark:from-gray-900/40 dark:to-transparent"
         ></div>
       </div>
       <div
-        class="relative z-10 flex w-full max-w-md flex-col items-center px-5 perspective-[900px]"
+        class="relative z-10 flex h-72 w-72 sm:h-80 sm:w-80 items-center justify-center flex-col rounded-full bg-white/45 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] backdrop-blur-[40px] ring-1 ring-white/60 dark:bg-gray-950/45 dark:ring-white/10"
       >
         <p
-          class="mb-8 text-center text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-gray-900 drop-shadow-sm dark:text-white"
+          class="mb-3 text-center text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-900 drop-shadow-sm dark:text-white"
         >
           Point of sale
         </p>
@@ -380,19 +369,14 @@
             <div
               class="flex h-24 w-24 items-center justify-center rounded-full bg-accent p-4 shadow-xl ring-4 ring-white/40 dark:ring-white/10"
             >
-              <svg
-                class="h-12 w-12 text-white"
-                aria-hidden="true"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
+              <img
+                data-logo-theme
+                src="/assets/svg/logo-store-dark.svg"
+                alt="TindaPamilya logo"
+                width="80"
+                height="80"
+                class="h-16 w-16 drop-shadow-sm"
+              />
             </div>
           </div>
           <p
@@ -401,7 +385,7 @@
             aria-live="polite"
           ></p>
           <div
-            class="mt-5 h-2.5 w-full max-w-[min(100%,18rem)] overflow-hidden rounded-full bg-gray-400/35 shadow-inner dark:bg-white/20"
+            class="mt-5 h-2.5 w-full max-w-[14rem] overflow-hidden rounded-full bg-gray-400/35 shadow-inner dark:bg-white/20"
             aria-hidden="true"
           >
             <div

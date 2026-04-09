@@ -13,7 +13,7 @@ import {
   clearSavedCredentials,
 } from "./modules/db-manager.js";
 import { initFlowbite } from "flowbite";
-import { initScannerModal } from "./modules/scanner-modal.js";
+import { initBarcodeScanner } from "./modules/barcode-scanner.js";
 
 const DEV_DEBUG = false;
 const APP_VERSION = "0.5.36";
@@ -147,7 +147,7 @@ function showToast(message, variant = "error") {
   setTimeout(() => toast.remove(), 2800);
 }
 
-const LOGIN_SUCCESS_DRAWER_MS = 1450;
+const LOGIN_SUCCESS_GATES_MS = 1450;
 
 function isDesktopLoginSuccessView() {
   return window.matchMedia("(min-width: 1024px)").matches;
@@ -190,7 +190,6 @@ async function playLoginSuccessOverlayThenNavigate(href) {
     "pointer-events-none",
     "opacity-0",
     "hidden",
-    "tp-login-success--drawers-open",
     "tp-login-success--gates-open",
   );
   overlay.classList.add("flex", "opacity-100", "pointer-events-auto");
@@ -228,17 +227,29 @@ async function playLoginSuccessOverlayThenNavigate(href) {
   }
 
   window.requestAnimationFrame(() => {
-    if (desktop) {
-      overlay.classList.add("tp-login-success--gates-open");
-    } else {
-      overlay.classList.add("tp-login-success--drawers-open");
-    }
+    overlay.classList.add("tp-login-success--gates-open");
   });
 
   window.setTimeout(() => {
     window.location.href = href;
-  }, LOGIN_SUCCESS_DRAWER_MS + 400);
+  }, LOGIN_SUCCESS_GATES_MS + 400);
 }
+
+const LOADING_SVG = `
+<div role="status" class="flex items-center justify-center">
+    <svg aria-hidden="true" class="w-7 h-7 animate-spin fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="white" opacity="0.2"/>
+        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
+    </svg>
+    <span class="sr-only">Loading...</span>
+</div>`;
+
+const SUCCESS_SVG = `
+<div class="flex items-center justify-center animate-tp-success-check-in">
+    <svg class="w-8 h-8 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+    </svg>
+</div>`;
 
 function setLoginInlineError(message = "") {
   const errorEl = document.getElementById("login-error");
@@ -287,18 +298,40 @@ async function handleLoginPage() {
   emailInput?.addEventListener("input", () => setLoginInlineError(""));
   passwordInput?.addEventListener("input", () => setLoginInlineError(""));
 
+  const loginBtn = document.getElementById("login-btn");
+  const loginBtnText = document.getElementById("login-btn-text");
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     setLoginInlineError("");
+
+    const originalContent = loginBtn ? loginBtn.innerHTML : "LOG IN";
+    if (loginBtn) {
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = LOADING_SVG;
+    }
+
     const email = emailInput?.value?.trim() || "";
     const password = passwordInput?.value || "";
     const remember = Boolean(savePasswordEl?.checked);
 
     const result = await auth.login(email, password);
+
     if (!result.success) {
       setLoginInlineError(result.error || "Wrong email or password");
+      if (loginBtn) {
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = originalContent;
+      }
       return;
     }
+
+    if (loginBtn) {
+      loginBtn.innerHTML = SUCCESS_SVG;
+    }
+
+    // Give it a brief moment so the user sees the button checkmark pop in
+    await new Promise((r) => setTimeout(r, 650));
 
     if (remember) {
       await saveEncryptedCredentials(email, password);
@@ -332,4 +365,4 @@ if (isMenuPage) {
     .catch((error) => console.error("handleLoginPage failed", error));
 }
 safeInit("initFlowbite", () => initFlowbite());
-safeInit("initScannerModal", () => initScannerModal());
+safeInit("initBarcodeScanner", () => initBarcodeScanner());
