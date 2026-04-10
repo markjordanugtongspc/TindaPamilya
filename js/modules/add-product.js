@@ -1,6 +1,7 @@
 import { Drawer, Dropdown } from "flowbite";
 import { renderProductCard } from "./products.js";
 import { Datepicker } from "flowbite-datepicker";
+import { showSuccessToast } from "./modals.js";
 
 const backdropClasses = "bg-black/45 fixed inset-0 z-[45] backdrop-blur-[1px] dark:bg-black/60";
 
@@ -157,7 +158,7 @@ class ProductManager {
           // Close modal using Flowbite data attribute behavior or manually
           const modalHideBtn = document.querySelector('[data-modal-hide="tp-category-modal"]');
           if (modalHideBtn) modalHideBtn.click();
-          import("./products.js").then(m => m.showSuccessToast(`Category "${val}" added.`));
+          showSuccessToast(`Category "${val}" added.`);
         }
       });
     }
@@ -203,7 +204,7 @@ class ProductManager {
         }
       }
       
-      import("./products.js").then(m => m.showSuccessToast(`Product "${newProduct.name}" added successfully!`));
+      showSuccessToast(`Product "${newProduct.name}" added successfully!`);
       form.reset();
       
       if (this.mq.matches) this.rightDrawerInstance.hide();
@@ -293,4 +294,3 @@ class ProductManager {
 
 // export default required for main.js or other imports
 export const productManager = new ProductManager();
-
