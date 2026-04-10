@@ -9,7 +9,14 @@ export const Toast = Swal.mixin({
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
+    customClass: {
+        container: 'swal2-toast-container'
+    },
     didOpen: (toast) => {
+        // High z-index to stay above drawer (z-50) and mobile overlays
+        const container = Swal.getContainer();
+        if (container) container.style.zIndex = '9999';
+
         toast.addEventListener('mouseenter', Swal.stopTimer);
         toast.addEventListener('mouseleave', Swal.resumeTimer);
     }

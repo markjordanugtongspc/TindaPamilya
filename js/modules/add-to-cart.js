@@ -20,6 +20,25 @@ class CartManager {
       const barcode = e.detail?.code;
       if (!barcode) return;
 
+      // Smart Scan Routing:
+      // If "Add New Product" form is open, we populate its input field instead of adding to cart.
+      const addProductRight = document.getElementById("tp-add-product-drawer-right");
+      const addProductBottom = document.getElementById("tp-add-product-drawer-bottom");
+      
+      const isRightOpen = addProductRight && !addProductRight.classList.contains("translate-x-full");
+      const isBottomOpen = addProductBottom && !addProductBottom.classList.contains("translate-y-full");
+
+      if (isRightOpen || isBottomOpen) {
+         const barcodeInput = document.getElementById("ap-barcode");
+         if (barcodeInput) {
+            barcodeInput.value = barcode;
+            // Force focus and trigger input event for consistency
+            barcodeInput.dispatchEvent(new Event('input', { bubbles: true }));
+            showSuccessToast(`Barcode Captured: ${barcode}`);
+            return; // Skip POS logic
+         }
+      }
+
       const product = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
       
       if (product) {
@@ -170,6 +189,7 @@ class CartManager {
 
         plusBtns.forEach(btn => {
            const isDisabled = v >= max || max <= 0;
+           btn.disabled = isDisabled;
            btn.classList.toggle("opacity-30", isDisabled);
            btn.classList.toggle("cursor-not-allowed", isDisabled);
            btn.classList.toggle("pointer-events-none", isDisabled);
@@ -177,6 +197,7 @@ class CartManager {
 
         minusBtns.forEach(btn => {
            const isDisabled = v <= 0;
+           btn.disabled = isDisabled;
            btn.classList.toggle("opacity-30", isDisabled);
            btn.classList.toggle("cursor-not-allowed", isDisabled);
            btn.classList.toggle("pointer-events-none", isDisabled);
