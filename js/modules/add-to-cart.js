@@ -2,6 +2,15 @@ import { formatPeso, initProductGrid } from "./products.js";
 import { SAMPLE_PRODUCTS } from "./data.js";
 import { showSuccessToast, showErrorToast } from "./modals.js";
 
+function playBeep() {
+  const audio = new Audio("/assets/mp3/beep-scan.mp3");
+  audio.play().catch(err => {
+    // Audio might be blocked if there's no user interaction yet, but since
+    // the user clicks "SCAN" to start, it should usually work.
+    console.warn("Audio playback blocked or file missing:", err);
+  });
+}
+
 class CartManager {
   constructor() {
     this.items = [];
@@ -36,6 +45,7 @@ class CartManager {
             barcodeInput.value = barcode;
             // Force focus and trigger input event for consistency
             barcodeInput.dispatchEvent(new Event('input', { bubbles: true }));
+            playBeep();
             showSuccessToast(`Barcode Captured: ${barcode}`);
             return; // Skip POS logic
          }
@@ -44,6 +54,7 @@ class CartManager {
       const product = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
       
       if (product) {
+        playBeep();
         showSuccessToast("PRODUCT FOUND: " + product.name);
         this.addItem({
           barcode: product.barcode,
