@@ -2,6 +2,7 @@ import "../styles/tailwind.css";
 import { initDarkMode } from "./modules/darkmode.js";
 import {
   initFormAnimations,
+  initProductImageZoom,
   runLoginSuccessAssetLoading,
 } from "./modules/animations.js";
 import * as auth from "./modules/auth.js";
@@ -355,8 +356,11 @@ if (isMenuPage) {
     .then(() => debugLog("initMenuPage: OK"))
     .catch((error) => console.error("initMenuPage failed", error));
 } else if (isProductsPage) {
-  initProductsPage()
-    .then(() => debugLog("initProductsPage: OK"))
+    initProductsPage()
+    .then(() => {
+      debugLog("initProductsPage: OK");
+      initProductImageZoom();
+    })
     .catch((error) => console.error("initProductsPage failed", error));
 } else {
   ensureLoginPageVisibleFallback();

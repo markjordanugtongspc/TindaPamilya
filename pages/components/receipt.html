@@ -1,0 +1,61 @@
+<template id="tp-receipt-template-source">
+<div class="relative flex w-full flex-col bg-transparent overflow-hidden">
+    <div class="bg-primary px-6 py-8 text-center sm:px-8">
+      <svg class="mx-auto mb-4 h-12 w-12 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <h2 class="text-xl font-black uppercase tracking-widest text-white leading-tight font-roboto">THANK YOU FOR YOUR PURCHASE</h2>
+    </div>
+
+    <!-- Receipt paper body -->
+    <div id="tp-receipt-print-area" class="bg-white px-6 py-10 mx-4 mt-6 rounded-2xl shadow-sm text-gray-900 border-x-4 border-gray-100 font-mono">
+      <div class="text-center border-b-2 border-dashed border-gray-300 pb-4 mb-4">
+        <h3 class="font-black text-2xl uppercase tracking-wider text-gray-900">TindaPamilya</h3>
+        <p class="text-[0.6rem] font-bold text-gray-500 uppercase tracking-widest mt-1">Sari-Sari Store Receipt</p>
+        <p class="text-[0.65rem] font-bold text-gray-400 mt-2" data-receipt-date>Date: --/--/---- --:--</p>
+        <p class="text-[0.65rem] font-bold text-gray-400" data-receipt-id>Order ID: #000000</p>
+      </div>
+
+      <div class="flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-widest text-gray-400 border-b border-gray-200 pb-2 mb-3">
+        <span>Item / Qty</span>
+        <span>Amount</span>
+      </div>
+
+      <ul id="tp-receipt-items" class="space-y-3 mb-4 text-xs font-bold min-h-[4rem]">
+        <!-- Receipt items go here -->
+      </ul>
+
+      <div class="border-t-2 border-dashed border-gray-300 pt-3 space-y-2">
+        <div class="flex justify-between text-[0.7rem] font-bold text-gray-500">
+          <span>SUBTOTAL</span>
+          <span data-receipt-subtotal>₱ 0.00</span>
+        </div>
+        <div class="flex justify-between text-base font-black text-gray-900">
+          <span>TOTAL PAID</span>
+          <span data-receipt-total>₱ 0.00</span>
+        </div>
+      </div>
+      
+      <p class="text-center text-[0.65rem] font-bold text-gray-400 mt-8 mb-2">Served by: <span data-receipt-cashier>Admin</span></p>
+      <div class="mt-4 flex flex-col items-center justify-center gap-1 border-t border-gray-100 pt-4 opacity-30">
+          <div class="h-8 w-40 bg-[repeating-linear-gradient(90deg,black,black_2px,transparent_2px,transparent_4px)]"></div>
+          <p class="text-[0.5rem] font-bold">SCAN FOR LOYALTY POINTS</p>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col gap-3 p-6 sm:p-8">
+      <button type="button" id="tp-receipt-print"
+        class="inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-primary py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg shadow-primary/25 transition hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/30">
+        <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+        </svg>
+        PRINT RECEIPT
+      </button>
+      <button type="button" data-tp-receipt-close="auto"
+        class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-border-default bg-transparent py-4 text-sm font-black uppercase tracking-widest text-text transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5">
+        Close View
+      </button>
+    </div>
+</div>
+</template>

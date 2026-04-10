@@ -44,7 +44,7 @@
           </p>
         </div>
         <div class="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-          <button type="button"
+          <button id="tp-add-product-btn" type="button"
             class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm ring-1 ring-primary/40 transition hover:bg-emerald-200 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-primary dark:ring-primary/25 dark:hover:bg-emerald-500/20 dark:hover:text-white sm:w-auto">
             <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -116,8 +116,8 @@
       class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10"
       role="listitem" data-product-card>
       <div
-        class="flex h-36 w-full items-center justify-center bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
-        <img src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+        class="flex h-36 w-full items-center justify-center overflow-hidden bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
+        <img data-product-image src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
       </div>
       <div class="p-4">
         <div class="flex items-start justify-between gap-3">
@@ -179,7 +179,7 @@
     <div class="space-y-5 pt-6">
       <!-- Mobile: primary Add to cart + quantity controls at top -->
       <div class="space-y-3 lg:hidden">
-        <button type="button"
+        <button type="button" data-tp-add-to-cart
           class="group flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-primary px-4 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-sm ring-1 ring-black/10 transition hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
           <svg class="h-6 w-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
             fill="currentColor" viewBox="0 0 24 24">
@@ -191,18 +191,18 @@
         </button>
 
         <div
-          class="rounded-xl border border-border-default bg-secondary/70 p-4 dark:border-white/10 dark:bg-secondary/30">
+          class="rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary/70 p-4 dark:border-white/10 dark:bg-secondary/30">
           <div class="flex items-center justify-between gap-3">
             <p class="text-sm font-bold text-text">Quantity</p>
             <div class="flex items-center gap-3">
-              <button type="button"
+              <button type="button" data-pi-qty-minus
                 class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 aria-label="Decrease quantity">
                 <span class="text-lg leading-none">−</span>
               </button>
-              <span
+              <span data-pi-qty-val
                 class="min-w-10 text-center text-base font-bold tabular-nums text-text underline underline-offset-4">1</span>
-              <button type="button"
+              <button type="button" data-pi-qty-plus
                 class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                 aria-label="Increase quantity">
                 <span class="text-lg leading-none">+</span>
@@ -212,14 +212,14 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 gap-3">
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Barcode</p>
           <p class="mt-1 font-mono text-sm font-semibold text-text" data-pi-barcode>—</p>
         </div>
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Product name</p>
           <p class="mt-1 text-base font-semibold text-text" data-pi-name>Product</p>
         </div>
@@ -227,62 +227,62 @@
 
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Stocks</p>
           <p class="mt-1 text-sm font-semibold text-text">
             <span class="ml-0.5 font-bold text-red-400 dark:text-red-300">x</span><span data-pi-stocks-count>0</span>
           </p>
         </div>
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Category</p>
           <p class="mt-1 text-sm font-semibold text-text" data-pi-category>—</p>
         </div>
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary/70 p-4 dark:border-white/10 dark:bg-secondary/30">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Expiration date</p>
           <p class="mt-1 text-sm font-semibold text-text" data-pi-exp>N/A</p>
         </div>
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-emerald-400/30 bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Sale price</p>
-          <p class="mt-1 text-sm font-semibold text-text" data-pi-sale>N/A</p>
+          <p class="mt-1 text-sm font-bold text-emerald-600 dark:text-emerald-400" data-pi-sale>N/A</p>
         </div>
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="sm:col-span-2 rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Purchase price</p>
-          <p class="mt-1 text-sm font-semibold text-text" data-pi-purchase>N/A</p>
+          <p class="mt-1 text-sm font-bold text-red-500 dark:text-red-400" data-pi-purchase>N/A</p>
         </div>
         <div
-          class="rounded-xl border border-border-default bg-background/70 p-4 dark:border-white/10 dark:bg-background/40">
+          class="col-span-2 sm:col-span-2 rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary/70 p-4 dark:border-white/10 dark:bg-secondary/30">
           <p class="text-xs font-bold uppercase tracking-widest text-text/55">Description</p>
-          <p class="mt-1 text-sm font-semibold text-text" data-pi-desc>N/A</p>
+          <p class="mt-1 text-sm font-medium leading-relaxed text-text/80" data-pi-desc>—</p>
         </div>
       </div>
 
       <div
-        class="hidden rounded-xl border border-border-default bg-secondary/70 p-4 dark:border-white/10 dark:bg-secondary/30 lg:block">
+        class="hidden rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary/70 p-4 dark:border-white/10 dark:bg-secondary/30 lg:block">
         <div class="flex items-center justify-between gap-3">
           <p class="text-sm font-bold text-text">Quantity</p>
           <div class="flex items-center gap-3">
-            <button type="button"
-              class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-              aria-label="Increase quantity">
-              <span class="text-lg leading-none">+</span>
-            </button>
-            <span
-              class="min-w-10 text-center text-base font-bold tabular-nums text-text underline underline-offset-4">1</span>
-            <button type="button"
+            <button type="button" data-pi-qty-minus
               class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               aria-label="Decrease quantity">
               <span class="text-lg leading-none">−</span>
+            </button>
+            <span data-pi-qty-val
+              class="min-w-10 text-center text-base font-bold tabular-nums text-text underline underline-offset-4">1</span>
+            <button type="button" data-pi-qty-plus
+              class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              aria-label="Increase quantity">
+              <span class="text-lg leading-none">+</span>
             </button>
           </div>
         </div>
       </div>
 
       <!-- Desktop: Add to cart + quantity at bottom -->
-      <button type="button"
+      <button type="button" data-tp-add-to-cart
         class="group hidden w-full cursor-pointer items-center justify-center gap-3 rounded-xl bg-primary px-4 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-sm ring-1 ring-primary/40 transition hover:bg-emerald-200 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-primary dark:ring-primary/25 dark:hover:bg-emerald-500/20 dark:hover:text-white lg:flex">
         <span aria-hidden="true">
           <svg class="h-6 w-6 text-white group-hover:hidden dark:text-white" xmlns="http://www.w3.org/2000/svg"
@@ -328,250 +328,34 @@
           <span class="text-end">Price</span>
         </div>
 
-        <ul class="mt-4 space-y-4" role="list">
-          <li class="border-b border-text/10 pb-4 last:border-0 dark:border-white/10">
-            <!-- Mobile -->
-            <div class="lg:hidden">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-text">Lucky Me Pancit Canton (Spicy)</p>
-                  <p class="text-xs text-text/55">Amount ₱30.00</p>
-                </div>
-                <p class="shrink-0 text-sm font-semibold tabular-nums text-text">₱ 30.00</p>
-              </div>
-              <div class="mt-3 flex items-center justify-between gap-3">
-                <button type="button"
-                  class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
-                  aria-label="Remove line">
-                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                  </svg>
-                </button>
-
-                <div
-                  class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
-                  <button type="button"
-                    class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    aria-label="Decrease quantity">
-                    <span class="text-lg leading-none">−</span>
-                  </button>
-                  <span class="min-w-8 text-center text-sm font-semibold tabular-nums text-text">2</span>
-                  <button type="button"
-                    class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    aria-label="Increase quantity">
-                    <span class="text-lg leading-none">+</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Desktop -->
-            <div class="hidden lg:block">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
-                <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-text">Lucky Me Pancit Canton (Spicy)</p>
-                  <p class="text-xs text-text/55">Amount ₱30.00</p>
-                </div>
-                <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
-                  <div
-                    class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
-                    <button type="button"
-                      class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      aria-label="Decrease quantity">
-                      <span class="text-lg leading-none">−</span>
-                    </button>
-                    <span class="min-w-8 text-center text-sm font-semibold tabular-nums text-text">2</span>
-                    <button type="button"
-                      class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      aria-label="Increase quantity">
-                      <span class="text-lg leading-none">+</span>
-                    </button>
-                  </div>
-                  <p class="text-sm font-semibold tabular-nums text-text sm:min-w-18 sm:text-end">₱ 30.00</p>
-                  <button type="button"
-                    class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
-                    aria-label="Remove line">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </li>
-
-          <li class="border-b border-text/10 pb-4 last:border-0 dark:border-white/10">
-            <!-- Mobile -->
-            <div class="lg:hidden">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-text">Coca-Cola 1.5L PET</p>
-                  <p class="text-xs text-text/55">Amount ₱75.00</p>
-                </div>
-                <p class="shrink-0 text-sm font-semibold tabular-nums text-text">₱ 75.00</p>
-              </div>
-              <div class="mt-3 flex items-center justify-between gap-3">
-                <button type="button"
-                  class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
-                  aria-label="Remove line">
-                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                  </svg>
-                </button>
-
-                <div
-                  class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
-                  <button type="button"
-                    class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    aria-label="Decrease quantity">
-                    <span class="text-lg leading-none">−</span>
-                  </button>
-                  <span class="min-w-8 text-center text-sm font-semibold tabular-nums text-text">1</span>
-                  <button type="button"
-                    class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    aria-label="Increase quantity">
-                    <span class="text-lg leading-none">+</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Desktop -->
-            <div class="hidden lg:block">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
-                <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-text">Coca-Cola 1.5L PET</p>
-                  <p class="text-xs text-text/55">Amount ₱75.00</p>
-                </div>
-                <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
-                  <div
-                    class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
-                    <button type="button"
-                      class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      aria-label="Decrease quantity">
-                      <span class="text-lg leading-none">−</span>
-                    </button>
-                    <span class="min-w-8 text-center text-sm font-semibold tabular-nums text-text">1</span>
-                    <button type="button"
-                      class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      aria-label="Increase quantity">
-                      <span class="text-lg leading-none">+</span>
-                    </button>
-                  </div>
-                  <p class="text-sm font-semibold tabular-nums text-text sm:min-w-18 sm:text-end">₱ 75.00</p>
-                  <button type="button"
-                    class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
-                    aria-label="Remove line">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </li>
-
-          <li>
-            <!-- Mobile -->
-            <div class="lg:hidden">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-text">Super Crunch Chicharon (Large)</p>
-                  <p class="text-xs text-text/55">Amount ₱50.00</p>
-                </div>
-                <p class="shrink-0 text-sm font-semibold tabular-nums text-text">₱ 50.00</p>
-              </div>
-              <div class="mt-3 flex items-center justify-between gap-3">
-                <button type="button"
-                  class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
-                  aria-label="Remove line">
-                  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                  </svg>
-                </button>
-
-                <div
-                  class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
-                  <button type="button"
-                    class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    aria-label="Decrease quantity">
-                    <span class="text-lg leading-none">−</span>
-                  </button>
-                  <span class="min-w-8 text-center text-sm font-semibold tabular-nums text-text">2</span>
-                  <button type="button"
-                    class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                    aria-label="Increase quantity">
-                    <span class="text-lg leading-none">+</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Desktop -->
-            <div class="hidden lg:block">
-              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
-                <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-text">Super Crunch Chicharon (Large)</p>
-                  <p class="text-xs text-text/55">Amount ₱50.00</p>
-                </div>
-                <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
-                  <div
-                    class="inline-flex items-center gap-1.5 rounded-full bg-neutral-quaternary/90 px-1 py-0.5 dark:bg-white/10">
-                    <button type="button"
-                      class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      aria-label="Decrease quantity">
-                      <span class="text-lg leading-none">−</span>
-                    </button>
-                    <span class="min-w-8 text-center text-sm font-semibold tabular-nums text-text">2</span>
-                    <button type="button"
-                      class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      aria-label="Increase quantity">
-                      <span class="text-lg leading-none">+</span>
-                    </button>
-                  </div>
-                  <p class="text-sm font-semibold tabular-nums text-text sm:min-w-18 sm:text-end">₱ 50.00</p>
-                  <button type="button"
-                    class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
-                    aria-label="Remove line">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </li>
+        <ul class="mt-4 space-y-4" role="list" data-cart-items-list>
+          <!-- Cart items will be rendered here dynamically -->
         </ul>
+        <div data-cart-empty class="hidden mt-6 text-center text-sm font-semibold text-text/50">Your cart is currently empty.</div>
       </div>
 
       <div class="space-y-2 border-t border-text/10 pt-5 text-sm dark:border-white/10">
         <div class="flex justify-between gap-4 text-text/80">
           <span>Total items</span>
-          <span class="font-medium tabular-nums text-text">5 items</span>
+          <span data-cart-total-items class="font-medium tabular-nums text-text">0 items</span>
         </div>
         <div class="flex justify-between gap-4 text-text/80">
           <span>Subtotal</span>
-          <span class="font-medium tabular-nums text-text">₱ 155.00</span>
+          <span data-cart-subtotal class="font-medium tabular-nums text-text">₱ 0.00</span>
         </div>
-        <div class="flex justify-between gap-4 text-text/80">
+        <div class="flex justify-between gap-4 text-text/80 opacity-50 line-through">
           <span>Tax 12%</span>
-          <span class="font-medium tabular-nums text-text">₱ 18.60</span>
+          <span data-cart-tax class="font-medium tabular-nums text-text">₱ 0.00</span>
         </div>
         <div
           class="flex justify-between gap-4 border-t border-text/10 pt-3 text-base font-bold text-text dark:border-white/10">
           <span>Total payment</span>
-          <span class="tabular-nums font-bold text-emerald-600 dark:text-emerald-400">₱ 173.60</span>
+          <span data-cart-total class="tabular-nums font-bold text-emerald-600 dark:text-emerald-400">₱ 0.00</span>
         </div>
       </div>
 
-      <button type="button"
-        class="w-full cursor-pointer rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-white shadow-sm ring-1 ring-black/10 transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+      <button type="button" data-tp-place-order
+        class="w-full cursor-pointer rounded-xl bg-primary px-4 py-3.5 text-sm font-bold text-white shadow-sm ring-1 ring-black/10 transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:opacity-50 disabled:cursor-not-allowed">
         Place order
       </button>
     </div>
@@ -696,12 +480,12 @@
         <span class="sr-only">Close panel</span>
       </button>
     </div>
-    <div class="shrink-0 px-4 pt-4 sm:px-6">
+    <div class="tp-sticky-cover-container shrink-0 px-4 pt-4 sm:px-6">
       <div
-        class="overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
-        <div class="h-28 w-full sm:h-32">
-          <img data-pi-cover src="/assets/svg/logo-store-dark.svg" alt="Product cover"
-            class="h-full w-full object-cover opacity-90 dark:brightness-0 dark:invert" />
+        class="group overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
+        <div class="h-28 w-full cursor-pointer sm:h-32">
+          <img data-pi-cover data-pi-zoomable src="/assets/svg/logo-store-dark.svg" alt="Product cover"
+            class="tp-product-image-expand h-full w-full object-cover opacity-90 dark:brightness-0 dark:invert" />
         </div>
       </div>
     </div>
@@ -724,16 +508,358 @@
         <span class="sr-only">Close panel</span>
       </button>
     </div>
-    <div class="shrink-0 px-4 pt-4">
+    <div class="tp-sticky-cover-container shrink-0 px-4 pt-4">
       <div
-        class="overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
-        <div class="h-24 w-full">
-          <img data-pi-cover src="/assets/svg/logo-store-dark.svg" alt="Product cover"
-            class="h-full w-full object-cover opacity-90 dark:brightness-0 dark:invert" />
+        class="group overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
+        <div class="h-24 w-full cursor-pointer">
+          <img data-pi-cover data-pi-zoomable src="/assets/svg/logo-store-dark.svg" alt="Product cover"
+            class="tp-product-image-expand h-full w-full object-cover opacity-90 dark:brightness-0 dark:invert" />
         </div>
       </div>
     </div>
     <div data-tp-product-info-mount class="min-h-0 flex-1 overflow-y-auto px-4 pb-8"></div>
+  </div>
+
+  <!-- Receipt Drawers -->
+  <div id="tp-receipt-drawer-right"
+    class="fixed right-0 top-0 z-50 flex h-full max-h-screen w-full max-w-md translate-x-full flex-col overflow-hidden rounded-none border-s border-border-default bg-secondary shadow-2xl lg:max-w-md dark:border-white/10 dark:bg-secondary/95"
+    tabindex="-1" aria-labelledby="tp-receipt-title">
+    <div
+      class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10 sm:px-6">
+      <h2 id="tp-receipt-title" class="text-lg font-semibold leading-tight text-text">Order Receipt</h2>
+      <button type="button" data-tp-receipt-close="right" aria-controls="tp-receipt-drawer-right"
+        class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500">
+        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M6 18 17.94 6M18 18 6.06 6" />
+        </svg>
+        <span class="sr-only">Close panel</span>
+      </button>
+    </div>
+    <div data-tp-receipt-mount class="min-h-0 flex-1 overflow-y-auto bg-gray-50/50 dark:bg-gray-900/40"></div>
+  </div>
+
+  <div id="tp-receipt-drawer-bottom"
+    class="fixed bottom-0 left-0 right-0 z-50 flex max-h-[92vh] translate-y-full flex-col rounded-t-2xl border-t border-border-default bg-secondary shadow-[0_-12px_40px_-12px_rgba(0,0,0,0.25)] dark:border-white/10 dark:bg-secondary/95"
+    tabindex="-1" aria-labelledby="tp-receipt-bottom-title">
+    <div
+      class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10">
+      <h2 id="tp-receipt-bottom-title" class="text-lg font-semibold leading-tight text-text">Order Receipt</h2>
+      <button type="button" data-tp-receipt-close="bottom" aria-controls="tp-receipt-drawer-bottom"
+        class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500">
+        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M6 18 17.94 6M18 18 6.06 6" />
+        </svg>
+        <span class="sr-only">Close panel</span>
+      </button>
+    </div>
+    <div data-tp-receipt-mount class="min-h-0 flex-1 overflow-y-auto px-4 pb-8 bg-gray-50/50 dark:bg-gray-900/40"></div>
+  </div>
+
+  <template id="tp-receipt-template-source">
+    <div class="relative flex w-full flex-col bg-transparent overflow-hidden">
+        <div class="bg-primary px-6 py-8 text-center sm:px-8">
+          <svg class="mx-auto mb-4 h-12 w-12 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h2 class="text-xl font-black uppercase tracking-widest text-white leading-tight font-roboto">THANK YOU FOR YOUR PURCHASE</h2>
+        </div>
+
+        <!-- Receipt paper body -->
+        <div id="tp-receipt-print-area" class="bg-white px-6 py-10 mx-4 mt-6 rounded-2xl shadow-sm text-gray-900 border-x-4 border-gray-100 font-mono">
+          <div class="text-center border-b-2 border-dashed border-gray-300 pb-4 mb-4">
+            <h3 class="font-black text-2xl uppercase tracking-wider text-gray-900">TindaPamilya</h3>
+            <p class="text-[0.6rem] font-bold text-gray-500 uppercase tracking-widest mt-1">Sari-Sari Store Receipt</p>
+            <p class="text-[0.65rem] font-bold text-gray-400 mt-2" data-receipt-date>Date: --/--/---- --:--</p>
+            <p class="text-[0.65rem] font-bold text-gray-400" data-receipt-id>Order ID: #000000</p>
+          </div>
+
+          <div class="flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-widest text-gray-400 border-b border-gray-200 pb-2 mb-3">
+            <span>Item / Qty</span>
+            <span>Amount</span>
+          </div>
+
+          <ul id="tp-receipt-items" class="space-y-3 mb-4 text-xs font-bold min-h-[4rem]">
+            <!-- Receipt items go here -->
+          </ul>
+
+          <div class="border-t-2 border-dashed border-gray-300 pt-3 space-y-2">
+            <div class="flex justify-between text-[0.7rem] font-bold text-gray-500">
+              <span>SUBTOTAL</span>
+              <span data-receipt-subtotal>₱ 0.00</span>
+            </div>
+            <div class="flex justify-between text-base font-black text-gray-900">
+              <span>TOTAL PAID</span>
+              <span data-receipt-total>₱ 0.00</span>
+            </div>
+          </div>
+          
+          <p class="text-center text-[0.65rem] font-bold text-gray-400 mt-8 mb-2">Served by: <span data-receipt-cashier>Admin</span></p>
+          <div class="mt-4 flex flex-col items-center justify-center gap-1 border-t border-gray-100 pt-4 opacity-30">
+              <div class="h-8 w-40 bg-[repeating-linear-gradient(90deg,black,black_2px,transparent_2px,transparent_4px)]"></div>
+              <p class="text-[0.5rem] font-bold">SCAN FOR LOYALTY POINTS</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col gap-3 p-6 sm:p-8">
+          <button type="button" id="tp-receipt-print"
+            class="inline-flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-primary py-4 text-sm font-black uppercase tracking-widest text-white shadow-lg shadow-primary/25 transition hover:scale-[1.02] active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/30">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            PRINT RECEIPT
+          </button>
+          <button type="button" data-tp-receipt-close="auto"
+            class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-border-default bg-transparent py-4 text-sm font-black uppercase tracking-widest text-text transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5">
+            Close View
+          </button>
+        </div>
+    </div>
+  </template>
+
+  <!-- ADD PRODUCT DRAWERS & TEMPLATE -->
+  <template id="tp-add-product-template">
+    <form id="tp-add-product-form" class="space-y-5 pb-20">
+      
+      <!-- Camera/Scan action & Mobile Submit area -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center pt-4">
+         <button type="button" data-scanner-open="true"
+           class="group flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-emerald-200 px-4 py-3 text-sm font-bold uppercase tracking-wide text-text shadow-sm ring-1 ring-emerald-400/40 transition hover:bg-primary hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-emerald-500/20 dark:hover:bg-primary sm:py-3.5">
+           <img src="/assets/svg/barcode-scanner.svg" alt=""
+             class="h-5 w-5 shrink-0 opacity-80 brightness-0 group-hover:invert dark:opacity-90 dark:invert" />
+           SCAN BARCODE
+         </button>
+         <!-- Visible only on mobile below scanner -->
+         <button type="submit"
+           class="flex w-full cursor-pointer flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-sm ring-1 ring-black/10 transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:hidden">
+           ADD TO SHELF
+         </button>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3">
+        <div>
+          <label for="ap-barcode" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Barcode</label>
+          <input type="text" id="ap-barcode" required name="barcode"
+            class="block w-full cursor-text rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary py-3 px-4 font-mono text-sm font-semibold text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90 dark:ring-white/10"
+            placeholder="e.g. 4800012345678" />
+        </div>
+        <div>
+          <label for="ap-name" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Product Name</label>
+          <input type="text" id="ap-name" required name="name"
+            class="block w-full cursor-text rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary py-3 px-4 text-sm font-semibold text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90 dark:ring-white/10"
+            placeholder="e.g. Lucky Me Pancit Canton" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div>
+          <label for="ap-stocks" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Stocks Count</label>
+          <input type="number" id="ap-stocks" required name="stocks" min="0" step="1"
+            class="block w-full cursor-text rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary py-3 px-4 text-sm font-semibold text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90 dark:ring-white/10"
+            placeholder="0" />
+        </div>
+        <div class="relative group">
+          <label for="ap-category" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Category</label>
+          <div class="relative flex items-center">
+             <div class="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-none"></div>
+             <input type="text" id="ap-category" required name="category"
+              class="block w-full cursor-text rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary py-3 pl-4 pr-24 text-sm font-semibold text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90 dark:ring-white/10"
+              placeholder="Select or type..." />
+            
+            <div class="absolute right-3 flex items-center gap-1">
+               <!-- Chevron to indicate dropdown (Flowbite Toggle) -->
+               <button type="button" id="cat-dropdown-btn" data-dropdown-toggle="tp-categories-dropdown" data-dropdown-placement="bottom-end"
+                 class="group/dd inline-flex h-7 w-7 items-center justify-center rounded-lg transition hover:bg-gray-100 focus:ring-2 focus:ring-gray-300 dark:hover:bg-gray-800 relative cursor-pointer">
+                 <svg class="h-4 w-4 text-text/30 group-hover/dd:text-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                 </svg>
+               </button>
+               
+               <div class="w-px h-4 bg-border-default mx-1 dark:bg-white/10"></div>
+               <!-- Cancel / Clear button -->
+               <button type="button" id="ap-cat-clear"
+                 class="group/clr inline-flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 text-red-500 transition hover:bg-red-200 focus:ring-2 focus:ring-red-300 dark:bg-red-900/40 dark:text-red-300 relative cursor-pointer">
+                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                 </svg>
+                 <!-- Tooltip -->
+                 <span class="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-secondary px-1.5 py-0.5 text-[0.65rem] font-bold text-red-500 opacity-0 group-hover/clr:opacity-100 shadow-sm ring-1 ring-border-default transition dark:bg-gray-800 dark:text-red-400 dark:ring-white/10">clear</span>
+               </button>
+               <!-- Add New Category button -->
+               <button type="button" id="ap-cat-add-modal-trigger" data-modal-target="tp-category-modal" data-modal-toggle="tp-category-modal"
+                 class="group/add inline-flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 transition hover:bg-emerald-200 focus:ring-2 focus:ring-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-400 relative cursor-pointer">
+                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                 </svg>
+                 <!-- Tooltip -->
+                 <span class="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-secondary px-2 py-1 text-[0.65rem] font-bold text-emerald-600 opacity-0 group-hover/add:opacity-100 shadow-sm ring-1 ring-border-default transition dark:bg-gray-800 dark:text-emerald-400 dark:ring-white/10">new</span>
+               </button>
+            </div>
+            
+            <!-- Flowbite Dropdown Table/Menu -->
+            <div id="tp-categories-dropdown" class="z-[110] hidden w-64 divide-y divide-border-default rounded-2xl border border-border-default bg-secondary shadow-2xl dark:divide-white/10 dark:border-white/10">
+                <div class="px-4 py-3 text-xs font-black uppercase tracking-widest text-text/40">
+                  Select Category
+                </div>
+                <ul class="max-h-60 overflow-y-auto py-2 text-sm text-text" id="tp-categories-list-ul">
+                  <li><button type="button" class="flex w-full cursor-pointer items-center px-4 py-2 hover:bg-primary/10 hover:text-primary transition-colors text-left font-semibold" data-cat-value="Dry goods & groceries">Dry goods & groceries</button></li>
+                  <li><button type="button" class="flex w-full cursor-pointer items-center px-4 py-2 hover:bg-primary/10 hover:text-primary transition-colors text-left font-semibold" data-cat-value="Beverages">Beverages</button></li>
+                  <li><button type="button" class="flex w-full cursor-pointer items-center px-4 py-2 hover:bg-primary/10 hover:text-primary transition-colors text-left font-semibold" data-cat-value="Snacks & chips">Snacks & chips</button></li>
+                  <li><button type="button" class="flex w-full cursor-pointer items-center px-4 py-2 hover:bg-primary/10 hover:text-primary transition-colors text-left font-semibold" data-cat-value="Household">Household</button></li>
+                  <li><button type="button" class="flex w-full cursor-pointer items-center px-4 py-2 hover:bg-primary/10 hover:text-primary transition-colors text-left font-semibold" data-cat-value="Personal care">Personal care</button></li>
+                </ul>
+            </div>
+          </div>
+          </div>
+        </div>
+        
+        <div class="sm:col-span-2">
+          <label for="ap-expiration" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Expiration Date</label>
+          <div class="relative w-full">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
+              <svg class="w-4 h-4 text-text/50" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+              </svg>
+            </div>
+            <input datepicker datepicker-autohide datepicker-format="mm-dd-yyyy" id="ap-expiration" name="expiration" type="text"
+              class="block w-full cursor-text rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary py-3 ps-10 pe-4 text-sm font-semibold text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90 dark:ring-white/10"
+              placeholder="Select date">
+          </div>
+        </div>
+        
+        <div>
+          <label for="ap-sale" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Sale Price</label>
+          <input type="number" id="ap-sale" required name="sale" min="0" step="0.01"
+            class="block w-full cursor-text rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-emerald-400/50 bg-secondary py-3 px-4 text-sm font-bold text-emerald-600 shadow-inner ring-1 ring-black/5 transition placeholder:text-emerald-600/30 focus:outline-none focus:ring-2 focus:ring-emerald-400 dark:border-emerald-500/30 dark:bg-gray-900/90 dark:text-emerald-400"
+            placeholder="0.00" />
+        </div>
+        <div>
+          <label for="ap-purchase" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Purchase Price</label>
+          <input type="number" id="ap-purchase" required name="purchase" min="0" step="0.01"
+            class="block w-full cursor-text rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-red-400/50 bg-secondary py-3 px-4 text-sm font-bold text-red-500 shadow-inner ring-1 ring-black/5 transition placeholder:text-red-500/30 focus:outline-none focus:ring-2 focus:ring-red-400 dark:border-red-500/30 dark:bg-gray-900/90 dark:text-red-400"
+            placeholder="0.00" />
+        </div>
+        
+        <div class="sm:col-span-2">
+          <label for="ap-desc" class="mb-1 block text-xs font-bold uppercase tracking-widest text-text/55">Description</label>
+          <textarea id="ap-desc" name="desc" rows="3"
+            class="block w-full cursor-text resize-y rounded-r-xl rounded-l-none border-l-4 border-primary border-y border-r border-border-default bg-secondary py-3 px-4 text-sm font-semibold text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-primary/35 dark:border-white/10 dark:bg-gray-900/90 dark:ring-white/10"
+            placeholder="Additional product details..."></textarea>
+        </div>
+      </div>
+      
+      <!-- Submit Button desktop organically flow at bottom inside drawer -->
+      <div class="mt-4 hidden sm:block">
+        <button type="submit"
+          class="w-full cursor-pointer rounded-xl bg-primary px-4 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-sm ring-1 ring-black/10 transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+          ADD TO SHELF
+        </button>
+      </div>
+    </form>
+  </template>
+
+  <!-- Add Product Drawers -->
+  <div id="tp-add-product-drawer-right"
+    class="fixed right-0 top-0 z-50 flex h-full max-h-screen w-full max-w-md translate-x-full flex-col overflow-hidden rounded-none border-l-4 border-l-primary bg-secondary shadow-2xl lg:max-w-xl dark:bg-secondary/95"
+    tabindex="-1" aria-labelledby="tp-add-product-title">
+    <div
+      class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10 sm:px-6">
+      <h2 id="tp-add-product-title" class="text-lg font-semibold leading-tight text-text">Add New Product</h2>
+      <button type="button" data-tp-add-product-close="right" aria-controls="tp-add-product-drawer-right"
+        class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500">
+        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+        </svg>
+        <span class="sr-only">Close panel</span>
+      </button>
+    </div>
+    
+    <!-- Cover upload inside drawer right -->
+    <div class="tp-sticky-cover-container shrink-0 px-4 sm:px-6">
+      <div class="group relative overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
+        <label for="ap-cover-upload-desktop" class="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/40 opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
+          <svg class="h-8 w-8 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+          </svg>
+          <span class="mt-2 text-xs font-bold text-white drop-shadow-md">UPLOAD IMAGE</span>
+          <input type="file" id="ap-cover-upload-desktop" class="hidden" accept="image/*" />
+        </label>
+        <div class="h-28 w-full sm:h-32">
+          <img id="ap-cover-preview-desktop" src="/assets/svg/logo-store-dark.svg" alt="Cover upload"
+            class="h-full w-full object-cover opacity-90 dark:brightness-0 dark:invert" />
+        </div>
+      </div>
+    </div>
+    
+    <div data-tp-add-product-mount class="relative flex-1 overflow-y-auto px-4 sm:px-6"></div>
+  </div>
+
+  <div id="tp-add-product-drawer-bottom"
+    class="fixed bottom-0 left-0 right-0 z-50 flex max-h-[84vh] translate-y-full flex-col rounded-t-2xl border-t border-border-default bg-secondary shadow-[0_-12px_40px_-12px_rgba(0,0,0,0.25)] dark:border-white/10 dark:bg-secondary/95"
+    tabindex="-1" aria-labelledby="tp-add-product-bottom-title">
+    <div
+      class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10">
+      <h2 id="tp-add-product-bottom-title" class="text-lg font-semibold leading-tight text-text">Add New Product</h2>
+      <button type="button" data-tp-add-product-close="bottom" aria-controls="tp-add-product-drawer-bottom"
+        class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500">
+        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+        </svg>
+        <span class="sr-only">Close panel</span>
+      </button>
+    </div>
+    
+    <!-- Cover upload inside drawer bottom -->
+    <div class="tp-sticky-cover-container shrink-0 px-4">
+      <div class="group relative overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
+        <label for="ap-cover-upload-mobile" class="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
+          <svg class="h-8 w-8 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+          </svg>
+          <span class="mt-2 text-xs font-bold text-white drop-shadow-md">UPLOAD IMAGE</span>
+          <input type="file" id="ap-cover-upload-mobile" class="hidden" accept="image/*" />
+        </label>
+        <div class="h-24 w-full">
+          <img id="ap-cover-preview-mobile" src="/assets/svg/logo-store-dark.svg" alt="Cover upload"
+            class="h-full w-full object-cover opacity-90 dark:brightness-0 dark:invert" />
+        </div>
+      </div>
+    </div>
+    
+    <div data-tp-add-product-mount class="relative flex-1 overflow-y-auto px-4"></div>
+  </div>
+
+  <!-- Add New Category Modal -->
+  <div id="tp-category-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[100] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-secondary rounded-3xl shadow-2xl border border-border-default dark:border-white/10 p-6">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b border-border-default pb-4 dark:border-white/10">
+                <h3 class="text-lg font-bold text-text">
+                    Add New Category
+                </h3>
+                <button type="button" class="text-text/50 bg-transparent hover:bg-red-100 hover:text-red-500 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-red-900/40" data-modal-hide="tp-category-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="py-6">
+                <label for="new-category-name" class="mb-2 block text-xs font-bold uppercase tracking-widest text-text/55">Category Name</label>
+                <input type="text" id="new-category-name" class="block w-full rounded-xl border border-border-default bg-background py-3 px-4 text-sm font-semibold text-text shadow-inner transition focus:border-primary focus:ring-primary dark:border-white/10 dark:bg-gray-900/90" placeholder="Enter category name...">
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center gap-3 pt-4 border-t border-border-default dark:border-white/10">
+                <button id="tp-add-category-confirm" type="button" class="flex-1 cursor-pointer rounded-2xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-primary/25 transition hover:scale-105 active:scale-95">Add Category</button>
+                <button data-modal-hide="tp-category-modal" type="button" class="flex-1 cursor-pointer rounded-2xl border-2 border-red-500/30 px-5 py-3 text-xs font-black uppercase tracking-widest text-red-500 transition hover:bg-red-500 hover:text-white">Cancel</button>
+            </div>
+        </div>
+    </div>
   </div>
 
   <!-- Delete Confirmation Modal -->
@@ -763,6 +889,22 @@
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tp-image-zoom-modal" tabindex="-1" aria-hidden="true"
+    class="tp-image-zoom-overlay fixed inset-0 z-[200] hidden items-center justify-center bg-black/75 p-4 opacity-0 transition-opacity duration-300">
+    <div class="relative flex w-full max-w-3xl flex-col items-center justify-center">
+      <button type="button" id="tp-image-zoom-close"
+        class="absolute -top-14 right-0 z-[210] flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20 hover:scale-110 active:scale-95 sm:-right-16 sm:top-0">
+        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div class="flex w-full items-center justify-center overflow-hidden rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.5)] ring-2 ring-white/10">
+        <img id="tp-image-zoom-content" src="" alt="Zoomed product image"
+          class="h-auto max-h-[85vh] w-full object-contain sm:max-h-[90vh]" />
       </div>
     </div>
   </div>

@@ -247,3 +247,55 @@ export function initMenuKpiAnimations() {
     icon.classList.add("animate-pulse");
   });
 }
+
+/**
+ * Handles the click to zoom functionality for product images.
+ */
+export function initProductImageZoom() {
+  const modal = document.getElementById("tp-image-zoom-modal");
+  const modalContent = document.getElementById("tp-image-zoom-content");
+  const closeBtn = document.getElementById("tp-image-zoom-close");
+
+  if (!modal || !modalContent || !closeBtn) return;
+
+  const showZoom = (src) => {
+    modalContent.src = src;
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    // Trigger opacity after removal of hidden to allow transition
+    window.requestAnimationFrame(() => {
+      modal.classList.add("is-open", "opacity-100");
+    });
+    document.body.classList.add("overflow-hidden");
+  };
+
+  const closeZoom = () => {
+    modal.classList.remove("is-open", "opacity-100");
+    setTimeout(() => {
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      modalContent.src = "";
+    }, 300);
+    document.body.classList.remove("overflow-hidden");
+  };
+
+  // Delegate click for zoomable images
+  document.addEventListener("click", (e) => {
+    const zoomable = e.target.closest("[data-pi-zoomable]");
+    if (zoomable && zoomable.tagName === "IMG") {
+      showZoom(zoomable.src);
+    }
+  });
+
+  closeBtn.addEventListener("click", closeZoom);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeZoom();
+  });
+
+  // Handle ESC key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+      closeZoom();
+    }
+  });
+}

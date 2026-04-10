@@ -203,11 +203,29 @@ function initProductInfoDrawer() {
     setText(mount, "[data-pi-barcode]", data.barcode || "—");
     setText(mount, "[data-pi-name]", data.name || "Product");
     setStocksCount(mount, data.quantity ?? 0);
-    setText(mount, "[data-pi-category]", data.category || "—");
-    setText(mount, "[data-pi-exp]", data.expirationDate || "N/A");
-    setText(mount, "[data-pi-sale]", data.salePrice || "N/A");
-    setText(mount, "[data-pi-purchase]", data.purchasePrice || "N/A");
-    setText(mount, "[data-pi-desc]", data.description || "N/A");
+    setText(mount, "[data-pi-category]", data.category && data.category !== "N/A" ? data.category : "—");
+    setText(mount, "[data-pi-exp]", data.expirationDate && data.expirationDate !== "N/A" ? data.expirationDate : "—");
+    
+    // Format money if it is a number
+    const purchaseVal = data.purchasePrice && !isNaN(data.purchasePrice) && data.purchasePrice > 0 ? `₱${parseFloat(data.purchasePrice).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "—";
+    setText(mount, "[data-pi-purchase]", purchaseVal);
+    
+    const saleVal = data.salePrice && !isNaN(data.salePrice) && data.salePrice > 0 ? `₱${parseFloat(data.salePrice).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "—";
+    setText(mount, "[data-pi-sale]", saleVal);
+    
+    setText(mount, "[data-pi-desc]", data.description && data.description !== "N/A" ? data.description : "—");
+    mount.querySelectorAll("[data-pi-qty-val]").forEach(span => span.textContent = "1");
+
+    // Handling Image
+    const cover = root.querySelector("[data-pi-cover]");
+    if (cover) {
+       cover.src = data.image || "/assets/svg/logo-store-dark.svg";
+       if (data.image && !data.image.includes("logo-store-dark.svg")) {
+          cover.classList.remove("dark:brightness-0", "dark:invert", "brightness-0", "invert", "opacity-90");
+       } else {
+          cover.classList.add("dark:brightness-0", "dark:invert", "brightness-0", "invert", "opacity-90");
+       }
+    }
 
     if (mq.matches) {
       drawerBottom.hide();
@@ -231,7 +249,9 @@ function initProductInfoDrawer() {
     const sku =
       card.querySelector("[data-product-sku]")?.textContent?.trim() || "";
     const price =
-      card.querySelector("[data-product-price]")?.textContent?.trim() || "";
+      card.dataset.productSalePrice || card.querySelector("[data-product-price]")?.textContent?.trim() || "";
+    // Clean up price if it has currency symbol
+    const cleanPrice = price.replace(/[^\d.-]/g, '');
     const qtyRaw = card.getAttribute("data-product-quantity");
     const qty = qtyRaw ? Number.parseInt(qtyRaw, 10) : 1;
 
@@ -239,11 +259,12 @@ function initProductInfoDrawer() {
       barcode,
       name,
       quantity: Number.isFinite(qty) ? qty : 1,
-      category: "N/A",
-      expirationDate: "N/A",
-      salePrice: price || "N/A",
-      purchasePrice: "N/A",
-      description: "N/A",
+      category: card.dataset.productCategory || "—",
+      expirationDate: card.dataset.productExpiration || "—",
+      salePrice: cleanPrice || "0",
+      purchasePrice: card.dataset.productPurchase || "0",
+      description: card.dataset.productDescription || "—",
+      image: card.dataset.productImage || null,
       sku,
     });
   });
@@ -288,4 +309,69 @@ function initProductInfoDrawer() {
 
 export function initProductInfoDrawers() {
   initProductInfoDrawer();
+}
+
+/**
+ * Receipt Drawer Initialization
+ */
+function upsertReceiptTemplates() {
+  const template = document.getElementById("tp-receipt-template-source");
+  if (!template) return;
+  document.querySelectorAll("[data-tp-receipt-mount]").forEach((mount) => {
+    if (mount.childElementCount > 0) return;
+    mount.appendChild(template.content.cloneNode(true));
+  });
+}
+
+export function initReceiptDrawers() {
+  upsertReceiptTemplates();
+
+  const rightEl = document.getElementById("tp-receipt-drawer-right");
+  const bottomEl = document.getElementById("tp-receipt-drawer-bottom");
+  if (!rightEl || !bottomEl) return;
+
+  const drawerOpts = {
+    backdrop: true,
+    bodyScrolling: false,
+    backdropClasses,
+  };
+
+  const drawerRight = new Drawer(
+    rightEl,
+    { ...drawerOpts, placement: "right" },
+    { id: "tp-receipt-drawer-right", override: true }
+  );
+  const drawerBottom = new Drawer(
+    bottomEl,
+    { ...drawerOpts, placement: "bottom" },
+    { id: "tp-receipt-drawer-bottom", override: true }
+  );
+
+  applyRightDrawerDesktopLayout(rightEl);
+
+  const mq = window.matchMedia(`(min-width: ${DESKTOP_MIN_WIDTH}px)`);
+
+  document.querySelectorAll("[data-tp-receipt-close]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      drawerRight.hide();
+      drawerBottom.hide();
+    });
+  });
+
+  // Global listener to trigger receipt display
+  window.addEventListener("tp:receipt-show", () => {
+    if (mq.matches) {
+      drawerBottom.hide();
+      drawerRight.show();
+    } else {
+      drawerRight.hide();
+      drawerBottom.show();
+    }
+  });
+}
+
+export function initDrawers() {
+  initProductOrdersDrawers();
+  initProductInfoDrawers();
+  initReceiptDrawers();
 }

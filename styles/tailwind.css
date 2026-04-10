@@ -6,6 +6,7 @@
 @plugin "flowbite/plugin";
 
 @source "../node_modules/flowbite";
+@source "../node_modules/flowbite-datepicker";
 @source "..";
 
 @theme {
@@ -36,6 +37,33 @@
     --color-neutral-quaternary: #374151;
     --color-fg-disabled: #6b7280;
     --color-border-default: #4b5563;
+  }
+
+  /* Custom Global Scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-primary), transparent 70%);
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-primary), transparent 40%);
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-accent), transparent 75%);
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-accent), transparent 50%);
   }
 }
 
@@ -366,4 +394,34 @@
 
 .animate-tp-fade-in-up {
   animation: tp-fade-in-up 0.4s ease-out forwards;
+}
+
+/* Product Image Zoom Modal & Animations */
+.tp-image-zoom-overlay {
+  transition: opacity 300ms ease, backdrop-filter 300ms ease;
+  backdrop-filter: blur(0px);
+}
+
+.tp-image-zoom-overlay.is-open {
+  backdrop-filter: blur(12px);
+}
+
+.tp-product-image-expand {
+  transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tp-product-image-expand:hover {
+  transform: scale(1.05);
+}
+
+/* Sticky Cover behavior for drawers */
+.tp-sticky-cover-container {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-background);
+}
+
+.dark .tp-sticky-cover-container {
+  background-color: var(--color-secondary);
 }

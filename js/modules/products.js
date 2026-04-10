@@ -1,7 +1,9 @@
 import { Modal, Dismiss } from "flowbite";
 import * as auth from "./auth.js";
 import { initMenuNavigations } from "./navigations.js";
-import { initProductOrdersDrawers, initProductInfoDrawers } from "./drawer.js";
+import { initDrawers } from "./drawer.js";
+import { productCartManager } from "./add-to-cart.js";
+import { productManager } from "./add-product.js";
 
 function initNotificationState() {
   const raw = localStorage.getItem("tp_unread_notifications");
@@ -125,8 +127,8 @@ export const SAMPLE_PRODUCTS = [
 
 export function formatPeso(amount) {
   const n = Number(amount);
-  if (!Number.isFinite(n)) return "₱ 0.00";
-  return `₱ ${n.toFixed(2)}`;
+  if (!Number.isFinite(n)) return "₱0.00";
+  return `₱${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function getProductTemplates() {
@@ -143,12 +145,22 @@ export function renderProductCard(product, customCardTemplate = null) {
 
   node.dataset.productBarcode = product.barcode || "";
   node.dataset.productQuantity = String(product.quantity ?? "");
+  node.dataset.productSalePrice = String(product.salePrice ?? 0);
   node.querySelector("[data-product-name]")?.replaceChildren(document.createTextNode(product.name || "Product"));
   node.querySelector("[data-product-sku]")?.replaceChildren(document.createTextNode(product.sku || "SKU-"));
   node.querySelector("[data-product-price]")?.replaceChildren(document.createTextNode(formatPeso(product.salePrice)));
   node
     .querySelector("[data-product-stock-count]")
     ?.replaceChildren(document.createTextNode(String(product.quantity ?? 0)));
+
+  const productImg = node.querySelector("[data-product-image]");
+  if (productImg && product.image) {
+    productImg.src = product.image;
+    if (!product.image.includes("logo-store-dark.svg")) {
+      productImg.classList.remove("h-12", "w-12", "opacity-90", "dark:brightness-0", "dark:invert");
+      productImg.classList.add("h-full", "w-full", "object-cover");
+    }
+  }
 
   const delBtn = node.querySelector("[data-product-delete]");
   delBtn?.addEventListener("click", (e) => {
@@ -225,6 +237,43 @@ export function showDeleteToast(message) {
   const dismiss = new Dismiss(toastEl, toastEl.querySelector(`[data-dismiss-target="#${id}"]`));
 
   // Auto-hide after 3.2 seconds
+  setTimeout(() => {
+    dismiss.hide();
+  }, 3200);
+}
+
+export function showSuccessToast(message) {
+  const containerId = "tp-toast-container";
+  let container = document.getElementById(containerId);
+  if (!container) {
+    container = document.createElement("div");
+    container.id = containerId;
+    container.className = "fixed bottom-24 left-1/2 z-[120] flex -translate-x-1/2 flex-col gap-3 px-4 sm:bottom-8 sm:right-8 sm:translate-x-0 sm:left-auto sm:px-0";
+    document.body.appendChild(container);
+  }
+
+  const id = `toast-success-${Date.now()}`;
+  const toastEl = document.createElement("div");
+  toastEl.id = id;
+  toastEl.className = "flex items-center w-full max-w-sm p-4 text-text bg-secondary rounded-2xl shadow-2xl border border-border-default dark:bg-secondary/95 dark:border-white/10 animate-tp-fade-in-up";
+  toastEl.setAttribute("role", "alert");
+  
+  toastEl.innerHTML = `
+    <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-emerald-500 bg-emerald-100 rounded-xl dark:bg-emerald-500/20 dark:text-emerald-400">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/></svg>
+        <span class="sr-only">Check icon</span>
+    </div>
+    <div class="ms-3 whitespace-nowrap text-sm font-bold">${message}</div>
+    <button type="button" class="ms-auto flex items-center justify-center text-text/40 hover:text-text bg-transparent rounded-lg text-sm h-8 w-8 focus:outline-none transition-colors" data-dismiss-target="#${id}" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+    </button>
+  `;
+
+  container.appendChild(toastEl);
+
+  const dismiss = new Dismiss(toastEl, toastEl.querySelector(`[data-dismiss-target="#${id}"]`));
+
   setTimeout(() => {
     dismiss.hide();
   }, 3200);
@@ -393,10 +442,9 @@ export async function initProductsPage() {
 
   initNotificationState();
   revealProductsDashboard();
-  initProductOrdersDrawers();
+  initDrawers();
   initProductGrid();
   initInfiniteScrollDebounced();
-  initProductInfoDrawers();
   handleUrlParams();
 
   const logoutButton = document.getElementById("logout-button");
