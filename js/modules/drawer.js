@@ -9,6 +9,43 @@ const backdropClasses =
 const ORDERS_DRAWER_STATE_KEY = "tp_orders_drawer_restore";
 const PRODUCT_INFO_DRAWER_STATE_KEY = "tp_product_info_drawer_restore";
 
+let openDrawersCount = 0;
+
+/**
+ * Toggles visibility of mobile navigation elements to prevent UI overlap when drawers are open.
+ */
+function toggleMobileNavVisibility(isVisible) {
+  const elements = [
+    document.getElementById("tp-mobile-top-nav"),
+    document.getElementById("tp-mobile-search-bar"),
+    document.getElementById("tp-mobile-bottom-nav"),
+  ];
+
+  elements.forEach((el) => {
+    if (!el) return;
+    if (isVisible) {
+      el.classList.remove("opacity-0", "pointer-events-none");
+      el.classList.add("opacity-100");
+    } else {
+      el.classList.add("opacity-0", "pointer-events-none");
+      el.classList.remove("opacity-100");
+    }
+  });
+}
+
+/**
+ * Globally tracks open drawers and hides mobile chrome if any are active.
+ */
+export function updateGlobalDrawerState(isOpen) {
+  if (isOpen) openDrawersCount++;
+  else openDrawersCount = Math.max(0, openDrawersCount - 1);
+
+  // Apply hiding ONLY on mobile screens
+  if (window.innerWidth < DESKTOP_MIN_WIDTH) {
+    toggleMobileNavVisibility(openDrawersCount === 0);
+  }
+}
+
 function isDrawerVisible(drawerEl, hiddenClass) {
   return !drawerEl.classList.contains(hiddenClass);
 }
@@ -78,6 +115,8 @@ export function initProductOrdersDrawers() {
     backdrop: true,
     bodyScrolling: false,
     backdropClasses,
+    onShow: () => updateGlobalDrawerState(true),
+    onHide: () => updateGlobalDrawerState(false),
   };
 
   const drawerRight = new Drawer(
@@ -178,6 +217,8 @@ function initProductInfoDrawer() {
     backdrop: true,
     bodyScrolling: false,
     backdropClasses,
+    onShow: () => updateGlobalDrawerState(true),
+    onHide: () => updateGlobalDrawerState(false),
   };
 
   const drawerRight = new Drawer(
@@ -341,6 +382,8 @@ export function initReceiptDrawers() {
     backdrop: true,
     bodyScrolling: false,
     backdropClasses,
+    onShow: () => updateGlobalDrawerState(true),
+    onHide: () => updateGlobalDrawerState(false),
   };
 
   const drawerRight = new Drawer(

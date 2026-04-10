@@ -1,7 +1,9 @@
 import { Drawer, Dropdown } from "flowbite";
 import { renderProductCard } from "./products.js";
+import { SAMPLE_PRODUCTS } from "./data.js";
 import { Datepicker } from "flowbite-datepicker";
 import { showSuccessToast } from "./modals.js";
+import { updateGlobalDrawerState } from "./drawer.js";
 
 const backdropClasses = "bg-black/45 fixed inset-0 z-[45] backdrop-blur-[1px] dark:bg-black/60";
 
@@ -28,7 +30,13 @@ class ProductManager {
       this.setupForm(mount);
     });
 
-    const drawerOpts = { backdrop: true, bodyScrolling: false, backdropClasses };
+    const drawerOpts = { 
+      backdrop: true, 
+      bodyScrolling: false, 
+      backdropClasses,
+      onShow: () => updateGlobalDrawerState(true),
+      onHide: () => updateGlobalDrawerState(false),
+    };
     this.rightDrawerInstance = new Drawer(this.drawerRight, { ...drawerOpts, placement: "right" }, { id: "tp-add-product-drawer-right", override: true });
     this.bottomDrawerInstance = new Drawer(this.drawerBottom, { ...drawerOpts, placement: "bottom" }, { id: "tp-add-product-drawer-bottom", override: true });
 
@@ -176,10 +184,12 @@ class ProductManager {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const fd = new FormData(form);
+      const barcode = fd.get("barcode");
+      
       const newProduct = {
-        barcode: fd.get("barcode"),
+        barcode: barcode,
         name: fd.get("name"),
-        sku: `SKU-TP-NEW-${Math.floor(Math.random() * 1000)}`,
+        sku: `TP-NEW-${barcode}`,
         category: fd.get("category"),
         expirationDate: fd.get("expiration"),
         salePrice: parseFloat(fd.get("sale")),
@@ -188,6 +198,9 @@ class ProductManager {
         quantity: parseInt(fd.get("stocks"), 10),
         image: mount.closest("[id*='drawer']").querySelector("[id*='preview']").src
       };
+
+      // PERSIST: Add to global array so it becomes scannable
+      SAMPLE_PRODUCTS.push(newProduct);
 
       const card = renderProductCard(newProduct);
       if (card) {

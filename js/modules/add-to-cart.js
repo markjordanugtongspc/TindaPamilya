@@ -1,4 +1,5 @@
-import { formatPeso, SAMPLE_PRODUCTS, initProductGrid } from "./products.js";
+import { formatPeso, initProductGrid } from "./products.js";
+import { SAMPLE_PRODUCTS } from "./data.js";
 import { showSuccessToast, showErrorToast } from "./modals.js";
 
 class CartManager {

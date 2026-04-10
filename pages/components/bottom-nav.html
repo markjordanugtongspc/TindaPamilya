@@ -1,4 +1,4 @@
-<div class="fixed right-3 top-3 z-50 flex items-center gap-2 md:hidden">
+<div id="tp-mobile-top-nav" class="fixed right-3 top-3 z-50 flex items-center gap-2 transition-opacity duration-300 md:hidden">
   <button
     type="button"
     data-mobile-notification
@@ -23,7 +23,7 @@
     <img data-user-avatar src="/assets/svg/logo-store-dark.svg" alt="User avatar" class="h-8 w-8 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/20" />
   </button>
 </div>
-<div class="fixed left-3 right-22 top-3 z-40 md:hidden">
+<div id="tp-mobile-search-bar" class="fixed left-3 right-22 top-3 z-40 transition-opacity duration-300 md:hidden">
   <label class="relative block">
     <span class="sr-only">Search menu items</span>
     <svg
@@ -47,7 +47,7 @@
   </label>
 </div>
 
-<div class="fixed inset-x-0 bottom-0 z-40 px-2 pb-3 pt-2 md:hidden">
+<div id="tp-mobile-bottom-nav" class="fixed inset-x-0 bottom-0 z-40 px-2 pb-3 pt-2 transition-opacity duration-300 md:hidden">
   <div class="tp-bottom-nav-wrap mx-auto grid h-[4.1rem] w-full max-w-lg grid-cols-5 items-end gap-0.5 overflow-visible rounded-xl border border-text/10 bg-secondary px-1.5 pb-1.5 pt-1.5 shadow-[0_-10px_22px_-18px_rgba(0,0,0,0.3)] dark:border-white/10 dark:bg-secondary/95">
     <button type="button" data-bottom-nav-link="menu" class="tp-nav-link-mobile flex cursor-pointer flex-col items-center justify-end gap-0.5 rounded-lg px-1.5 py-0.5 text-text transition">
       <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12c.263 0 .524-.06.767-.175a2 2 0 0 0 .65-.491c.186-.21.333-.46.433-.734.1-.274.15-.568.15-.864a2.4 2.4 0 0 0 .586 1.591c.375.422.884.659 1.414.659.53 0 1.04-.237 1.414-.659A2.4 2.4 0 0 0 12 9.736a2.4 2.4 0 0 0 .586 1.591c.375.422.884.659 1.414.659.53 0 1.04-.237 1.414-.659A2.4 2.4 0 0 0 16 9.736c0 .295.052.588.152.861s.248.521.434.73a2 2 0 0 0 .649.488 1.809 1.809 0 0 0 1.53 0 2.03 2.03 0 0 0 .65-.488c.185-.209.332-.457.433-.73.1-.273.152-.566.152-.861 0-.974-1.108-3.85-1.618-5.121A.983.983 0 0 0 17.466 4H6.456a.986.986 0 0 0-.93.645C5.045 5.962 4 8.905 4 9.736c.023.59.241 1.148.611 1.567.37.418.865.667 1.389.697Zm0 0c.328 0 .651-.091.94-.266A2.1 2.1 0 0 0 7.66 11h.681a2.1 2.1 0 0 0 .718.734c.29.175.613.266.942.266.328 0 .651-.091.94-.266.29-.174.537-.427.719-.734h.681a2.1 2.1 0 0 0 .719.734c.289.175.612.266.94.266.329 0 .652-.091.942-.266.29-.174.536-.427.718-.734h.681c.183.307.43.56.719.734.29.174.613.266.941.266a1.819 1.819 0 0 0 1.06-.351M6 12a1.766 1.766 0 0 1-1.163-.476M5 12v7a1 1 0 0 0 1 1h2v-5h3v5h7a1 1 0 0 0 1-1v-7m-5 3v2h2v-2h-2Z"/></svg>

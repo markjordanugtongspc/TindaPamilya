@@ -1,0 +1,73 @@
+/**
+ * Global application data and state.
+ * Centralizing this prevents circular dependencies between modules.
+ */
+
+export const SAMPLE_PRODUCTS = [
+  {
+    barcode: "4800012345678",
+    name: "Rice (Rice 5kg)",
+    sku: "SKU-TP-001",
+    category: "Dry goods & groceries",
+    expirationDate: null,
+    salePrice: 265.0,
+    purchasePrice: null,
+    description: null,
+    quantity: 18,
+  },
+  {
+    barcode: "4800123456789",
+    name: "Cooking oil (1L)",
+    sku: "SKU-TP-014",
+    category: "Dry goods & groceries",
+    expirationDate: null,
+    salePrice: 145.0,
+    purchasePrice: null,
+    description: null,
+    quantity: 24,
+  },
+  {
+    barcode: "4800234567890",
+    name: "Canned Sardines (155g)",
+    sku: "SKU-TP-028",
+    category: "Dry goods & groceries",
+    expirationDate: "12-31-2026",
+    salePrice: 22.0,
+    purchasePrice: null,
+    description: null,
+    quantity: 48,
+  },
+  {
+    barcode: "4901234567891",
+    name: "Instant Coffee (Original 25g)",
+    sku: "SKU-TP-032",
+    category: "Dry goods & groceries",
+    expirationDate: null,
+    salePrice: 12.0,
+    purchasePrice: null,
+    description: null,
+    quantity: 120,
+  },
+  {
+    barcode: "4902345678902",
+    name: "Condensed Milk (300ml)",
+    sku: "SKU-TP-045",
+    category: "Dry goods & groceries",
+    expirationDate: "11-15-2025",
+    salePrice: 58.0,
+    purchasePrice: null,
+    description: null,
+    quantity: 36,
+  },
+  {
+    barcode: "4903456789013",
+    name: "Fish Sauce (Patis 350ml)",
+    sku: "SKU-TP-052",
+    category: "Dry goods & groceries",
+    expirationDate: null,
+    salePrice: 32.0,
+    purchasePrice: null,
+    description: null,
+    quantity: 15,
+  },
+];
