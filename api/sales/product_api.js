@@ -46,14 +46,27 @@ export default async function handler(req, res) {
         categoryId = catRows[0].id;
       }
 
+      // We only insert the image_url if it's not a huge empty string.
+      // Often, "url" might be a long base64 string, which works natively for short term or tiny images.
+      const imageUrlToSave = image && image.length > 50 ? image : null;
+
       const inserted = await sql`
         INSERT INTO public.products (
           sku_id, barcode, name, stocks, category_id, 
           expiration_date, sale_price, purchase_price, description, image_url
         ) VALUES (
           ${sku}, ${barcode}, ${name}, ${quantity}, ${categoryId},
-          ${expirationDate || null}, ${salePrice || 0}, ${purchasePrice || 0}, ${description || null}, ${image || null}
+          ${expirationDate || null}, ${salePrice || 0}, ${purchasePrice || 0}, ${description || null}, ${imageUrlToSave}
         )
+        ON CONFLICT (barcode) DO UPDATE SET
+          name = EXCLUDED.name,
+          stocks = EXCLUDED.stocks,
+          category_id = EXCLUDED.category_id,
+          expiration_date = EXCLUDED.expiration_date,
+          sale_price = EXCLUDED.sale_price,
+          purchase_price = EXCLUDED.purchase_price,
+          description = EXCLUDED.description,
+          image_url = EXCLUDED.image_url
         RETURNING id
       `;
 

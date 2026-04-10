@@ -5,6 +5,7 @@ import { initDrawers } from "./drawer.js";
 import { productCartManager } from "./add-to-cart.js";
 import { productManager } from "./add-product.js";
 import { showSuccessToast, showErrorToast } from "./modals.js";
+import { initSearchAndFilter } from "./search-filter.js";
 
 function initNotificationState() {
   const raw = localStorage.getItem("tp_unread_notifications");
@@ -43,7 +44,35 @@ export async function fetchAllProducts() {
     if (res.ok) {
       const json = await res.json();
       if (json.success) {
-        GLOBAL_PRODUCTS = json.data;
+        GLOBAL_PRODUCTS.length = 0;
+        GLOBAL_PRODUCTS.push(...json.data);
+
+        // Extract unique categories and populate dropdowns
+        const uniqueCats = Array.from(new Set(GLOBAL_PRODUCTS.map(p => p.category).filter(Boolean)));
+        const filterSelect = document.getElementById("products-category");
+        const drawerList = document.getElementById("tp-categories-list-ul");
+        
+        if (filterSelect) {
+           filterSelect.innerHTML = '<option value="">All Categories</option>';
+           uniqueCats.forEach(c => {
+              const opt = document.createElement("option");
+              opt.value = c;
+              opt.textContent = c;
+              filterSelect.appendChild(opt);
+           });
+        }
+
+        if (drawerList) {
+           drawerList.innerHTML = '';
+           uniqueCats.forEach(c => {
+              const li = document.createElement("li");
+              li.innerHTML = `<button type="button" class="flex w-full cursor-pointer items-center px-4 py-2 hover:bg-primary/10 hover:text-primary transition-colors text-left font-semibold" data-cat-value="${c}">${c}</button>`;
+              drawerList.appendChild(li);
+           });
+           // Rebind bindings
+           const bindEvt = new CustomEvent("tp:rebind-categories");
+           window.dispatchEvent(bindEvt);
+        }
       }
     }
   } catch (err) {
@@ -73,6 +102,11 @@ export function renderProductCard(product, customCardTemplate = null) {
   node.dataset.productBarcode = product.barcode || "";
   node.dataset.productQuantity = String(product.quantity ?? "");
   node.dataset.productSalePrice = String(product.salePrice ?? 0);
+  node.dataset.productPurchase = String(product.purchasePrice ?? 0);
+  node.dataset.productExpiration = product.expirationDate || "";
+  node.dataset.productDescription = product.description || "";
+  node.dataset.productCategory = product.category || "";
+  node.dataset.productImage = product.image || "";
   node.querySelector("[data-product-name]")?.replaceChildren(document.createTextNode(product.name || "Product"));
   node.querySelector("[data-product-sku]")?.replaceChildren(document.createTextNode(product.sku || "SKU-"));
   node.querySelector("[data-product-price]")?.replaceChildren(document.createTextNode(formatPeso(product.salePrice)));
@@ -185,6 +219,18 @@ function handleUrlParams() {
        scannerTrigger.click();
      }
   }
+
+  // Handle action parameter (e.g. ?action=add)
+  if (params.get('action') === 'add') {
+     const pushBtn = document.getElementById('tp-add-product-btn');
+     if (pushBtn) {
+       const url = new URL(window.location);
+       url.searchParams.delete('action');
+       window.history.replaceState({}, '', url);
+       
+       pushBtn.click();
+     }
+  }
   
   // 2. Auto-open product drawer if barcode is provided
   const barcode = params.get('barcode');
@@ -258,25 +304,30 @@ function initInfiniteScrollDebounced() {
   const loadMore = async () => {
     if (loading) return;
     loading = true;
-    const skeletons = appendSkeletons(8);
-
-    await new Promise((r) => window.setTimeout(r, 550));
-
-    removeSkeletons(skeletons);
-    if (GLOBAL_PRODUCTS.length === 0) return; // Prevent infinite if empty
-    for (let i = 0; i < 8; i += 1) {
-      const base = GLOBAL_PRODUCTS[(page + i) % GLOBAL_PRODUCTS.length];
-      const p = {
-        ...base,
-        id: `clone-${Date.now()}-${i}`,
-        barcode: `${base.barcode}-${page}-${i}`,
-        sku: base.sku ? base.sku.replace(/\d+$/, (m) => String(Number(m) + page + i)) : `SKU-TEMP-${i}`,
-        name: `${base.name}`,
-      };
-      const card = renderProductCard(p);
-      if (card) grid.appendChild(card);
+    // Since we fetch all products in fetchAllProducts() immediately right now, 
+    // there's no real "next page" to fetch from an array. 
+    // If we implement pagination later, we append actual new server items here.
+    // For now, if all products are rendered, we stop.
+    // We already rendered GLOBAL_PRODUCTS in initProductGrid().
+    const currentRenderedCount = grid.querySelectorAll("[data-product-card]").length;
+    if (currentRenderedCount >= GLOBAL_PRODUCTS.length) {
+      if (sentinel) sentinel.style.display = "none";
+      loading = false;
+      return; 
     }
 
+    const skeletons = appendSkeletons(4);
+    await new Promise((r) => window.setTimeout(r, 550));
+    removeSkeletons(skeletons);
+
+    // If we paginated, we would iterate new items here.
+    // E.g.
+    // const newItems = GLOBAL_PRODUCTS.slice(currentRenderedCount, currentRenderedCount + 8);
+    // newItems.forEach(p => { 
+    //    const card = renderProductCard(p); 
+    //    if (card) grid.appendChild(card);
+    // });
+    
     page += 1;
     loading = false;
   };
@@ -340,8 +391,10 @@ export async function initProductsPage() {
   initNotificationState();
   revealProductsDashboard();
   initDrawers();
-  initProductGrid();
+  await fetchAllProducts();
+  await initProductGrid();
   initInfiniteScrollDebounced();
+  initSearchAndFilter();
   handleUrlParams();
 
   const logoutButton = document.getElementById("logout-button");

@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     }
     const result = await getUserProfileFromUsersTable({ id, email });
     if (!result.success) {
-      res.status(404).json(result);
+      res.status(404).json({ success: false, error: "User profile not found in database" });
       return;
     }
     res.status(200).json(result);

@@ -23,27 +23,48 @@
             <path data-hb-bot d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
           </svg>
         </button>
-        <label class="relative hidden w-80 lg:block xl:w-104">
-          <span class="sr-only">Search menu items</span>
+        <label for="menu-search-input" class="relative block">
+          <span class="sr-only">Search</span>
           <svg
-            class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-text/45"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
+            class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-text/50"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
+            fill="none"
             aria-hidden="true"
           >
-            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
           <input
+            id="menu-search-input"
             type="search"
-            name="menu-search"
+            name="global-store-search"
             placeholder="Search menu items..."
             class="w-full cursor-text rounded-full border-0 bg-background py-2.5 pl-11 pr-4 text-sm text-text shadow-inner ring-1 ring-black/5 transition placeholder:text-text/45 focus:outline-none focus:ring-2 focus:ring-white/50 dark:bg-gray-900/90 dark:ring-white/10 dark:placeholder:text-text/50"
             autocomplete="off"
           />
         </label>
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+             const gs = document.getElementById("menu-search-input");
+             if (gs) {
+                gs.addEventListener("keydown", (e) => {
+                   if (e.key === "Enter") {
+                      e.preventDefault();
+                      const q = gs.value.trim();
+                      if (window.location.pathname.includes("/pages/products/")) {
+                         // already on products page
+                         const ps = document.querySelector('input[name="products-search"]');
+                         if (ps) {
+                           ps.value = q;
+                           ps.dispatchEvent(new Event("input", { bubbles: true }));
+                         }
+                      } else {
+                         window.location.href = "/pages/products/index.html?search=" + encodeURIComponent(q);
+                      }
+                   }
+                });
+             }
+          });
+        </script>
       </div>
 
       <div class="hidden min-w-0 items-center gap-4 lg:flex">

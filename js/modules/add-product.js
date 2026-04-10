@@ -85,6 +85,47 @@ class ProductManager {
       if (restore === "right" && this.mq.matches) this.rightDrawerInstance.show();
       if (restore === "bottom" && !this.mq.matches) this.bottomDrawerInstance.show();
     });
+
+    // Listen for Edit requests from Product Info Drawers
+    window.addEventListener("tp:edit-product-open", (e) => {
+      const { data } = e.detail;
+      if (data) {
+        this.openDrawer();
+        this.prefillForm(data);
+      }
+    });
+  }
+
+  prefillForm(data) {
+    const root = this.mq.matches ? this.drawerRight : this.drawerBottom;
+    const form = root.querySelector("form");
+    if (!form) return;
+
+    form.querySelector('[name="barcode"]').value = data.barcode || "";
+    form.querySelector('[name="name"]').value = data.name || "";
+    form.querySelector('[name="category"]').value = (data.category && data.category !== "—" && data.category !== "N/A") ? data.category : "";
+    form.querySelector('[name="sale"]').value = data.salePrice || "";
+    form.querySelector('[name="purchase"]').value = data.purchasePrice || "";
+    form.querySelector('[name="stocks"]').value = data.quantity || "0";
+    form.querySelector('[name="desc"]').value = (data.description && data.description !== "—" && data.description !== "N/A") ? data.description : "";
+    
+    const exp = form.querySelector('[name="expiration"]');
+    if (exp) {
+       exp.value = (data.expirationDate && data.expirationDate !== "—" && data.expirationDate !== "N/A") ? data.expirationDate : "";
+    }
+    
+    // Set preview image if it exists
+    if (data.image) {
+      const previewDesktop = document.getElementById("ap-cover-preview-desktop");
+      const previewMobile = document.getElementById("ap-cover-preview-mobile");
+      if (previewDesktop) previewDesktop.src = data.image;
+      if (previewMobile) previewMobile.src = data.image;
+    }
+  }
+
+  openDrawer() {
+    if (this.mq.matches) this.rightDrawerInstance.show();
+    else this.bottomDrawerInstance.show();
   }
 
   setupForm(mount) {
@@ -128,6 +169,7 @@ class ProductManager {
        });
     };
     bindDropdownItems();
+    window.addEventListener("tp:rebind-categories", bindDropdownItems);
     
     // Prefill modal from input
     if (catAddTrigger) {

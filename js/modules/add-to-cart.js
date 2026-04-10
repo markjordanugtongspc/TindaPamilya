@@ -400,22 +400,8 @@ class CartManager {
     const listMounts = document.querySelectorAll("[data-tp-receipt-mount]");
     if (listMounts.length === 0) return;
 
-    // Send transaction to Sales API
-    try {
-      const payload = this.items.map(i => ({
-        sku: i.barcode,
-        quantity: i.quantity,
-        price: i.price * i.quantity
-      }));
-      
-      await fetch("/api/sales/sales_log_api", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: payload })
-      });
-    } catch (err) {
-      console.error("Checkout logging failed:", err);
-    }
+    // Use a backup of items for the background API call
+    const orderItems = [...this.items];
 
     let subtotal = 0;
     const itemsHtml = this.items.map(item => {
@@ -460,20 +446,38 @@ class CartManager {
     this.items = [];
     this.render();
 
-    // Re-fetch products from database to ensure sync
-    const { fetchAllProducts } = await import("./products.js");
-    await fetchAllProducts();
-    initProductGrid();
-    
-    // Optionally refresh menu KPIs if we are on the dashboard
-    const { initMenuPage } = await import("./menu.js").catch(() => ({}));
-    if (initMenuPage && document.getElementById("tp-menu-latest-products-grid")) {
-       // A quick hack to refresh sales data on the dashboard locally without full page reload
-       const { initMenuProducts } = await import("./menu.js").catch(() => ({}));
-    }
-    
-    const targetModal = document.getElementById("tp-receipt-modal");
+    // Show receipt immediately
     window.dispatchEvent(new CustomEvent("tp:receipt-show"));
+
+    // BACKGROUND SYNC: Perform API calls without blocking the UI
+    (async () => {
+       try {
+          const payload = orderItems.map(i => ({
+            sku: i.barcode,
+            quantity: i.quantity,
+            price: i.price * i.quantity
+          }));
+          
+          await fetch("/api/sales/sales_log_api", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ items: payload })
+          });
+
+          // Re-fetch products from database to ensure sync
+          const { fetchAllProducts, initProductGrid } = await import("./products.js");
+          await fetchAllProducts();
+          initProductGrid();
+          
+          // Optionally refresh menu KPIs if we are on the dashboard
+          const { initMenuProducts } = await import("./menu.js").catch(() => ({}));
+          if (initMenuProducts && document.getElementById("tp-menu-latest-products-grid")) {
+             await initMenuProducts();
+          }
+       } catch (err) {
+          console.error("Background checkout sync failed:", err);
+       }
+    })();
   }
 }
 

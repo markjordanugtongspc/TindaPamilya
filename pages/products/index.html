@@ -472,7 +472,14 @@
     tabindex="-1" aria-labelledby="tp-product-info-title">
     <div
       class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10 sm:px-6">
-      <h2 id="tp-product-info-title" class="text-lg font-semibold leading-tight text-text">Product information</h2>
+      <div class="flex items-center gap-3">
+        <h2 id="tp-product-info-title" class="text-lg font-semibold leading-tight text-text">Product information</h2>
+        <button type="button" data-tp-edit-product class="group inline-flex cursor-pointer items-center justify-center rounded bg-orange-100 p-1.5 text-orange-600 transition hover:bg-orange-500 hover:text-white dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-600 dark:hover:text-white" title="Edit Product">
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343zM16.5 6.5l-2-2L16 3a1 1 0 011.414 1.414L16.5 6.5z" />
+          </svg>
+        </button>
+      </div>
       <button type="button" data-tp-product-info-close="right" aria-controls="tp-product-info-drawer-right"
         class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500">
         <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -499,8 +506,14 @@
     tabindex="-1" aria-labelledby="tp-product-info-bottom-title">
     <div
       class="flex shrink-0 items-start justify-between gap-3 border-b border-border-default px-4 pb-4 pt-4 dark:border-white/10">
-      <h2 id="tp-product-info-bottom-title" class="text-lg font-semibold leading-tight text-text">Product information
-      </h2>
+      <div class="flex items-center gap-3">
+        <h2 id="tp-product-info-bottom-title" class="text-lg font-semibold leading-tight text-text">Product information</h2>
+        <button type="button" data-tp-edit-product class="group inline-flex cursor-pointer items-center justify-center rounded bg-orange-100 p-1.5 text-orange-600 transition hover:bg-orange-500 hover:text-white dark:bg-orange-900/30 dark:text-orange-400 dark:hover:bg-orange-600 dark:hover:text-white" title="Edit Product">
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343zM16.5 6.5l-2-2L16 3a1 1 0 011.414 1.414L16.5 6.5z" />
+          </svg>
+        </button>
+      </div>
       <button type="button" data-tp-product-info-close="bottom" aria-controls="tp-product-info-drawer-bottom"
         class="inline-flex h-9 w-9 cursor-pointer shrink-0 items-center justify-center rounded-lg text-red-300 transition hover:bg-red-100 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50 dark:hover:bg-red-950/50 dark:hover:text-red-500">
         <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -781,7 +794,7 @@
     </div>
     
     <!-- Cover upload inside drawer right -->
-    <div class="tp-sticky-cover-container shrink-0 px-4 sm:px-6">
+    <div class="tp-sticky-cover-container shrink-0 px-4 pt-4 sm:px-6">
       <div class="group relative overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
         <label for="ap-cover-upload-desktop" class="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/40 opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
           <svg class="h-8 w-8 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -816,7 +829,7 @@
     </div>
     
     <!-- Cover upload inside drawer bottom -->
-    <div class="tp-sticky-cover-container shrink-0 px-4">
+    <div class="tp-sticky-cover-container shrink-0 px-4 pt-4">
       <div class="group relative overflow-hidden rounded-xl border border-border-default bg-linear-to-br from-primary/15 via-background to-primary/5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:from-primary/20 dark:via-background/40 dark:to-primary/10">
         <label for="ap-cover-upload-mobile" class="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
           <svg class="h-8 w-8 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -280,6 +280,15 @@ function initProductInfoDrawer() {
       drawerBottom.show();
     }
 
+    // Setup Edit Product button
+    root.querySelectorAll("[data-tp-edit-product]").forEach(btn => {
+      btn.onclick = () => {
+         if (mq.matches) drawerRight.hide();
+         else drawerBottom.hide();
+         window.dispatchEvent(new CustomEvent("tp:edit-product-open", { detail: { data } }));
+      };
+    });
+
     // Emit event for other modules (like CartManager) to sync states
     window.dispatchEvent(new CustomEvent("tp:drawer-opened"));
   };

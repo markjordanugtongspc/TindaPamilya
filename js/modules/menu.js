@@ -1,6 +1,6 @@
 import * as auth from "./auth.js";
 import { initMenuNavigations } from "./navigations.js";
-import { initMenuKpiAnimations } from "./animations.js";
+import { initMenuKpiAnimations, toggleKpiSkeleton } from "./animations.js";
 import { formatPeso, renderProductCard } from "./products.js";
 
 function initStoreClock() {
@@ -109,42 +109,69 @@ async function initMenuProducts() {
     });
   }
 
-  if (!grid) return;
-  grid.innerHTML = "";
+  // Define total budget target
+  const BUDGET_TARGET = 5000;
   
+  // Show skeletons for all KPI cards
+  const kpiCards = document.querySelectorAll("[data-kpi-card]");
+  kpiCards.forEach(card => toggleKpiSkeleton(card, true));
+
   try {
-    const res = await fetch("/api/sales/sales_log_api");
-    const json = await res.json();
-    if (json.success && json.recentSales) {
-      json.recentSales.slice(0, 8).forEach((sale) => {
-        const article = document.createElement("article");
-        article.className = "overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10";
-        article.innerHTML = `
-          <div class="p-3">
-            <div class="flex items-start justify-between gap-2">
-              <div class="min-w-0">
-                <p class="truncate text-sm font-semibold text-text">${sale.name}</p>
-                <p class="text-xs text-text/55">Qty: ${sale.quantity}</p>
-              </div>
-              <p class="shrink-0 text-sm font-bold text-primary">${formatPeso(sale.total_price)}</p>
-            </div>
-            <p class="mt-2 text-[0.65rem] text-text/40">${new Date(sale.created_at).toLocaleString()}</p>
-          </div>
-        `;
-        grid.appendChild(article);
+    // Fetch products for latest products grid and capital/low-stock calc
+    const prodRes = await fetch("/api/sales/product_api");
+    const prodJson = await prodRes.json();
+    let capital = 0;
+    let lowStockCount = 0;
+    
+    if (prodJson.success && prodJson.data) {
+      prodJson.data.forEach(p => {
+        const qty = p.quantity || 0;
+        const cost = p.purchasePrice || p.salePrice || 0;
+        capital += (qty * cost);
+        if (qty <= 5) lowStockCount += 1;
       });
       
-      // Update KPIs dynamically if successful
-      const dailyKpi = document.querySelector('[data-kpi-daily]');
-      const weeklyKpi = document.querySelector('[data-kpi-weekly]');
-      const monthlyKpi = document.querySelector('[data-kpi-monthly]');
-      
-      if (dailyKpi) dailyKpi.textContent = formatPeso(json.stats.daily);
-      if (weeklyKpi) weeklyKpi.textContent = formatPeso(json.stats.weekly);
-      if (monthlyKpi) monthlyKpi.textContent = formatPeso(json.stats.monthly);
+      // Update Grid (after skeletons hidden)
+      if (grid) {
+        grid.innerHTML = "";
+        prodJson.data.slice(0, 5).forEach((product) => {
+          const card = renderProductCard(product);
+          if (card) grid.appendChild(card);
+        });
+      }
     }
+
+    // Fetch sales for KPI and Budget
+    const salesRes = await fetch("/api/sales/sales_log_api");
+    const salesJson = await salesRes.json();
+    
+    // Hide skeletons after data is ready
+    kpiCards.forEach(card => toggleKpiSkeleton(card, false));
+
+    // Update Capital & Low Stock
+    document.querySelectorAll('[data-kpi-capital]').forEach(el => el.textContent = formatPeso(capital));
+    document.querySelectorAll('[data-kpi-low-stock]').forEach(el => el.textContent = String(lowStockCount));
+
+    if (salesJson.success && salesJson.stats) {
+      // Map Sales KPIs
+      document.querySelectorAll('[data-kpi-daily]').forEach(el => el.textContent = formatPeso(salesJson.stats.daily));
+      document.querySelectorAll('[data-kpi-weekly]').forEach(el => el.textContent = formatPeso(salesJson.stats.weekly));
+      document.querySelectorAll('[data-kpi-monthly]').forEach(el => el.textContent = formatPeso(salesJson.stats.monthly));
+      document.querySelectorAll('[data-kpi-orders]').forEach(el => el.textContent = String(salesJson.stats.count || 0));
+      
+      document.querySelectorAll('[data-kpi-budget-sales]').forEach(el => {
+         el.textContent = formatPeso(salesJson.stats.daily);
+         if (salesJson.stats.daily >= BUDGET_TARGET) {
+            el.classList.add("text-emerald-400");
+         } else {
+            el.classList.add("text-text");
+         }
+      });
+    }
+
   } catch(err) {
-    console.error("Failed to fetch recent sales", err);
+    kpiCards.forEach(card => toggleKpiSkeleton(card, false));
+    console.error("Failed to fetch menu data", err);
   }
 }
 

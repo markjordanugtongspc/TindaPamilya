@@ -20,79 +20,59 @@ function readJsonBody(req: any): Promise<any> {
   });
 }
 
-function authApiPlugin() {
-  const handler = async (req: any, res: any, next: any) => {
-    if (req.url === "/api/auth/login" && req.method === "POST") {
-      const { email = "", password = "" } = await readJsonBody(req);
-      if (!email || !password) {
-        res.statusCode = 400;
-        res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify({ success: false, error: "Wrong email or password" }));
-        return;
-      }
-
-      try {
-        const result = await loginWithPostgres(email, password);
-        res.statusCode = result.success ? 200 : 401;
-        res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify(result));
-      } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Unknown database error";
-        const isTimeout =
-          /CONNECT_TIMEOUT|ECONNREFUSED|ENOTFOUND|ETIMEDOUT/i.test(message);
-        const isAuth =
-          /SASL|password authentication|Tenant or user not found|no such user/i.test(
-            message,
-          );
-        res.statusCode = isTimeout || isAuth ? 503 : 500;
-        res.setHeader("Content-Type", "application/json");
-        let hint = message;
-        if (isTimeout) {
-          hint = `${message} — Use Transaction pooler (port 6543) from Supabase Dashboard → Connect (IPv4-friendly).`;
-        } else if (isAuth) {
-          hint = `${message} — Copy the URI from Dashboard → Connect, and reset Database password in Project Settings if needed.`;
-        }
-        res.end(JSON.stringify({ success: false, error: hint }));
-      }
-      return;
-    }
-
-    if (req.url === "/api/auth/logout" && req.method === "POST") {
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify({ success: true }));
-      return;
-    }
-
-    if (req.url === "/api/auth/profile" && req.method === "POST") {
-      const { id = "", email = "" } = await readJsonBody(req);
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "application/json");
-      res.end(
-        JSON.stringify({
-          success: true,
-          user: {
-            id: id || "",
-            email: email || "",
-            full_name: "TindaPamilya User",
-            role: "Seller",
-          },
-        }),
-      );
-      return;
-    }
-
-    next();
-  };
-
+function apiPlugin() {
   return {
-    name: "auth-api-plugin",
+    name: "api-plugin",
     configureServer(server: any) {
-      server.middlewares.use(handler);
-    },
-    configurePreviewServer(server: any) {
-      server.middlewares.use(handler);
+      server.middlewares.use(async (req: any, res: any, next: any) => {
+        if (!req.url.startsWith("/api/")) return next();
+
+        // 1. Resolve API file path (e.g., /api/auth/login -> ./api/auth/login.js)
+        const urlPath = req.url.split("?")[0];
+        const filePath = resolve(__dirname, "." + urlPath + ".js");
+
+        if (!existsSync(filePath)) {
+          // Fallback to auth server if it's missing but expected
+          if (urlPath === "/api/auth/login") {
+            const { email = "", password = "" } = await readJsonBody(req);
+            const result = await loginWithPostgres(email, password);
+            res.statusCode = result.success ? 200 : 401;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify(result));
+            return;
+          }
+          return next();
+        }
+
+        try {
+          // 2. Load the API handler dynamically using Vite's SSR loader (enables HMR & Node support)
+          const module = await server.ssrLoadModule(filePath);
+          const handler = module.default;
+
+          // 3. Shim Vercel-style response methods so the scripts work locally
+          res.status = (code: number) => {
+            res.statusCode = code;
+            return res;
+          };
+          res.json = (data: any) => {
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify(data));
+          };
+
+          // 4. Populate req.body for POST/PUT requests
+          if (["POST", "PUT", "PATCH"].includes(req.method)) {
+            req.body = await readJsonBody(req);
+          }
+
+          // 5. Execute the handler
+          await handler(req, res);
+        } catch (err: any) {
+          console.error(`API Error (${urlPath}):`, err);
+          res.statusCode = 500;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify({ success: false, error: err.message }));
+        }
+      });
     },
   };
 }
@@ -110,7 +90,7 @@ function copyPagesComponentsPlugin() {
 }
 
 export default defineConfig({
-  plugins: [tailwindcss(), authApiPlugin(), copyPagesComponentsPlugin()],
+  plugins: [tailwindcss(), apiPlugin(), copyPagesComponentsPlugin()],
   build: {
     rollupOptions: {
       input: {

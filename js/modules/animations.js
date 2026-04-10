@@ -299,3 +299,38 @@ export function initProductImageZoom() {
     }
   });
 }
+/**
+ * Jumping dots animation for loading states.
+ * Creates 3 dots that bounce sequentially.
+ */
+export function initBouncingDots(container) {
+  if (!container) return;
+  container.innerHTML = `
+    <div class="flex items-center gap-1.5 h-8">
+      <div class="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]"></div>
+      <div class="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]"></div>
+      <div class="h-2 w-2 rounded-full bg-primary animate-bounce"></div>
+    </div>
+  `;
+}
+
+/**
+ * Toggle skeleton state for KPI articles.
+ */
+export function toggleKpiSkeleton(container, loading) {
+  if (!container) return;
+  const originalContent = container.getAttribute("data-original-content");
+  
+  if (loading) {
+    if (!originalContent) {
+      container.setAttribute("data-original-content", container.innerHTML);
+    }
+    container.classList.add("animate-pulse", "pointer-events-none");
+    initBouncingDots(container);
+  } else {
+    if (originalContent) {
+      container.innerHTML = originalContent;
+      container.classList.remove("animate-pulse", "pointer-events-none");
+    }
+  }
+}
