@@ -29,7 +29,8 @@ class CartManager {
       const isBottomOpen = addProductBottom && !addProductBottom.classList.contains("translate-y-full");
 
       if (isRightOpen || isBottomOpen) {
-         const barcodeInput = document.getElementById("ap-barcode");
+         const activeDrawer = isRightOpen ? addProductRight : addProductBottom;
+         const barcodeInput = activeDrawer.querySelector("#ap-barcode");
          if (barcodeInput) {
             barcodeInput.value = barcode;
             // Force focus and trigger input event for consistency
