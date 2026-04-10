@@ -1,5 +1,5 @@
-import { formatPeso, initProductGrid } from "./products.js";
-import { SAMPLE_PRODUCTS } from "./data.js";
+import { formatPeso, initProductGrid, GLOBAL_PRODUCTS } from "./products.js";
+// Remove data.js import
 import { showSuccessToast, showErrorToast } from "./modals.js";
 
 function playBeep() {
@@ -51,7 +51,7 @@ class CartManager {
          }
       }
 
-      const product = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+      const product = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
       
       if (product) {
         playBeep();
@@ -113,7 +113,7 @@ class CartManager {
        if (triggeredInput) {
           const container = triggeredInput.closest("[data-tp-product-info-mount]");
           const barcode = (container.querySelector("[data-pi-barcode]")?.textContent || "").trim();
-          const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+          const stockProduct = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
           
           let val = parseInt(triggeredInput.value, 10);
           if (isNaN(val)) val = 0;
@@ -145,7 +145,7 @@ class CartManager {
           if (container) {
              const qtyInputs = container.querySelectorAll("[data-pi-qty-val]");
              const barcode = (container.querySelector("[data-pi-barcode]")?.textContent || "").trim();
-             const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+             const stockProduct = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
 
              if (qtyInputs.length > 0) {
                 let v = parseInt(qtyInputs[0].value, 10) || 0;
@@ -173,7 +173,7 @@ class CartManager {
        const drawer = document.querySelector("[data-tp-product-info-mount]");
        if (drawer) {
           const barcode = (drawer.querySelector("[data-pi-barcode]")?.textContent || "").trim();
-          const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+          const stockProduct = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
           const qtyInputs = drawer.querySelectorAll("[data-pi-qty-val]");
           
           if (stockProduct && qtyInputs.length > 0) {
@@ -191,7 +191,7 @@ class CartManager {
   syncDrawerPlusState(container) {
      const qtyInputs = container.querySelectorAll("[data-pi-qty-val]");
      const barcode = (container.querySelector("[data-pi-barcode]")?.textContent || "").trim();
-     const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+     const stockProduct = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
      const plusBtns = container.querySelectorAll("[data-pi-qty-plus]");
      const minusBtns = container.querySelectorAll("[data-pi-qty-minus]");
      const addBtns = container.querySelectorAll("[data-tp-add-to-cart]");
@@ -276,7 +276,7 @@ class CartManager {
   }
 
   addItem(product) {
-    const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === product.barcode.trim());
+    const stockProduct = GLOBAL_PRODUCTS.find(p => p.barcode === product.barcode.trim());
     
     // Strict Case: Out of stock completely
     if (stockProduct && stockProduct.quantity <= 0) {
@@ -308,7 +308,7 @@ class CartManager {
     const item = this.items[index];
     if (item) {
       if (delta > 0) {
-         const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === item.barcode);
+         const stockProduct = GLOBAL_PRODUCTS.find(p => p.barcode === item.barcode);
          if (stockProduct && item.quantity >= stockProduct.quantity) {
             showErrorToast("Limit reached: Max stock available.");
             return;
@@ -338,7 +338,7 @@ class CartManager {
       subtotal += itemTotal;
       totalItems += item.quantity;
 
-      const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === item.barcode);
+      const stockProduct = GLOBAL_PRODUCTS.find(p => p.barcode === item.barcode);
       const isMax = stockProduct ? item.quantity >= stockProduct.quantity : false;
       const plusDisabledAttr = isMax ? 'disabled' : '';
       const plusClass = isMax ? 'opacity-30 cursor-not-allowed pointer-events-none' : '';
@@ -396,9 +396,26 @@ class CartManager {
     });
   }
 
-  checkout() {
+  async checkout() {
     const listMounts = document.querySelectorAll("[data-tp-receipt-mount]");
     if (listMounts.length === 0) return;
+
+    // Send transaction to Sales API
+    try {
+      const payload = this.items.map(i => ({
+        sku: i.barcode,
+        quantity: i.quantity,
+        price: i.price * i.quantity
+      }));
+      
+      await fetch("/api/sales/sales_log_api", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: payload })
+      });
+    } catch (err) {
+      console.error("Checkout logging failed:", err);
+    }
 
     let subtotal = 0;
     const itemsHtml = this.items.map(item => {
@@ -439,16 +456,23 @@ class CartManager {
        }
     });
 
-    // Reduce stocks in SAMPLE_PRODUCTS
-    this.items.forEach(cartItem => {
-       const product = SAMPLE_PRODUCTS.find(p => p.barcode === cartItem.barcode.trim());
-       if (product) {
-          product.quantity = Math.max(0, product.quantity - cartItem.quantity);
-       }
-    });
-    // Refresh the UI grid to show new stock levels
-    initProductGrid();
+    // Free up items and refresh
+    this.items = [];
+    this.render();
 
+    // Re-fetch products from database to ensure sync
+    const { fetchAllProducts } = await import("./products.js");
+    await fetchAllProducts();
+    initProductGrid();
+    
+    // Optionally refresh menu KPIs if we are on the dashboard
+    const { initMenuPage } = await import("./menu.js").catch(() => ({}));
+    if (initMenuPage && document.getElementById("tp-menu-latest-products-grid")) {
+       // A quick hack to refresh sales data on the dashboard locally without full page reload
+       const { initMenuProducts } = await import("./menu.js").catch(() => ({}));
+    }
+    
+    const targetModal = document.getElementById("tp-receipt-modal");
     window.dispatchEvent(new CustomEvent("tp:receipt-show"));
   }
 }

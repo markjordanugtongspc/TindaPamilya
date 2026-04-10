@@ -1,7 +1,7 @@
 import * as auth from "./auth.js";
 import { initMenuNavigations } from "./navigations.js";
 import { initMenuKpiAnimations } from "./animations.js";
-import { SAMPLE_PRODUCTS, renderProductCard } from "./products.js";
+import { formatPeso, renderProductCard } from "./products.js";
 
 function initStoreClock() {
   const clockEl = document.getElementById("tp-pos-clock");
@@ -99,10 +99,9 @@ function initNotificationState() {
   });
 }
 
-function initMenuProducts() {
+async function initMenuProducts() {
   const grid = document.getElementById("tp-menu-latest-products-grid");
   const viewAllBtn = document.getElementById("tp-menu-view-all-products");
-  const template = document.getElementById("tp-menu-product-template");
 
   if (viewAllBtn) {
     viewAllBtn.addEventListener("click", () => {
@@ -110,22 +109,43 @@ function initMenuProducts() {
     });
   }
 
-  if (!grid || !template) return;
-
+  if (!grid) return;
   grid.innerHTML = "";
-  const latestProducts = SAMPLE_PRODUCTS.slice(0, 4);
-
-  latestProducts.forEach((product) => {
-    const card = renderProductCard(product, template);
-    if (card) {
-      card.classList.add("cursor-pointer");
-      card.addEventListener("click", () => {
-         const barcode = product.barcode || "";
-         window.location.href = `/pages/products/index.html?barcode=${barcode}`;
+  
+  try {
+    const res = await fetch("/api/sales/sales_log_api");
+    const json = await res.json();
+    if (json.success && json.recentSales) {
+      json.recentSales.slice(0, 8).forEach((sale) => {
+        const article = document.createElement("article");
+        article.className = "overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10";
+        article.innerHTML = `
+          <div class="p-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-text">${sale.name}</p>
+                <p class="text-xs text-text/55">Qty: ${sale.quantity}</p>
+              </div>
+              <p class="shrink-0 text-sm font-bold text-primary">${formatPeso(sale.total_price)}</p>
+            </div>
+            <p class="mt-2 text-[0.65rem] text-text/40">${new Date(sale.created_at).toLocaleString()}</p>
+          </div>
+        `;
+        grid.appendChild(article);
       });
-      grid.appendChild(card);
+      
+      // Update KPIs dynamically if successful
+      const dailyKpi = document.querySelector('[data-kpi-daily]');
+      const weeklyKpi = document.querySelector('[data-kpi-weekly]');
+      const monthlyKpi = document.querySelector('[data-kpi-monthly]');
+      
+      if (dailyKpi) dailyKpi.textContent = formatPeso(json.stats.daily);
+      if (weeklyKpi) weeklyKpi.textContent = formatPeso(json.stats.weekly);
+      if (monthlyKpi) monthlyKpi.textContent = formatPeso(json.stats.monthly);
     }
-  });
+  } catch(err) {
+    console.error("Failed to fetch recent sales", err);
+  }
 }
 
 export async function initMenuPage() {

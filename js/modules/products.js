@@ -35,8 +35,22 @@ function revealProductsDashboard() {
   }, 650);
 }
 
-import { SAMPLE_PRODUCTS } from "./data.js";
-export { SAMPLE_PRODUCTS };
+export let GLOBAL_PRODUCTS = [];
+
+export async function fetchAllProducts() {
+  try {
+    const res = await fetch("/api/sales/product_api");
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success) {
+        GLOBAL_PRODUCTS = json.data;
+      }
+    }
+  } catch (err) {
+    console.error("Failed to fetch products", err);
+  }
+}
+
 
 export function formatPeso(amount) {
   const n = Number(amount);
@@ -210,11 +224,16 @@ function removeSkeletons(nodes) {
   nodes.forEach((n) => n.remove());
 }
 
-export function initProductGrid() {
+export async function initProductGrid() {
   const grid = document.getElementById("tp-products-grid");
   if (!grid) return;
   grid.innerHTML = "";
-  SAMPLE_PRODUCTS.forEach((p) => {
+  
+  if (GLOBAL_PRODUCTS.length === 0) {
+    await fetchAllProducts();
+  }
+  
+  GLOBAL_PRODUCTS.forEach((p) => {
     const card = renderProductCard(p);
     if (card) grid.appendChild(card);
   });
@@ -244,12 +263,14 @@ function initInfiniteScrollDebounced() {
     await new Promise((r) => window.setTimeout(r, 550));
 
     removeSkeletons(skeletons);
+    if (GLOBAL_PRODUCTS.length === 0) return; // Prevent infinite if empty
     for (let i = 0; i < 8; i += 1) {
-      const base = SAMPLE_PRODUCTS[(page + i) % SAMPLE_PRODUCTS.length];
+      const base = GLOBAL_PRODUCTS[(page + i) % GLOBAL_PRODUCTS.length];
       const p = {
         ...base,
+        id: `clone-${Date.now()}-${i}`,
         barcode: `${base.barcode}-${page}-${i}`,
-        sku: base.sku.replace(/\\d+$/, (m) => String(Number(m) + page + i)),
+        sku: base.sku ? base.sku.replace(/\d+$/, (m) => String(Number(m) + page + i)) : `SKU-TEMP-${i}`,
         name: `${base.name}`,
       };
       const card = renderProductCard(p);

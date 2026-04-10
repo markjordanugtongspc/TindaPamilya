@@ -1,6 +1,6 @@
 import { Drawer, Dropdown } from "flowbite";
 import { renderProductCard } from "./products.js";
-import { SAMPLE_PRODUCTS } from "./data.js";
+import { GLOBAL_PRODUCTS } from "./products.js";
 import { Datepicker } from "flowbite-datepicker";
 import { showSuccessToast } from "./modals.js";
 import { updateGlobalDrawerState } from "./drawer.js";
@@ -156,7 +156,7 @@ class ProductManager {
               const mainFilter = document.getElementById("products-category");
               if (mainFilter) {
                  const opt = document.createElement("option");
-                 opt.value = val.toLowerCase().replace(/\s+/g, '-'); // slug style matching index.html
+                 opt.value = val; 
                  opt.textContent = val;
                  mainFilter.appendChild(opt);
               }
@@ -181,10 +181,12 @@ class ProductManager {
       });
     }
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const fd = new FormData(form);
       const barcode = fd.get("barcode");
+      const subBtn = form.querySelector('[type="submit"]');
+      if (subBtn) subBtn.disabled = true;
       
       const newProduct = {
         barcode: barcode,
@@ -199,8 +201,28 @@ class ProductManager {
         image: mount.closest("[id*='drawer']").querySelector("[id*='preview']").src
       };
 
+      try {
+        const res = await fetch("/api/sales/product_api", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newProduct)
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          // Update local ID if available
+          newProduct.id = data.id;
+        } else {
+          console.error("API error:", data.error);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        if (subBtn) subBtn.disabled = false;
+      }
+
       // PERSIST: Add to global array so it becomes scannable
-      SAMPLE_PRODUCTS.push(newProduct);
+      GLOBAL_PRODUCTS.push(newProduct);
 
       const card = renderProductCard(newProduct);
       if (card) {
