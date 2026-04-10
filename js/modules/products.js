@@ -1,3 +1,4 @@
+import { Modal, Dismiss } from "flowbite";
 import * as auth from "./auth.js";
 import { initMenuNavigations } from "./navigations.js";
 import { initProductOrdersDrawers, initProductInfoDrawers } from "./drawer.js";
@@ -31,7 +32,7 @@ function revealProductsDashboard() {
   }, 650);
 }
 
-const SAMPLE_PRODUCTS = [
+export const SAMPLE_PRODUCTS = [
   {
     barcode: "4800012345678",
     name: "Rice (Rice 5kg)",
@@ -122,7 +123,7 @@ const SAMPLE_PRODUCTS = [
   },
 ];
 
-function formatPeso(amount) {
+export function formatPeso(amount) {
   const n = Number(amount);
   if (!Number.isFinite(n)) return "₱ 0.00";
   return `₱ ${n.toFixed(2)}`;
@@ -134,8 +135,8 @@ function getProductTemplates() {
   return { card, skeleton };
 }
 
-function renderProductCard(product) {
-  const { card } = getProductTemplates();
+export function renderProductCard(product, customCardTemplate = null) {
+  const card = customCardTemplate || document.getElementById("tp-product-card-template");
   if (!card) return null;
   const node = card.content.firstElementChild?.cloneNode(true);
   if (!(node instanceof HTMLElement)) return null;
@@ -153,10 +154,115 @@ function renderProductCard(product) {
   delBtn?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    node.remove();
+    
+    // Use professional Flowbite Modal for deletion confirmation
+    const modalEl = document.getElementById('tp-delete-product-modal');
+    if (modalEl) {
+      const confirmModal = new Modal(modalEl);
+      confirmModal.show();
+      
+      const yesBtn = document.getElementById('tp-confirm-delete-yes');
+      const noBtn = document.getElementById('tp-confirm-delete-no');
+      
+      const onYes = () => {
+        confirmModal.hide();
+        node.remove();
+        showDeleteToast("Item has been deleted.");
+        cleanup();
+      };
+      
+      const onNo = () => {
+        confirmModal.hide();
+        cleanup();
+      };
+      
+      const cleanup = () => {
+        yesBtn.removeEventListener('click', onYes);
+        noBtn.removeEventListener('click', onNo);
+      };
+      
+      yesBtn.addEventListener('click', onYes, { once: true });
+      noBtn.addEventListener('click', onNo, { once: true });
+    }
   });
 
   return node;
+}
+
+export function showDeleteToast(message) {
+  const containerId = "tp-toast-container";
+  let container = document.getElementById(containerId);
+  if (!container) {
+    container = document.createElement("div");
+    container.id = containerId;
+    // Mobile: bottom-middle (above nav), Desktop: bottom-right
+    // Use z-[120] to stay above modals (z-100) and drawers
+    container.className = "fixed bottom-24 left-1/2 z-[120] flex -translate-x-1/2 flex-col gap-3 px-4 sm:bottom-8 sm:right-8 sm:translate-x-0 sm:left-auto sm:px-0";
+    document.body.appendChild(container);
+  }
+
+  const id = `toast-danger-${Date.now()}`;
+  const toastEl = document.createElement("div");
+  toastEl.id = id;
+  toastEl.className = "flex items-center w-full max-w-sm p-4 text-text bg-secondary rounded-2xl shadow-2xl border border-border-default dark:bg-secondary/95 dark:border-white/10 animate-tp-fade-in-up";
+  toastEl.setAttribute("role", "alert");
+  
+  toastEl.innerHTML = `
+    <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-xl dark:bg-red-500/20 dark:text-red-400">
+        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+        <span class="sr-only">Error icon</span>
+    </div>
+    <div class="ms-3 whitespace-nowrap text-sm font-bold">${message}</div>
+    <button type="button" class="ms-auto flex items-center justify-center text-text/40 hover:text-text bg-transparent rounded-lg text-sm h-8 w-8 focus:outline-none transition-colors" data-dismiss-target="#${id}" aria-label="Close">
+        <span class="sr-only">Close</span>
+        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+    </button>
+  `;
+
+  container.appendChild(toastEl);
+
+  // Initialize Flowbite Dismiss
+  const dismiss = new Dismiss(toastEl, toastEl.querySelector(`[data-dismiss-target="#${id}"]`));
+
+  // Auto-hide after 3.2 seconds
+  setTimeout(() => {
+    dismiss.hide();
+  }, 3200);
+}
+
+function handleUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  
+  // 1. Auto-open scanner if scan=true
+  if (params.get('scan') === 'true') {
+     const scannerTrigger = document.querySelector('[data-scanner-open="true"]');
+     if (scannerTrigger) {
+       // Clear the param from URL without reloading to keep it clean
+       const url = new URL(window.location);
+       url.searchParams.delete('scan');
+       window.history.replaceState({}, '', url);
+       
+       // Click scanner button
+       scannerTrigger.click();
+     }
+  }
+  
+  // 2. Auto-open product drawer if barcode is provided
+  const barcode = params.get('barcode');
+  if (barcode) {
+    // We might need to wait for the grid to render
+    setTimeout(() => {
+      const card = document.querySelector(`[data-product-barcode="${barcode}"]`);
+      if (card) {
+        // Clear param
+        const url = new URL(window.location);
+        url.searchParams.delete('barcode');
+        window.history.replaceState({}, '', url);
+        
+        card.click();
+      }
+    }, 800);
+  }
 }
 
 function appendSkeletons(count = 8) {
@@ -291,6 +397,7 @@ export async function initProductsPage() {
   initProductGrid();
   initInfiniteScrollDebounced();
   initProductInfoDrawers();
+  handleUrlParams();
 
   const logoutButton = document.getElementById("logout-button");
   if (logoutButton) {

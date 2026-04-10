@@ -352,3 +352,18 @@
 .tp-login-success--gates-open [data-login-gate-right] {
   transform: translateX(100%);
 }
+
+@keyframes tp-fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-tp-fade-in-up {
+  animation: tp-fade-in-up 0.4s ease-out forwards;
+}

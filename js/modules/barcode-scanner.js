@@ -202,7 +202,13 @@ export function initBarcodeScanner() {
     const toggleBtn = e.target.closest('[data-modal-toggle="tp-barcode-scanner-modal"], [data-modal-target="tp-barcode-scanner-modal"], [data-scanner-open="true"]');
     if (toggleBtn) {
       e.preventDefault();
-      openScanner();
+      
+      const isOnProductsPage = window.location.pathname.includes('/pages/products/');
+      if (!isOnProductsPage) {
+        window.location.href = '/pages/products/index.html?scan=true';
+      } else {
+        openScanner();
+      }
       return;
     }
 

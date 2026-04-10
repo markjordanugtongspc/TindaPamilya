@@ -1,6 +1,7 @@
 import * as auth from "./auth.js";
 import { initMenuNavigations } from "./navigations.js";
 import { initMenuKpiAnimations } from "./animations.js";
+import { SAMPLE_PRODUCTS, renderProductCard } from "./products.js";
 
 function initStoreClock() {
   const clockEl = document.getElementById("tp-pos-clock");
@@ -98,6 +99,35 @@ function initNotificationState() {
   });
 }
 
+function initMenuProducts() {
+  const grid = document.getElementById("tp-menu-latest-products-grid");
+  const viewAllBtn = document.getElementById("tp-menu-view-all-products");
+  const template = document.getElementById("tp-menu-product-template");
+
+  if (viewAllBtn) {
+    viewAllBtn.addEventListener("click", () => {
+      window.location.href = "/pages/products/index.html";
+    });
+  }
+
+  if (!grid || !template) return;
+
+  grid.innerHTML = "";
+  const latestProducts = SAMPLE_PRODUCTS.slice(0, 4);
+
+  latestProducts.forEach((product) => {
+    const card = renderProductCard(product, template);
+    if (card) {
+      card.classList.add("cursor-pointer");
+      card.addEventListener("click", () => {
+         const barcode = product.barcode || "";
+         window.location.href = `/pages/products/index.html?barcode=${barcode}`;
+      });
+      grid.appendChild(card);
+    }
+  });
+}
+
 export async function initMenuPage() {
   const status = await auth.isAuthenticated();
   if (!status.authenticated) {
@@ -141,6 +171,7 @@ export async function initMenuPage() {
   initStoreClock();
   initMenuKpiAnimations();
   initMobileKpiCarousel();
+  initMenuProducts();
   revealMenuDashboard();
 
   const logoutButton = document.getElementById("logout-button");
