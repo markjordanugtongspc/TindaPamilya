@@ -214,7 +214,11 @@ function initProductInfoDrawer() {
     setText(mount, "[data-pi-sale]", saleVal);
     
     setText(mount, "[data-pi-desc]", data.description && data.description !== "N/A" ? data.description : "—");
-    mount.querySelectorAll("[data-pi-qty-val]").forEach(span => span.textContent = "1");
+    
+    // AUTO-MAX: Set quantity input to current stocks
+    mount.querySelectorAll("[data-pi-qty-val]").forEach(input => {
+      input.value = data.quantity ?? 1;
+    });
 
     // Handling Image
     const cover = root.querySelector("[data-pi-cover]");
@@ -234,6 +238,9 @@ function initProductInfoDrawer() {
       drawerRight.hide();
       drawerBottom.show();
     }
+
+    // Emit event for other modules (like CartManager) to sync states
+    window.dispatchEvent(new CustomEvent("tp:drawer-opened"));
   };
 
   document.addEventListener("click", (event) => {

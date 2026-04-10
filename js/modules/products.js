@@ -334,7 +334,7 @@ function removeSkeletons(nodes) {
   nodes.forEach((n) => n.remove());
 }
 
-function initProductGrid() {
+export function initProductGrid() {
   const grid = document.getElementById("tp-products-grid");
   if (!grid) return;
   grid.innerHTML = "";

@@ -1,4 +1,5 @@
-import { formatPeso } from "./products.js";
+import { formatPeso, SAMPLE_PRODUCTS, initProductGrid } from "./products.js";
+import { showSuccessToast, showErrorToast } from "./modals.js";
 
 class CartManager {
   constructor() {
@@ -11,57 +12,189 @@ class CartManager {
     this.bindAddToCart();
     this.bindCartInteractions();
     this.bindReceiptControls();
+    this.initScannerListener();
+  }
+
+  initScannerListener() {
+    window.addEventListener("tp-barcode-scanned", (e) => {
+      const barcode = e.detail?.code;
+      if (!barcode) return;
+
+      const product = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+      
+      if (product) {
+        showSuccessToast("PRODUCT FOUND: " + product.name);
+        this.addItem({
+          barcode: product.barcode,
+          name: product.name,
+          price: product.salePrice,
+          quantity: 1
+        });
+      } else {
+        showErrorToast("PRODUCT NOT FOUND: " + barcode);
+      }
+    });
   }
 
   bindAddToCart() {
     document.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-tp-add-to-cart]");
-      if (!btn) return;
+      if (!btn || btn.disabled) return;
       
       const drawer = btn.closest("[data-tp-product-info-mount]");
       if (!drawer) return;
 
-      const barcode = drawer.querySelector("[data-pi-barcode]")?.textContent || "—";
+      const barcode = (drawer.querySelector("[data-pi-barcode]")?.textContent || "").trim();
       const name = drawer.querySelector("[data-pi-name]")?.textContent || "Product";
       const priceStr = drawer.querySelector("[data-pi-sale]")?.textContent || "0";
       const price = parseFloat(priceStr.replace(/[^0-9.-]+/g,"")) || 0;
-      const qtyStr = drawer.querySelector("[data-pi-qty-val]")?.textContent || "1";
-      const qty = parseInt(qtyStr, 10) || 1;
+      const qtyInput = drawer.querySelector("[data-pi-qty-val]");
+      const qty = parseInt(qtyInput?.value, 10) || 0;
 
-      this.addItem({ barcode, name, price, quantity: qty });
+      if (qty <= 0) {
+         showErrorToast("Please select at least 1 item.");
+         return;
+      }
+
+      const success = this.addItem({ barcode, name, price, quantity: qty });
       
-      // Reset qty in drawer
-      const qtySpans = drawer.querySelectorAll("[data-pi-qty-val]");
-      qtySpans.forEach(span => span.textContent = "1");
-      
-      // Optionally show toast
-      import("./products.js").then((m) => {
-         m.showSuccessToast(`${qty} ${name} added to cart.`);
-      });
-      
-      // Close the product info drawer
-      document.querySelectorAll("[data-tp-product-info-close]").forEach((btn) => {
-         btn.click();
-      });
+      if (success) {
+        // Reset ALL qty inputs in drawer 
+        const qtyInputs = drawer.querySelectorAll("[data-pi-qty-val]");
+        qtyInputs.forEach(input => {
+          input.value = "1";
+        });
+        this.syncDrawerPlusState(drawer);
+        
+        showSuccessToast(`${qty} ${name} added to cart.`);
+        
+        // Close the product info drawer
+        document.querySelectorAll("[data-tp-product-info-close]").forEach((btn) => {
+           btn.click();
+        });
+      }
     });
 
-    // Handle drawer quantity increment/decrement
+    // Handle manual input field changes
+    document.addEventListener("input", (e) => {
+       const triggeredInput = e.target.closest("[data-pi-qty-val]");
+       if (triggeredInput) {
+          const container = triggeredInput.closest("[data-tp-product-info-mount]");
+          const barcode = (container.querySelector("[data-pi-barcode]")?.textContent || "").trim();
+          const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+          
+          let val = parseInt(triggeredInput.value, 10);
+          if (isNaN(val)) val = 0;
+          
+          const max = stockProduct ? stockProduct.quantity : 0;
+          if (val > max) {
+             val = max;
+             showErrorToast(`Limit reached: Only ${max} in stock`);
+          } else if (val < 0) {
+             val = 0;
+          }
+          
+          // SYNC ALL INPUTS in the container
+          const allInputs = container.querySelectorAll("[data-pi-qty-val]");
+          allInputs.forEach(input => {
+             input.value = val;
+          });
+          
+          if (container) this.syncDrawerPlusState(container);
+       }
+    });
+
+    // Handle drawer quantity increment/decrement buttons
     document.addEventListener("click", (e) => {
        const plus = e.target.closest("[data-pi-qty-plus]");
        const minus = e.target.closest("[data-pi-qty-minus]");
        if (plus || minus) {
           const container = (plus || minus).closest("[data-tp-product-info-mount]");
           if (container) {
-             const qtySpans = container.querySelectorAll("[data-pi-qty-val]");
-             if (qtySpans.length > 0) {
-                let v = parseInt(qtySpans[0].textContent, 10) || 1;
-                if (plus) v++;
-                else if (minus && v > 1) v--;
-                qtySpans.forEach(span => span.textContent = v);
+             const qtyInputs = container.querySelectorAll("[data-pi-qty-val]");
+             const barcode = (container.querySelector("[data-pi-barcode]")?.textContent || "").trim();
+             const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+
+             if (qtyInputs.length > 0) {
+                let v = parseInt(qtyInputs[0].value, 10) || 0;
+                
+                if (plus) {
+                   if (stockProduct && v >= stockProduct.quantity) {
+                      showErrorToast("Limit reached: Only " + stockProduct.quantity + " in stock");
+                      return;
+                   }
+                   v++;
+                } else if (minus && v > 0) {
+                   // Allow decreasing to 0 if they want, but addItem will check for >0
+                   v--;
+                }
+                
+                qtyInputs.forEach(input => input.value = v);
+                this.syncDrawerPlusState(container);
              }
           }
        }
     });
+
+    // Professional initialization when drawer opens
+    window.addEventListener("tp:drawer-opened", (e) => {
+       const drawer = document.querySelector("[data-tp-product-info-mount]");
+       if (drawer) {
+          const barcode = (drawer.querySelector("[data-pi-barcode]")?.textContent || "").trim();
+          const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+          const qtyInputs = drawer.querySelectorAll("[data-pi-qty-val]");
+          
+          if (stockProduct && qtyInputs.length > 0) {
+             // AUTO-SYNC: set value to current max stocks OR 1 (if available)
+             // Let's stick with user's requested "max out" logic but handle 0
+             qtyInputs.forEach(input => {
+                input.value = stockProduct.quantity;
+             });
+             this.syncDrawerPlusState(drawer);
+          }
+       }
+    });
+  }
+
+  syncDrawerPlusState(container) {
+     const qtyInputs = container.querySelectorAll("[data-pi-qty-val]");
+     const barcode = (container.querySelector("[data-pi-barcode]")?.textContent || "").trim();
+     const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === barcode);
+     const plusBtns = container.querySelectorAll("[data-pi-qty-plus]");
+     const minusBtns = container.querySelectorAll("[data-pi-qty-minus]");
+     const addBtns = container.querySelectorAll("[data-tp-add-to-cart]");
+     
+     if (qtyInputs.length > 0 && stockProduct) {
+        const v = parseInt(qtyInputs[0].value, 10) || 0;
+        const max = stockProduct.quantity;
+
+        plusBtns.forEach(btn => {
+           const isDisabled = v >= max || max <= 0;
+           btn.classList.toggle("opacity-30", isDisabled);
+           btn.classList.toggle("cursor-not-allowed", isDisabled);
+           btn.classList.toggle("pointer-events-none", isDisabled);
+        });
+
+        minusBtns.forEach(btn => {
+           const isDisabled = v <= 0;
+           btn.classList.toggle("opacity-30", isDisabled);
+           btn.classList.toggle("cursor-not-allowed", isDisabled);
+           btn.classList.toggle("pointer-events-none", isDisabled);
+        });
+
+        addBtns.forEach(btn => {
+           const isDisabled = v <= 0 || max <= 0;
+           btn.disabled = isDisabled;
+           btn.classList.toggle("opacity-50", isDisabled);
+           btn.classList.toggle("cursor-not-allowed", isDisabled);
+           
+           if (max <= 0) {
+              btn.innerHTML = `<span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg> OUT OF STOCK</span>`;
+           } else {
+              btn.textContent = "ADD TO CART";
+           }
+        });
+     }
   }
 
   bindCartInteractions() {
@@ -109,19 +242,46 @@ class CartManager {
   }
 
   addItem(product) {
+    const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === product.barcode.trim());
+    
+    // Strict Case: Out of stock completely
+    if (stockProduct && stockProduct.quantity <= 0) {
+       showErrorToast(`OUT OF STOCK: ${product.name}`);
+       return false;
+    }
+
     const existing = this.items.find(i => i.barcode === product.barcode && i.barcode !== "—");
+    
+    // Check if adding more exceeds stock
+    if (stockProduct) {
+       const currentQty = existing ? existing.quantity : 0;
+       if (currentQty + product.quantity > stockProduct.quantity) {
+          showErrorToast(`Cannot add more: Only ${stockProduct.quantity} available.`);
+          return false;
+       }
+    }
+
     if (existing) {
       existing.quantity += product.quantity;
     } else {
       this.items.push({...product});
     }
     this.render();
+    return true;
   }
 
   updateQuantity(index, delta) {
-    if (this.items[index]) {
-      this.items[index].quantity += delta;
-      if (this.items[index].quantity <= 0) {
+    const item = this.items[index];
+    if (item) {
+      if (delta > 0) {
+         const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === item.barcode);
+         if (stockProduct && item.quantity >= stockProduct.quantity) {
+            showErrorToast("Limit reached: Max stock available.");
+            return;
+         }
+      }
+      item.quantity += delta;
+      if (item.quantity <= 0) {
         this.removeItem(index);
       } else {
         this.render();
@@ -144,6 +304,11 @@ class CartManager {
       subtotal += itemTotal;
       totalItems += item.quantity;
 
+      const stockProduct = SAMPLE_PRODUCTS.find(p => p.barcode === item.barcode);
+      const isMax = stockProduct ? item.quantity >= stockProduct.quantity : false;
+      const plusDisabledAttr = isMax ? 'disabled' : '';
+      const plusClass = isMax ? 'opacity-30 cursor-not-allowed pointer-events-none' : '';
+
       return `
       <li class="border-b border-text/10 pb-4 last:border-0 dark:border-white/10">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
@@ -156,14 +321,20 @@ class CartManager {
               <button type="button" data-cart-qty-dec data-index="${idx}"
                 class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"><span class="text-lg leading-none">−</span></button>
               <span class="min-w-8 text-center text-sm font-semibold tabular-nums text-text">${item.quantity}</span>
-              <button type="button" data-cart-qty-inc data-index="${idx}"
-                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"><span class="text-lg leading-none">+</span></button>
+              <button type="button" data-cart-qty-inc data-index="${idx}" ${plusDisabledAttr}
+                class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-sm transition hover:bg-emerald-400 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${plusClass}"><span class="text-lg leading-none">+</span></button>
             </div>
             <p class="text-sm font-semibold tabular-nums text-text sm:min-w-18 sm:text-end">${formatPeso(itemTotal)}</p>
+            
             <button type="button" data-cart-remove data-index="${idx}"
-              class="inline-flex cursor-pointer items-center rounded-lg p-1.5 text-red-500 ring-1 ring-red-400/40 transition hover:bg-red-50 dark:hover:bg-red-950/40"
+              class="group inline-flex cursor-pointer items-center justify-center rounded-lg p-1.5 text-red-500 transition hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40 dark:text-red-400 dark:hover:text-red-500"
               aria-label="Remove line">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M10 11v6M14 11v6M6 7l1-3h10l1 3M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" /></svg>
+              <svg class="hidden h-5 w-5 lg:block group-hover:hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1-1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+              </svg>
+              <svg class="h-5 w-5 lg:hidden lg:group-hover:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                <path fill-rule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clip-rule="evenodd"/>
+              </svg>
             </button>
           </div>
         </div>
@@ -233,6 +404,16 @@ class CartManager {
           btn.click();
        }
     });
+
+    // Reduce stocks in SAMPLE_PRODUCTS
+    this.items.forEach(cartItem => {
+       const product = SAMPLE_PRODUCTS.find(p => p.barcode === cartItem.barcode.trim());
+       if (product) {
+          product.quantity = Math.max(0, product.quantity - cartItem.quantity);
+       }
+    });
+    // Refresh the UI grid to show new stock levels
+    initProductGrid();
 
     window.dispatchEvent(new CustomEvent("tp:receipt-show"));
   }
