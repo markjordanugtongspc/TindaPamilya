@@ -362,20 +362,20 @@
           id="tp-barcode-scanner-modal"
           tabindex="-1"
           aria-hidden="true"
-          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[100] justify-center items-center w-full md:inset-0 h-full max-h-full"
+          class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-100 justify-center items-center w-full md:inset-0 h-full max-h-full"
         >
           <div class="relative p-0 sm:p-4 w-full max-w-2xl h-full sm:h-auto max-h-full">
             <div class="relative flex h-full sm:h-auto w-full flex-col overflow-hidden bg-secondary shadow-2xl ring-2 ring-primary/40 sm:rounded-3xl">
               
               <!-- Header -->
-              <div class="absolute inset-x-0 top-0 z-20 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent p-4 pb-8 sm:p-6">
+              <div class="absolute inset-x-0 top-0 z-20 flex items-center justify-between bg-linear-to-b from-black/80 to-transparent p-4 pb-8 sm:p-6">
                 <div class="flex items-center gap-3">
                   <span class="relative flex h-3 w-3">
                     <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75"></span>
                     <span class="relative inline-flex h-3 w-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
                   </span>
                   <span class="shrink-0 text-[0.65rem] font-black uppercase tracking-[0.2em] text-emerald-400 drop-shadow-sm">Active</span>
-                  <p data-scanner-status class="max-w-[12rem] truncate text-xs font-semibold text-white/90 sm:max-w-[20rem]">Initializing...</p>
+                  <p data-scanner-status class="max-w-48 truncate text-xs font-semibold text-white/90 sm:max-w-[20rem]">Initializing...</p>
                 </div>
                 <button type="button" data-scanner-close="true" class="group inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition hover:scale-105 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30">
                    <svg class="h-4 w-4 transition-transform group-hover:rotate-90" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -389,11 +389,11 @@
                 <div id="tp-scanner-viewport" class="absolute inset-0 flex items-center justify-center h-full w-full [&>canvas]:hidden [&_video]:w-full [&_video]:max-w-[640px] [&_video]:h-full [&_video]:object-cover opacity-90 mix-blend-multiply dark:mix-blend-normal"></div>
                 
                 <!-- Optical Crosshairs overlay (Rectangular for Barcode) -->
-                <div class="absolute z-10 flex h-36 w-[85%] max-w-[22rem] items-center justify-center rounded-[1rem] border-2 border-emerald-400/30 shadow-[inset_0_0_40px_rgba(16,185,129,0.15)] sm:h-40">
-                  <div class="absolute -left-1 -top-1 h-8 w-8 rounded-tl-[1rem] border-l-4 border-t-4 border-emerald-500"></div>
-                  <div class="absolute -right-1 -top-1 h-8 w-8 rounded-tr-[1rem] border-r-4 border-t-4 border-emerald-500"></div>
-                  <div class="absolute -bottom-1 -left-1 h-8 w-8 rounded-bl-[1rem] border-b-4 border-l-4 border-emerald-500"></div>
-                  <div class="absolute -bottom-1 -right-1 h-8 w-8 rounded-br-[1rem] border-b-4 border-r-4 border-emerald-500"></div>
+                <div class="absolute z-10 flex h-36 w-[85%] max-w-88 items-center justify-center rounded-2xl border-2 border-emerald-400/30 shadow-[inset_0_0_40px_rgba(16,185,129,0.15)] sm:h-40">
+                  <div class="absolute -left-1 -top-1 h-8 w-8 rounded-tl-2xl border-l-4 border-t-4 border-emerald-500"></div>
+                  <div class="absolute -right-1 -top-1 h-8 w-8 rounded-tr-2xl border-r-4 border-t-4 border-emerald-500"></div>
+                  <div class="absolute -bottom-1 -left-1 h-8 w-8 rounded-bl-2xl border-b-4 border-l-4 border-emerald-500"></div>
+                  <div class="absolute -bottom-1 -right-1 h-8 w-8 rounded-br-2xl border-b-4 border-r-4 border-emerald-500"></div>
                   
                   <!-- Scanning Line (Uses animate-scan-line to move up/down) -->
                   <div class="absolute left-0 w-full h-[3px] bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-scan-line"></div>
@@ -478,7 +478,7 @@
 
   <!-- Delete Confirmation Modal -->
   <div id="tp-delete-product-modal" tabindex="-1" aria-hidden="true"
-    class="fixed left-0 right-0 top-0 z-[100] hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
+    class="fixed left-0 right-0 top-0 z-100 hidden h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-y-auto overflow-x-hidden md:inset-0">
     <div class="relative max-h-full w-full max-w-md p-4">
       <div class="relative rounded-3xl bg-secondary shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
         <div class="p-6 text-center">
