@@ -1,6 +1,6 @@
 {
   "name": "tindapamilya",
-  "version": "0.5.57",
+  "version": "0.5.58",
   "description": "",
   "type": "module",
   "scripts": {
@@ -19,6 +19,7 @@
     "vite": "^6.2.0"
   },
   "dependencies": {
+    "@ericblade/quagga2": "^1.12.1",
     "@supabase/supabase-js": "^2.49.1",
     "flowbite": "^4.0.1",
     "postgres": "^3.4.9",
