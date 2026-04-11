@@ -2,7 +2,10 @@ import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import { loginWithPostgres } from "./server/auth.server.js";
 import { cpSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { resolve, join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 function readJsonBody(req: any): Promise<any> {
   return new Promise((resolve) => {
@@ -17,6 +20,8 @@ function readJsonBody(req: any): Promise<any> {
         resolve({});
       }
     });
+    // Handle error to prevent hanging
+    req.on("error", () => resolve({}));
   });
 }
 
@@ -25,31 +30,39 @@ function apiPlugin() {
     name: "api-plugin",
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
-        if (!req.url.startsWith("/api/")) return next();
+        if (!req.url || !req.url.startsWith("/api/")) return next();
 
-        // 1. Resolve API file path (e.g., /api/auth/login -> ./api/auth/login.js)
-        const urlPath = req.url.split("?")[0];
-        const filePath = resolve(__dirname, "." + urlPath + ".js");
+        const urlPath = req.url.split("?")[0].replace(/\/+$/, ""); // Remove trailing slash
+        
+        // Resolve API file path (e.g., /api/auth/login -> ./api/auth/login.js)
+        const filePath = join(__dirname, urlPath + ".js");
 
         if (!existsSync(filePath)) {
+          console.warn(`[API] 404 - File not found: ${filePath} (URL: ${req.url})`);
           // Fallback to auth server if it's missing but expected
           if (urlPath === "/api/auth/login") {
-            const { email = "", password = "" } = await readJsonBody(req);
-            const result = await loginWithPostgres(email, password);
-            res.statusCode = result.success ? 200 : 401;
-            res.setHeader("Content-Type", "application/json");
-            res.end(JSON.stringify(result));
-            return;
+            try {
+              const { email = "", password = "" } = await readJsonBody(req);
+              const result = await loginWithPostgres(email, password);
+              res.statusCode = result.success ? 200 : 401;
+              res.setHeader("Content-Type", "application/json");
+              res.end(JSON.stringify(result));
+              return;
+            } catch (err) {
+              console.error("[API] Login fallback error:", err);
+            }
           }
           return next();
         }
 
         try {
-          // 2. Load the API handler dynamically using Vite's SSR loader (enables HMR & Node support)
           const module = await server.ssrLoadModule(filePath);
           const handler = module.default;
 
-          // 3. Shim Vercel-style response methods so the scripts work locally
+          if (!handler) {
+             throw new Error(`The API module at ${relativePath} does not export a default function.`);
+          }
+
           res.status = (code: number) => {
             res.statusCode = code;
             return res;
@@ -59,18 +72,19 @@ function apiPlugin() {
             res.end(JSON.stringify(data));
           };
 
-          // 4. Populate req.body for POST/PUT requests
           if (["POST", "PUT", "PATCH"].includes(req.method)) {
-            req.body = await readJsonBody(req);
+            // Only read body if not already present
+            if (!req.body) req.body = await readJsonBody(req);
           }
 
-          // 5. Execute the handler
           await handler(req, res);
         } catch (err: any) {
-          console.error(`API Error (${urlPath}):`, err);
-          res.statusCode = 500;
-          res.setHeader("Content-Type", "application/json");
-          res.end(JSON.stringify({ success: false, error: err.message }));
+          console.error(`[API] Error (${urlPath}):`, err);
+          if (!res.writableEnded) {
+            res.statusCode = 500;
+            res.setHeader("Content-Type", "application/json");
+            res.end(JSON.stringify({ success: false, error: err.message || "Internal Server Error" }));
+          }
         }
       });
     },
@@ -91,6 +105,11 @@ function copyPagesComponentsPlugin() {
 
 export default defineConfig({
   plugins: [tailwindcss(), apiPlugin(), copyPagesComponentsPlugin()],
+  server: {
+    // Increase stability for local SSR loads
+    hmr: { overlay: true },
+    cors: true
+  },
   build: {
     rollupOptions: {
       input: {

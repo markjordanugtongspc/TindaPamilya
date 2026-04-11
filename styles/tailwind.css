@@ -217,8 +217,9 @@
   }
 
   .tp-nav-link-mobile.is-active-nav::before {
-    transform: scaleX(1);
+    transform: scaleX(0.75);
     opacity: 1;
+    border-radius: 9999px;
   }
 
   .tp-nav-link-mobile.is-active-nav {

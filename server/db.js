@@ -12,7 +12,7 @@ if (!connectionString) {
 
 const sql = postgres(connectionString, {
   ssl: "require",
-  max: 1,
+  max: 10,
   connect_timeout: 20,
   // Required for Supabase transaction pooler (port 6543)
   prepare: false,

@@ -3,7 +3,7 @@ import { renderProductCard } from "./products.js";
 import { GLOBAL_PRODUCTS } from "./products.js";
 import { Datepicker } from "flowbite-datepicker";
 import { showSuccessToast } from "./modals.js";
-import { updateGlobalDrawerState } from "./drawer.js";
+import { updateGlobalDrawerState, applyRightDrawerDesktopLayout } from "./drawer.js";
 
 const backdropClasses = "bg-black/45 fixed inset-0 z-[45] backdrop-blur-[1px] dark:bg-black/60";
 
@@ -41,7 +41,7 @@ class ProductManager {
     this.bottomDrawerInstance = new Drawer(this.drawerBottom, { ...drawerOpts, placement: "bottom" }, { id: "tp-add-product-drawer-bottom", override: true });
 
     this.mq = window.matchMedia("(min-width: 1024px)");
-    this.applyRightDrawerLayout();
+    applyRightDrawerDesktopLayout(this.drawerRight);
 
     this.addBtn.addEventListener("click", () => this.openDrawer());
 
@@ -289,24 +289,7 @@ class ProductManager {
     });
   }
 
-  applyRightDrawerLayout() {
-    const apply = () => {
-      if (window.matchMedia("(min-width: 1024px)").matches) {
-        const nav = document.querySelector("nav.fixed.top-0.z-50");
-        const topPx = nav ? Math.round(nav.getBoundingClientRect().height) : 76;
-        this.drawerRight.style.top = `${topPx}px`;
-        this.drawerRight.style.height = `calc(100vh - ${topPx}px)`;
-        this.drawerRight.style.maxHeight = `calc(100vh - ${topPx}px)`;
-      } else {
-        this.drawerRight.style.removeProperty("top");
-        this.drawerRight.style.removeProperty("height");
-        this.drawerRight.style.removeProperty("max-height");
-      }
-    };
-    window.addEventListener("resize", apply);
-    apply();
-    window.requestAnimationFrame(() => apply());
-  }
+
 
   initCategoryOptions(mount) {
      const mainFilter = document.getElementById("products-category");

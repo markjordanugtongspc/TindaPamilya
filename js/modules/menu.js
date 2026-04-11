@@ -1,7 +1,9 @@
 import * as auth from "./auth.js";
 import { initMenuNavigations } from "./navigations.js";
-import { initMenuKpiAnimations, toggleKpiSkeleton } from "./animations.js";
-import { formatPeso, renderProductCard } from "./products.js";
+import { initMenuKpiAnimations, toggleKpiSkeleton as kpiSkeleton } from "./animations.js";
+import { formatPeso, renderProductCard, GLOBAL_PRODUCTS } from "./products.js";
+import { initDrawers } from "./drawer.js";
+import { productCartManager } from "./add-to-cart.js";
 
 function initStoreClock() {
   const clockEl = document.getElementById("tp-pos-clock");
@@ -10,11 +12,16 @@ function initStoreClock() {
 
   const tick = () => {
     const now = new Date();
-    clockEl.textContent = now.toLocaleTimeString("en-PH", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const hhmm = `${String(hours).padStart(2, "0")}:${minutes}`;
+
+    clockEl.innerHTML = `${hhmm}<span id="tp-pos-seconds" class="text-sm font-medium text-red-500/60">${seconds}s</span> <span class="text-xs uppercase ml-0.5 font-bold opacity-70">${ampm}</span>`;
+
     dateEl.textContent = now.toLocaleDateString("en-PH", {
       weekday: "short",
       month: "short",
@@ -82,6 +89,56 @@ function initMobileKpiCarousel() {
   render();
 }
 
+function initProductCarouselLogic() {
+  const root = document.getElementById("tp-menu-product-sales-carousel");
+  if (!root) return;
+  const track = root.querySelector("[data-product-carousel-track]");
+  const dotsContainer = root.querySelector("#tp-product-carousel-dots");
+  const prev = root.querySelector("[data-product-carousel-prev]");
+  const next = root.querySelector("[data-product-carousel-next]");
+  if (!track || !dotsContainer) return;
+
+  const slides = Array.from(track.children);
+  if (slides.length <= 1) {
+    if (prev) prev.style.display = "none";
+    if (next) next.style.display = "none";
+    dotsContainer.innerHTML = "";
+    return;
+  }
+
+  dotsContainer.innerHTML = slides.map((_, i) => `
+    <button type="button" data-product-slide-to="${i}" class="h-2 w-2 cursor-pointer rounded-full ${i === 0 ? "bg-primary" : "bg-text/20"}" aria-label="Go to slide ${i+1}"></button>
+  `).join("");
+
+  const dots = Array.from(dotsContainer.querySelectorAll("[data-product-slide-to]"));
+  let index = 0;
+
+  const render = () => {
+    track.style.transform = `translateX(-${index * 100}%)`;
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("bg-primary", i === index);
+      dot.classList.toggle("bg-text/20", i !== index);
+    });
+  };
+
+  prev?.addEventListener("click", () => {
+    index = index <= 0 ? slides.length - 1 : index - 1;
+    render();
+  });
+
+  next?.addEventListener("click", () => {
+    index = index >= slides.length - 1 ? 0 : index + 1;
+    render();
+  });
+
+  dots.forEach((dot, i) => {
+    dot.addEventListener("click", () => {
+      index = i;
+      render();
+    });
+  });
+}
+
 function initNotificationState() {
   const raw = localStorage.getItem("tp_unread_notifications");
   const unread = Number.parseInt(raw || "0", 10);
@@ -101,6 +158,7 @@ function initNotificationState() {
 
 async function initMenuProducts() {
   const grid = document.getElementById("tp-menu-latest-products-grid");
+  const mobileTrack = document.querySelector("[data-product-carousel-track]");
   const viewAllBtn = document.getElementById("tp-menu-view-all-products");
 
   if (viewAllBtn) {
@@ -114,7 +172,7 @@ async function initMenuProducts() {
   
   // Show skeletons for all KPI cards
   const kpiCards = document.querySelectorAll("[data-kpi-card]");
-  kpiCards.forEach(card => toggleKpiSkeleton(card, true));
+  kpiCards.forEach(card => kpiSkeleton(card, true));
 
   try {
     // Fetch products for latest products grid and capital/low-stock calc
@@ -124,20 +182,76 @@ async function initMenuProducts() {
     let lowStockCount = 0;
     
     if (prodJson.success && prodJson.data) {
-      prodJson.data.forEach(p => {
+      const data = prodJson.data;
+      
+      // Update the imported GLOBAL_PRODUCTS array
+      GLOBAL_PRODUCTS.length = 0;
+      GLOBAL_PRODUCTS.push(...data);
+
+      data.forEach(p => {
         const qty = p.quantity || 0;
         const cost = p.purchasePrice || p.salePrice || 0;
         capital += (qty * cost);
         if (qty <= 5) lowStockCount += 1;
       });
       
-      // Update Grid (after skeletons hidden)
+      const latest = data.slice(0, 4); // Limit to 4 for desktop grid row symmetry
+
+      // Update Desktop Grid
       if (grid) {
         grid.innerHTML = "";
-        prodJson.data.slice(0, 5).forEach((product) => {
+        latest.forEach((product) => {
           const card = renderProductCard(product);
-          if (card) grid.appendChild(card);
+          if (card) {
+             // Redirect to Products page with barcode param to trigger drawer there
+             card.addEventListener("click", (e) => {
+                const deleteBtn = e.target.closest("[data-product-delete]");
+                if (deleteBtn) return; // Allow delete button to function normally
+                
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = `/pages/products/index.html?barcode=${product.barcode}`;
+             });
+             grid.appendChild(card);
+          }
         });
+      }
+
+      // Update Mobile Carousel (2 products per slide)
+      if (mobileTrack) {
+        mobileTrack.innerHTML = "";
+        for (let i = 0; i < latest.length; i += 2) {
+          const slide = document.createElement("div");
+          slide.className = "flex min-w-full gap-3 px-1";
+          
+          const productsInSlide = [latest[i], latest[i + 1]];
+
+          productsInSlide.forEach(p => {
+            if (p) {
+               const card = renderProductCard(p);
+               if (card) {
+                  card.classList.add("flex-1");
+                  card.addEventListener("click", (e) => {
+                     const deleteBtn = e.target.closest("[data-product-delete]");
+                     if (deleteBtn) return;
+                     
+                     e.preventDefault();
+                     e.stopPropagation();
+                     window.location.href = `/pages/products/index.html?barcode=${p.barcode}`;
+                  });
+                  slide.appendChild(card);
+               }
+            } else {
+               // Placeholder for empty slots to maintain layout
+               const spacer = document.createElement("div");
+               spacer.className = "flex-1";
+               slide.appendChild(spacer);
+            }
+          });
+
+          mobileTrack.appendChild(slide);
+        }
+        initProductCarouselLogic();
       }
     }
 
@@ -146,7 +260,7 @@ async function initMenuProducts() {
     const salesJson = await salesRes.json();
     
     // Hide skeletons after data is ready
-    kpiCards.forEach(card => toggleKpiSkeleton(card, false));
+    kpiCards.forEach(card => kpiSkeleton(card, false));
 
     // Update Capital & Low Stock
     document.querySelectorAll('[data-kpi-capital]').forEach(el => el.textContent = formatPeso(capital));
@@ -170,7 +284,7 @@ async function initMenuProducts() {
     }
 
   } catch(err) {
-    kpiCards.forEach(card => toggleKpiSkeleton(card, false));
+    kpiCards.forEach(card => kpiSkeleton(card, false));
     console.error("Failed to fetch menu data", err);
   }
 }

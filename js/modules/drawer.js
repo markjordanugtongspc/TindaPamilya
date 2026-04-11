@@ -69,7 +69,7 @@ function measureTopBarHeightPx() {
  * Pins the right drawer flush under the measured top nav (no extra gap), full remaining height.
  * Cleared on &lt; lg where the bottom sheet is used instead.
  */
-function applyRightDrawerDesktopLayout(rightEl) {
+export function applyRightDrawerDesktopLayout(rightEl) {
   const mq = window.matchMedia(`(min-width: ${DESKTOP_MIN_WIDTH}px)`);
   const apply = () => {
     if (mq.matches) {
@@ -420,10 +420,10 @@ export function initReceiptDrawers() {
   // Global listener to trigger receipt display
   window.addEventListener("tp:receipt-show", () => {
     if (mq.matches) {
-      drawerBottom.hide();
+      if (typeof drawerBottom?.isVisible === 'function' && drawerBottom.isVisible()) drawerBottom.hide();
       drawerRight.show();
     } else {
-      drawerRight.hide();
+      if (typeof drawerRight?.isVisible === 'function' && drawerRight.isVisible()) drawerRight.hide();
       drawerBottom.show();
     }
   });

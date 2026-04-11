@@ -3,11 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TindaPamilya — Register</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>Menu - TindaPamilya POS</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <script type="module" src="/js/main.js"></script>
@@ -16,41 +14,7 @@
     <div id="menu-sidebar-root"></div>
 
     <!-- Standard Product Templates for Renderers -->
-    <template id="tp-product-card-template">
-      <article
-        class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10"
-        role="listitem" data-product-card>
-        <div
-          class="flex h-36 w-full items-center justify-center overflow-hidden bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
-          <img data-product-image src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
-        </div>
-        <div class="p-4">
-          <div class="flex items-start justify-between gap-3">
-            <div class="min-w-0 flex-1">
-              <div class="flex items-start justify-between gap-2">
-                <p class="min-w-0 flex-1 whitespace-normal wrap-break-word text-sm font-semibold leading-snug text-text"
-                  data-product-name>
-                  Product name
-                </p>
-                <p class="shrink-0 text-xs font-semibold text-text/55" data-product-sku>SKU-TP-0000</p>
-              </div>
-              <p class="mt-1 text-xs font-medium text-text/55">
-                In stock
-                <span
-                  class="ml-2 inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[0.7rem] font-bold tabular-nums text-emerald-700 ring-1 ring-emerald-300/50 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-400/20">
-                  <span class="ml-0.5 font-bold text-red-400 dark:text-red-300">x</span>
-                  <span data-product-stock-count>0</span>
-                </span>
-              </p>
-            </div>
-          </div>
 
-          <div class="mt-4 flex items-center justify-between gap-3 text-lg font-bold text-primary" data-product-price>
-             ₱ 0.00
-          </div>
-        </div>
-      </article>
-    </template>
 
     <template id="tp-product-skeleton-template">
       <article
@@ -137,7 +101,9 @@
               <div class="flex items-center justify-between gap-3 border-t border-text/10 pt-3 dark:border-white/10">
                 <div>
                   <p class="text-[0.65rem] font-semibold uppercase tracking-wider text-text/55">Store time</p>
-                  <p id="tp-pos-clock" class="font-mono text-xl font-bold tabular-nums text-primary">--:--</p>
+                  <p id="tp-pos-clock" class="flex items-baseline gap-1 font-mono text-xl font-bold tabular-nums text-primary">
+                    --:--<span id="tp-pos-seconds" class="text-sm font-medium text-text/40">--</span>
+                  </p>
                   <p id="tp-pos-date" class="text-xs text-text/60">…</p>
                 </div>
                 <span class="rounded-full bg-primary/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-primary ring-1 ring-primary/25">Open</span>
@@ -152,54 +118,54 @@
             <div class="relative overflow-hidden rounded-2xl">
               <div data-kpi-carousel-track class="flex transition-transform duration-700 ease-in-out">
                 <div class="min-w-full">
-                  <article class="rounded-r-2xl rounded-l-none border border-emerald-300/45 border-l-4 border-l-emerald-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
+                  <article data-kpi-card class="rounded-r-2xl rounded-l-none border border-emerald-300/45 border-l-4 border-l-emerald-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
                     <div class="flex items-start justify-between gap-3">
                       <p class="text-xs font-semibold uppercase tracking-wider text-text/55">Today Sales</p>
                       <svg data-kpi-trend-icon="up" class="h-4 w-4 text-emerald-500" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m5 14 5-5 4 4 5-5M17 8h2v2"/></svg>
                     </div>
-                    <p class="mt-3 text-3xl font-bold tabular-nums text-text">₱ 2,365</p>
-                    <p data-kpi-trend-label="up" class="mt-1 text-xs font-semibold text-emerald-500">+12.5% from last yesterday</p>
+                    <p data-kpi-daily class="mt-3 text-3xl font-bold tabular-nums text-text">₱ 0</p>
+                    <p data-kpi-trend-label="up" class="mt-1 text-xs font-semibold text-emerald-500">+0.0% from yesterday</p>
                   </article>
                 </div>
                 <div class="min-w-full">
-                  <article class="rounded-r-2xl rounded-l-none border border-emerald-300/45 border-l-4 border-l-emerald-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
+                  <article data-kpi-card class="rounded-r-2xl rounded-l-none border border-emerald-300/45 border-l-4 border-l-emerald-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
                     <div class="flex items-start justify-between gap-3">
                       <p class="text-xs font-semibold uppercase tracking-wider text-text/55">Weekly Sales</p>
                       <svg data-kpi-trend-icon="up" class="h-4 w-4 text-emerald-500" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m5 14 5-5 4 4 5-5M17 8h2v2"/></svg>
                     </div>
-                    <p class="mt-3 text-3xl font-bold tabular-nums text-text">₱ 8,975</p>
-                    <p data-kpi-trend-label="up" class="mt-1 text-xs font-semibold text-emerald-500">+12.5% from last Week</p>
+                    <p data-kpi-weekly class="mt-3 text-3xl font-bold tabular-nums text-text">₱ 0</p>
+                    <p data-kpi-trend-label="up" class="mt-1 text-xs font-semibold text-emerald-500">+0.0% from last Week</p>
                   </article>
                 </div>
                 <div class="min-w-full">
-                  <article class="rounded-r-2xl rounded-l-none border border-red-300/45 border-l-4 border-l-red-400 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
+                  <article data-kpi-card class="rounded-r-2xl rounded-l-none border border-red-300/45 border-l-4 border-l-red-400 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
                     <div class="flex items-start justify-between gap-3">
                       <p class="text-xs font-semibold uppercase tracking-wider text-text/55">Monthly Sales</p>
                       <svg data-kpi-trend-icon="down" class="h-4 w-4 text-red-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m5 10 5 5 4-4 5 5M17 16h2v-2"/></svg>
                     </div>
-                    <p class="mt-3 text-3xl font-bold tabular-nums text-text">₱ 30,789</p>
-                    <p data-kpi-trend-label="down" class="mt-1 text-xs font-semibold text-red-400">+12.5% from last Month</p>
+                    <p data-kpi-monthly class="mt-3 text-3xl font-bold tabular-nums text-text">₱ 0</p>
+                    <p data-kpi-trend-label="down" class="mt-1 text-xs font-semibold text-red-400">+0.0% from last Month</p>
                   </article>
                 </div>
                 <div class="min-w-full">
-                  <article class="rounded-r-2xl rounded-l-none border border-red-300/45 border-l-4 border-l-red-400 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
+                  <article data-kpi-card class="rounded-r-2xl rounded-l-none border border-red-300/45 border-l-4 border-l-red-400 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
                     <div class="flex items-start justify-between gap-3">
                       <p class="text-xs font-semibold uppercase tracking-wider text-text/55">Low Stock Items</p>
                       <svg data-kpi-trend-icon="down" class="h-4 w-4 text-red-400" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m5 10 5 5 4-4 5 5M17 16h2v-2"/></svg>
                     </div>
-                    <p class="mt-3 text-3xl font-bold tabular-nums text-red-400">7</p>
+                    <p data-kpi-low-stock class="mt-3 text-3xl font-bold tabular-nums text-red-400">0</p>
                     <p data-kpi-trend-label="down" class="mt-1 text-xs font-semibold text-red-400">Needs restock today</p>
                   </article>
                 </div>
                 <div class="min-w-full">
-                  <article class="rounded-r-2xl rounded-l-none border border-text/10 border-l-4 border-l-primary/65 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
+                  <article data-kpi-card class="rounded-r-2xl rounded-l-none border border-text/10 border-l-4 border-l-primary/65 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
                     <p class="text-xs font-semibold uppercase tracking-wider text-text/55">Today Total Orders</p>
-                    <p class="mt-3 text-3xl font-bold tabular-nums text-text">76</p>
-                    <p class="mt-1 text-xs text-text/55">+18 from yesterday</p>
+                    <p data-kpi-orders class="mt-3 text-3xl font-bold tabular-nums text-text">0</p>
+                    <p class="mt-1 text-xs text-text/55">+0 from yesterday</p>
                   </article>
                 </div>
                 <div class="min-w-full">
-                  <article class="rounded-r-2xl rounded-l-none border border-text/10 border-l-4 border-l-emerald-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10 transition-transform hover:scale-105 duration-300">
+                  <article data-kpi-card class="rounded-r-2xl rounded-l-none border border-text/10 border-l-4 border-l-emerald-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10 transition-transform hover:scale-105 duration-300">
                     <div class="flex items-start justify-between gap-3">
                       <p class="text-xs font-semibold uppercase tracking-wider text-text/55">Capital</p>
                       <svg class="h-4 w-4 text-emerald-500" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -209,7 +175,7 @@
                   </article>
                 </div>
                 <div class="min-w-full">
-                  <article class="rounded-r-2xl rounded-l-none border border-text/10 border-l-4 border-l-blue-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10 transition-transform hover:scale-105 duration-300">
+                  <article data-kpi-card class="rounded-r-2xl rounded-l-none border border-text/10 border-l-4 border-l-blue-500 bg-secondary/90 p-5 shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10 transition-transform hover:scale-105 duration-300">
                     <div class="flex items-start justify-between gap-3">
                       <p class="text-xs font-semibold uppercase tracking-wider text-text/55">Sales vs Budget</p>
                       <svg class="h-4 w-4 text-blue-500" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 4 4 6-6"/></svg>
@@ -314,7 +280,7 @@
               <span><span class="block text-sm font-bold text-sky-900 dark:text-sky-100">Scan item</span><span class="mt-0.5 block text-xs text-sky-900/70 dark:text-sky-100/75">Barcode lookup</span></span>
             </button>
             <a href="mailto:support@tindapamilya.com" class="group flex cursor-pointer flex-col items-start gap-3 rounded-tl-none rounded-2xl border border-violet-300/35 bg-violet-100/75 p-4 text-left shadow-sm ring-1 ring-violet-400/20 transition hover:-translate-y-0.5 hover:bg-violet-100 dark:bg-violet-300/20 dark:hover:bg-violet-300/30">
-              <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500 text-white shadow-sm"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m8 10 3 3 7-7M8 14v5m-4 0h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z" /></svg></span>
+              <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500 text-white shadow-sm"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="l8 10 3 3 7-7M8 14v5m-4 0h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z" /></svg></span>
               <span><span class="block text-sm font-bold text-violet-900 dark:text-violet-100">Contact Support</span><span class="mt-0.5 block text-xs text-violet-900/70 dark:text-violet-100/75">Open a ticket</span></span>
             </a>
             <button type="button" class="group flex cursor-pointer flex-col items-start gap-3 rounded-tl-none rounded-2xl border border-rose-300/35 bg-rose-100/75 p-4 text-left shadow-sm ring-1 ring-rose-400/20 transition hover:-translate-y-0.5 hover:bg-rose-100 dark:bg-rose-300/20 dark:hover:bg-rose-300/30">
@@ -338,7 +304,29 @@
             </button>
           </div>
 
-          <div id="tp-menu-latest-products-grid" class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
+          <!-- Mobile Carousel for Product Sales (Flowbite) -->
+          <div id="tp-menu-product-sales-carousel" class="relative block md:hidden" data-carousel="static">
+            <div class="relative overflow-hidden rounded-2xl">
+              <div data-product-carousel-track class="flex transition-transform duration-700 ease-in-out">
+                <!-- Slides containing 2 products each will be inserted here -->
+              </div>
+            </div>
+            
+            <div class="mt-4 flex items-center justify-center gap-3">
+              <button type="button" data-product-carousel-prev class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-secondary/90 text-text shadow-sm ring-1 ring-black/10 transition hover:bg-secondary">
+                <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/></svg>
+              </button>
+              <div id="tp-product-carousel-dots" class="flex gap-2">
+                <!-- Dots will be inserted here -->
+              </div>
+              <button type="button" data-product-carousel-next class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-secondary/90 text-text shadow-sm ring-1 ring-black/10 transition hover:bg-secondary">
+                <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Desktop Grid -->
+          <div id="tp-menu-latest-products-grid" class="hidden grid-cols-2 gap-3 md:grid md:grid-cols-3 xl:grid-cols-4">
             <!-- Dynamic sales products will be inserted here -->
           </div>
         </section>
@@ -410,57 +398,69 @@
             </div>
           </div>
         </div>
+      </main>
+    </div>
 
-        <template id="tp-menu-product-template">
-          <article
-            class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10"
-            role="listitem" data-product-card>
-            <div
-              class="flex h-36 w-full items-center justify-center overflow-hidden bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40">
-              <img data-product-image src="/assets/svg/logo-store-dark.svg" alt="" class="h-12 w-12 opacity-90 dark:brightness-0 dark:invert" />
+    <template id="tp-product-card-template">
+      <article
+        class="cursor-pointer overflow-hidden rounded-2xl border border-text/10 bg-secondary/90 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md hover:ring-primary/40 active:translate-y-0 dark:border-white/10 dark:ring-white/10"
+        role="listitem" data-product-card>
+        <div
+          class="flex h-28 w-full items-center justify-center overflow-hidden bg-linear-to-br from-primary/15 to-background dark:from-primary/20 dark:to-background/40 md:h-36">
+          <img data-product-image src="/assets/svg/logo-store-dark.svg" alt="" class="h-20 w-20 object-contain opacity-90 dark:brightness-0 dark:invert md:h-28 md:w-28 transition-transform duration-500 group-hover:scale-110" />
+        </div>
+        <div class="p-3 md:p-4">
+          <!-- Top Row -->
+          <div class="flex items-baseline justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-base font-bold text-text" data-product-name>Product name</p>
             </div>
-            <div class="p-4">
-              <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0 flex-1">
-                  <div class="flex items-start justify-between gap-2">
-                    <p class="min-w-0 flex-1 whitespace-normal wrap-break-word text-sm font-semibold leading-snug text-text"
-                      data-product-name>
-                      Product name
-                    </p>
-                    <p class="shrink-0 text-xs font-semibold text-text/55" data-product-sku>SKU-TP-000</p>
-                  </div>
-                  <p class="mt-1 text-xs font-medium text-text/55">
-                    In stock
-                    <span
-                      class="ml-2 inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[0.7rem] font-bold tabular-nums text-emerald-700 ring-1 ring-emerald-300/50 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-400/20">
-                      <span class="ml-0.5 font-bold text-red-400 dark:text-red-300">x</span>
-                      <span data-product-stock-count>0</span>
-                    </span>
-                  </p>
-                </div>
-              </div>
-      
-              <div class="mt-4 flex items-center justify-between gap-3">
-                <button type="button" data-product-delete aria-label="Delete product"
-                  class="group inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-red-500 transition hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40 dark:text-red-400 dark:hover:text-red-500">
-                  <svg class="hidden h-6 w-6 lg:block group-hover:hidden" aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
-                  </svg>
-                  <svg class="h-6 w-6 lg:hidden lg:group-hover:block" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                    width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                    <path fill-rule="evenodd"
-                      d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
-                      clip-rule="evenodd" />
-                  </svg>
-                </button>
-      
-                <p class="text-lg font-bold text-primary" data-product-price>₱ 0.00</p>
-              </div>
+            <div class="text-right">
+              <!-- Mobile: "In stock" text -->
+              <span class="text-[0.65rem] font-bold uppercase tracking-wider text-text/45 md:hidden">In stock</span>
+              <!-- Desktop: SKU -->
+              <p class="hidden text-[0.65rem] font-bold uppercase tracking-widest text-text/40 md:block" data-product-sku>SKU-TP-000</p>
             </div>
-          </article>
-        </template>
+          </div>
+
+          <!-- Middle Row (Desktop Only): Stock info together -->
+          <div class="mt-2 hidden md:block">
+            <p class="text-xs font-medium text-text/55">
+              In stock
+              <span
+                class="ml-2 inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[0.7rem] font-bold tabular-nums text-emerald-700 ring-1 ring-emerald-300/50 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-400/20">
+                <span class="ml-0.5 font-bold text-red-400 dark:text-red-300">x</span>
+                <span data-product-stock-count>0</span>
+              </span>
+            </p>
+          </div>
+
+          <!-- Bottom Row -->
+          <div class="mt-4 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+               <!-- Mobile: Quantity Badge alone on bottom-left -->
+               <span
+                 class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-[0.7rem] font-bold tabular-nums text-emerald-700 ring-1 ring-emerald-300/50 dark:bg-emerald-500/15 dark:text-emerald-300 dark:ring-emerald-400/20 md:hidden">
+                 <span class="ml-0.5 font-bold text-red-400 dark:text-red-300">x</span>
+                 <span data-product-stock-count>0</span>
+               </span>
+
+               <!-- Desktop: Delete Button on bottom-left -->
+               <button type="button" data-product-delete aria-label="Delete product"
+                 class="group hidden h-9 w-9 cursor-pointer items-center justify-center rounded-xl text-red-500 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40 dark:text-red-400 dark:hover:bg-red-500/20 md:flex">
+                 <svg class="h-5.5 w-5.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                     d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1-1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                 </svg>
+               </button>
+            </div>
+            
+            <!-- Price on bottom-right (Mobile & Desktop) -->
+            <p class="shrink-0 text-base font-bold text-primary sm:text-lg lg:text-xl" data-product-price>₱ 0.00</p>
+          </div>
+        </div>
+      </article>
+    </template>
 
   <!-- Delete Confirmation Modal -->
   <div id="tp-delete-product-modal" tabindex="-1" aria-hidden="true"

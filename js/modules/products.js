@@ -107,18 +107,28 @@ export function renderProductCard(product, customCardTemplate = null) {
   node.dataset.productDescription = product.description || "";
   node.dataset.productCategory = product.category || "";
   node.dataset.productImage = product.image || "";
-  node.querySelector("[data-product-name]")?.replaceChildren(document.createTextNode(product.name || "Product"));
-  node.querySelector("[data-product-sku]")?.replaceChildren(document.createTextNode(product.sku || "SKU-"));
+  
+  // Display name optimization: prioritize actual name, hide automatic barcode-based names (TP-NEW-)
+  const displayName = product.name && !product.name.startsWith("TP-NEW-") 
+    ? product.name 
+    : (product.category && product.category !== "N/A" ? product.category : "Unnamed Item");
+    
+  node.querySelector("[data-product-name]")?.replaceChildren(document.createTextNode(displayName));
+  node.querySelector("[data-product-sku]")?.replaceChildren(document.createTextNode(product.sku || "—"));
   node.querySelector("[data-product-price]")?.replaceChildren(document.createTextNode(formatPeso(product.salePrice)));
-  node
-    .querySelector("[data-product-stock-count]")
-    ?.replaceChildren(document.createTextNode(String(product.quantity ?? 0)));
+  
+  // Update all instances of stock count (useful for responsive layouts with duplicated elements)
+  node.querySelectorAll("[data-product-stock-count]").forEach(el => {
+    el.replaceChildren(document.createTextNode(String(product.quantity ?? 0)));
+  });
 
   const productImg = node.querySelector("[data-product-image]");
   if (productImg && product.image) {
     productImg.src = product.image;
     if (!product.image.includes("logo-store-dark.svg")) {
-      productImg.classList.remove("h-12", "w-12", "opacity-90", "dark:brightness-0", "dark:invert");
+      // Remove all typical placeholder classes
+      productImg.classList.remove("h-10", "w-10", "h-12", "w-12", "h-20", "w-20", "md:h-12", "md:w-12", "md:h-28", "md:w-28", "opacity-90", "dark:brightness-0", "dark:invert");
+      // Scale to cover the container
       productImg.classList.add("h-full", "w-full", "object-cover");
     }
   }
