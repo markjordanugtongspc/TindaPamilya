@@ -47,6 +47,29 @@ export function initBarcodeScanner() {
     statusDisplay.classList.add('text-emerald-400');
   }
 
+  function playScanBeep() {
+    try {
+      const audio = new Audio('/assets/mp3/beep-scan.mp3');
+      audio.volume = 0.5;
+      audio.play().catch(e => {
+        // Fallback to oscillator if audio file fails
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+      });
+    } catch (err) {
+      console.warn("Beep failed", err);
+    }
+  }
+
   function startScanner() {
     setStatus("Requesting camera...");
     
@@ -63,10 +86,10 @@ export function initBarcodeScanner() {
         type: "LiveStream",
         target: viewport,
         constraints: {
-          width: { min: 640 },
-          height: { min: 480 },
+          width: { ideal: 1280 }, // HD Upgrade
+          height: { ideal: 720 }, // HD Upgrade
           facingMode: "environment",
-          aspectRatio: { min: 1, max: 2 }
+          aspectRatio: { ideal: 1.7777777778 } // 16:9 HD
         }
       },
       decoder: {
@@ -124,13 +147,15 @@ export function initBarcodeScanner() {
           setTimeout(() => {
             console.log("Scanned Barcode:", code);
             setSuccess("Confirmed: " + code);
+            playScanBeep(); // PLAY BEEP ON SUCCESS
             stopScanner();
             scanCounts = {};
             
             setTimeout(() => {
               isVerifying = false;
               closeScanner();
-              window.dispatchEvent(new CustomEvent('tp-barcode-scanned', { detail: { code } }));
+              // Standardized Event dispatch
+              window.dispatchEvent(new CustomEvent('tp:barcode-scanned', { detail: { barcode: code } }));
             }, 600); // reduced close delay
           }, 350); // reduced verify delay
         }
@@ -175,14 +200,18 @@ export function initBarcodeScanner() {
     if (capabilities.torch) {
       isTorchOn = !isTorchOn;
       try {
-        await track.applyConstraints({
-          advanced: [{ torch: isTorchOn }]
-        });
+        // More robust constraint application for different browsers
+        const constraints = {
+            advanced: [{ torch: isTorchOn }]
+        };
+        
+        await track.applyConstraints(constraints);
+        
         setSuccess(isTorchOn ? "Flashlight: ON" : "Flashlight: OFF");
         setTimeout(() => setStatus("Scanning for barcodes..."), 2000);
       } catch (e) {
         console.error("Torch error:", e);
-        setStatus("Error toggling torch", true);
+        setStatus("Flashlight error", true);
       }
     } else {
       console.warn("Torch not supported on this camera.");
@@ -190,7 +219,6 @@ export function initBarcodeScanner() {
       // Specific check for HTTPS (Secure Context)
       if (!window.isSecureContext) {
         setStatus("HTTPS Required for Flash", true);
-        console.error("Flashlight/Torch requires a secure context (HTTPS).");
       } else {
         setStatus("Flashlight not supported", true);
       }
@@ -261,4 +289,15 @@ export function initBarcodeScanner() {
       closeScanner();
     }
   });
+
+  // Auto-open scanner if navigated with ?scan=true
+  if (window.location.search.includes('scan=true')) {
+    // Small delay to ensure modal and DOM are fully ready
+    setTimeout(() => {
+        openScanner();
+        // Clean up URL without reload to prevent re-opening on manual refresh
+        const newUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({ path: newUrl }, '', newUrl);
+    }, 500);
+  }
 }

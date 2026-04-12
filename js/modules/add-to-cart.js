@@ -2,19 +2,6 @@ import * as auth from "./auth.js";
 import { formatPeso, GLOBAL_PRODUCTS } from "./products.js";
 import { showSuccessToast, showErrorToast } from "./modals.js";
 
-function playBeep() {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(880, ctx.currentTime);
-  gain.gain.setValueAtTime(0.1, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start();
-  osc.stop(ctx.currentTime + 0.1);
-}
 
 export class CartManager {
   constructor() {
@@ -47,7 +34,6 @@ export class CartManager {
       const product = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
       
       if (product) {
-        playBeep();
         showSuccessToast("Found: " + product.name);
         this.addItem({
           barcode: product.barcode,
@@ -55,6 +41,11 @@ export class CartManager {
           price: product.salePrice,
           quantity: 1
         });
+
+        // Automatically open the Orders drawer to show the cart
+        setTimeout(() => {
+           document.getElementById("tp-view-orders-btn")?.click();
+        }, 300);
       } else {
         showErrorToast("Not Found: " + barcode);
       }
