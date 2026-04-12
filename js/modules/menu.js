@@ -163,7 +163,7 @@ async function initMenuProducts() {
 
   if (viewAllBtn) {
     viewAllBtn.addEventListener("click", () => {
-      window.location.href = "/pages/products/index.html";
+      window.location.href = "/pages/products/";
     });
   }
 

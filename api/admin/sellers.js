@@ -27,7 +27,25 @@ export default async function handler(req, res) {
 
       let result;
       if (id) {
-        // UPDATE EXISTING: We only update the profile table
+        // UPDATE EXISTING: Sync both profile table and Supabase Auth
+        // 1. Get the Auth UID first
+        const userRows = await sql`SELECT user_id FROM public.users WHERE id = ${id}`;
+        if (userRows.length === 0) throw new Error("Seller not found");
+        const authUid = userRows[0].user_id;
+
+        if (authUid) {
+          // 2. Update Supabase Auth table (Internal)
+          await sql`
+            UPDATE auth.users
+            SET 
+              email = ${email},
+              raw_user_meta_data = raw_user_meta_data || ${JSON.stringify({ full_name: fullName })},
+              updated_at = NOW()
+            WHERE id = ${authUid}
+          `;
+        }
+
+        // 3. Update public profile table
         result = await sql`
           UPDATE public.users
           SET 

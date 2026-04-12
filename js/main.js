@@ -16,9 +16,10 @@ import {
 } from "./modules/db-manager.js";
 import { initFlowbite } from "flowbite";
 import { initBarcodeScanner } from "./modules/barcode-scanner.js";
+import { initRBAC, isUserSeller } from "./modules/rbac.js";
 
 const DEV_DEBUG = false;
-const APP_VERSION = "0.5.95";
+const APP_VERSION = "0.6.0";
 // Use data-tp-version on <html> — NOT data-app-version — or injectAppVersionLabels would
 // match <html> and setting textContent would wipe the entire document.
 document.documentElement.dataset.tpVersion = APP_VERSION;
@@ -342,7 +343,13 @@ async function handleLoginPage() {
     }
 
     const menuHref = "pages/menu/";
-    void playLoginSuccessOverlayThenNavigate(menuHref);
+    const productsHref = "pages/products/";
+    
+    // Check role for default landing page
+    const seller = await isUserSeller();
+    const targetHref = seller ? productsHref : menuHref;
+    
+    void playLoginSuccessOverlayThenNavigate(targetHref);
   });
 }
 
@@ -354,6 +361,9 @@ const isProductsPage =
 const isSellersPage =
   pathname.endsWith("/pages/sellers/") || pathname.endsWith("/pages/sellers/index.html");
 debugLog("boot route detection", { pathname, isMenuPage, isProductsPage, isSellersPage });
+
+// Initialize Role-Based Access Control
+safeInit("initRBAC", () => initRBAC());
 if (isMenuPage) {
   initMenuPage()
     .then(() => debugLog("initMenuPage: OK"))

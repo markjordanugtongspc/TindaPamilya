@@ -1,4 +1,5 @@
 import { initSidebarHamburgerAnimation } from "./animations.js";
+import { applyRBACUI } from "./rbac.js";
 
 async function injectComponent(targetId, url) {
   const target = document.getElementById(targetId);
@@ -137,4 +138,7 @@ export async function initMenuNavigations() {
   initBottomNavRoutes();
   applyActiveState();
   injectVersionLabels();
+  
+  // Apply RBAC UI logic after injection
+  await applyRBACUI();
 }
