@@ -2,7 +2,7 @@ import { Drawer } from "flowbite";
 
 const DESKTOP_MIN_WIDTH = 1024;
 /** Fallback if the top bar is not in the DOM yet. */
-const DESKTOP_TOP_OFFSET_FALLBACK_PX = 76;
+const DESKTOP_TOP_OFFSET_FALLBACK_PX = 61;
 
 const backdropClasses =
   "bg-black/45 fixed inset-0 z-[45] backdrop-blur-[1px] dark:bg-black/60";

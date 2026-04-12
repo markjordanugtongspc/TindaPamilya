@@ -18,7 +18,7 @@ import { initFlowbite } from "flowbite";
 import { initBarcodeScanner } from "./modules/barcode-scanner.js";
 
 const DEV_DEBUG = false;
-const APP_VERSION = "0.5.90";
+const APP_VERSION = "0.5.95";
 // Use data-tp-version on <html> — NOT data-app-version — or injectAppVersionLabels would
 // match <html> and setting textContent would wipe the entire document.
 document.documentElement.dataset.tpVersion = APP_VERSION;

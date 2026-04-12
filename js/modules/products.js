@@ -377,6 +377,8 @@ export async function initProductsPage() {
   }
 
   await initMenuNavigations();
+  // Trigger layout refresh for drawers once nav is in the DOM
+  window.dispatchEvent(new Event("resize"));
 
   const refreshed = await auth.fetchUserProfile(status.user || {});
   const user = refreshed.success ? refreshed.user || {} : status.user || {};
