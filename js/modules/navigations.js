@@ -63,6 +63,7 @@ function initBottomNavRoutes() {
   const routes = {
     menu: "/pages/menu/",
     products: "/pages/products/",
+    sellers: "/pages/sellers/",
   };
   document.querySelectorAll("[data-bottom-nav-link]").forEach((el) => {
     const key = el.getAttribute("data-bottom-nav-link");
@@ -78,6 +79,7 @@ function applyActiveState() {
   const path = window.location.pathname.replace(/\/index\.html$/, "/");
   let active = "menu";
   if (path.includes("/pages/products")) active = "products";
+  if (path.includes("/pages/sellers")) active = "sellers";
 
   document.querySelectorAll("[data-nav-link], [data-bottom-nav-link]").forEach((el) => {
     const key = el.getAttribute("data-nav-link") || el.getAttribute("data-bottom-nav-link");
@@ -91,6 +93,21 @@ function applyActiveState() {
 
 function injectVersionLabels() {
   const version = document.documentElement.dataset.tpVersion;
+  
+  // Read username from auth session
+  let username = "User";
+  const rawAuth = localStorage.getItem("tp_auth_session");
+  if (rawAuth) {
+    try {
+      const user = JSON.parse(rawAuth);
+      username = user.username || user.full_name || "User";
+    } catch {}
+  }
+  
+  document.querySelectorAll("[data-user-username]").forEach((el) => {
+    el.textContent = username;
+  });
+
   if (!version) return;
   document
     .querySelectorAll("#menu-sidebar [data-app-version], [data-auth-main] [data-app-version]")
@@ -104,6 +121,16 @@ export async function initMenuNavigations() {
     injectComponent("menu-sidebar-root", "/pages/components/sidebar.html"),
     injectComponent("menu-bottom-nav-root", "/pages/components/bottom-nav.html"),
   ]);
+
+  // Bind logout button AFTER injection
+  const logoutBtn = document.getElementById("logout-button");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      const { logout } = await import("./auth.js");
+      await logout();
+      window.location.href = "/";
+    });
+  }
 
   initDesktopSidebar();
   initLogoRefresh();

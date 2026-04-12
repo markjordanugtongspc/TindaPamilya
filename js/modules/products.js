@@ -389,10 +389,14 @@ export async function initProductsPage() {
 
   const fullName = user.full_name || "TindaPamilya User";
   const email = user.email || "user@email.com";
+  const username = user.username || "user";
 
   if (nameEl) nameEl.textContent = fullName;
-  if (roleEl) roleEl.textContent = `Role: ${user.role || "Seller"}`;
+  if (roleEl) roleEl.textContent = user.role || "Seller";
 
+  document.querySelectorAll("[data-user-username]").forEach((el) => {
+    el.textContent = username;
+  });
   summaryNameEls.forEach((el) => {
     el.textContent = fullName;
   });

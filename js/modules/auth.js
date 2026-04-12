@@ -39,8 +39,15 @@ export async function login(email, password) {
 
 export async function logout() {
   if (typeof window === "undefined") return { success: true };
+  const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+  let userId = null;
+  if (raw) {
+    try {
+      userId = JSON.parse(raw).id;
+    } catch {}
+  }
   localStorage.removeItem(AUTH_STORAGE_KEY);
-  await browserPost("/logout", {});
+  await browserPost("/logout", { id: userId });
   return { success: true };
 }
 

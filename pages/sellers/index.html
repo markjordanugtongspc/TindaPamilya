@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sellers Management - TindaPamilya POS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="/js/main.js"></script>
+    <link rel="icon" type="image/png" href="/assets/img/pos-logo.png" />
+  </head>
+  <body class="font-sans min-h-full bg-background text-text antialiased">
+    <div id="menu-sidebar-root"></div>
+
+    <main
+      id="menu-content"
+      class="mx-auto w-full px-4 pb-28 pt-30 transition-[margin,max-width] duration-200 ease-out lg:ml-64 lg:max-w-[calc(100vw-18rem)] lg:mr-0 lg:pt-24"
+    >
+      <!-- Page Header -->
+      <header class="relative p-1 mb-8">
+        <div class="relative flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div class="min-w-0">
+            <p class="text-xs font-bold uppercase tracking-[0.22em] text-primary">Administration</p>
+            <h1 class="mt-2 text-3xl font-bold tracking-tight text-text sm:text-4xl">Sellers Management</h1>
+            <p class="mt-2 max-w-xl text-sm leading-relaxed text-text/75">
+              Manage your sales team, monitor status, and register new sellers for your TindaPamilya POS system.
+            </p>
+          </div>
+          <button 
+            type="button" 
+            id="tp-add-seller-btn"
+            class="flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3.5 text-sm font-bold uppercase tracking-widest text-white shadow-lg shadow-primary/25 transition hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/30"
+          >
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Add New Seller
+          </button>
+        </div>
+      </header>
+
+      <!-- Sellers Table Container (Flowbite Redesign) -->
+      <div class="relative overflow-x-auto bg-secondary/80 shadow-xl rounded-3xl border border-text/10 ring-1 ring-black/5 backdrop-blur-sm dark:border-white/10 dark:ring-white/10">
+        <!-- Table Header / Actions -->
+        <div class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-6">
+          <div class="relative">
+            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="inline-flex items-center justify-center text-text bg-background border border-text/10 hover:bg-black/5 focus:ring-4 focus:ring-primary/20 shadow-sm font-bold leading-5 rounded-xl text-xs uppercase tracking-widest px-4 py-2.5 transition active:scale-95 focus:outline-none dark:hover:bg-white/5" type="button">
+                Bulk Actions
+                <svg class="w-4 h-4 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
+            </button>
+            <!-- Dropdown menu -->
+            <div id="dropdown" class="z-10 hidden bg-secondary border border-text/10 rounded-2xl shadow-2xl w-44 ring-1 ring-black/5 dark:border-white/10">
+                <ul class="p-2 text-sm text-text font-medium" aria-labelledby="dropdownDefaultButton">
+                <li>
+                    <button data-action="promote" class="flex items-center w-full p-3 hover:bg-black/5 rounded-xl text-left transition dark:hover:bg-white/5 cursor-pointer">Promote to Admin</button>
+                </li>
+                <li>
+                    <button data-action="archive" class="flex items-center w-full p-3 hover:bg-black/5 rounded-xl text-left transition dark:hover:bg-white/5 cursor-pointer">Archive Sellers</button>
+                </li>
+                <li>
+                    <button data-action="delete" class="flex items-center w-full p-3 text-red-500 hover:bg-red-50 rounded-xl text-left transition dark:hover:bg-red-500/10 cursor-pointer">Delete Selected</button>
+                </li>
+                </ul>
+            </div>
+          </div>
+          <label for="seller-search" class="sr-only">Search sellers</label>
+          <div class="relative w-full max-w-sm">
+              <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none">
+                  <svg class="w-4 h-4 text-text/45" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
+              </div>
+              <input 
+                type="text" 
+                id="seller-search" 
+                class="block w-full ps-11 pe-4 py-3 bg-background border border-text/10 text-text text-sm rounded-2xl focus:ring-2 focus:ring-primary/30 focus:border-primary/50 shadow-sm transition placeholder:text-text/40 dark:border-white/10" 
+                placeholder="Search sellers by name or email"
+              >
+          </div>
+        </div>
+
+        <!-- The Table -->
+        <table class="w-full text-sm text-left rtl:text-right text-text">
+            <thead class="text-xs text-text/60 uppercase tracking-widest bg-black/5 border-b border-t border-text/10 dark:bg-white/5 dark:border-white/10">
+                <tr>
+                    <th scope="col" class="p-6">
+                        <div class="flex items-center">
+                            <input id="select-all-sellers" type="checkbox" class="w-5 h-5 cursor-pointer text-primary border-text/20 rounded-lg bg-background focus:ring-2 focus:ring-primary/40 focus:ring-offset-0 transition dark:border-white/20">
+                            <label for="select-all-sellers" class="sr-only">Select all</label>
+                        </div>
+                    </th>
+                    <th scope="col" class="px-6 py-5 font-bold">Name</th>
+                    <th scope="col" class="px-6 py-5 font-bold">Position</th>
+                    <th scope="col" class="px-6 py-5 font-bold">Status</th>
+                    <th scope="col" class="px-6 py-5 font-bold">Action</th>
+                </tr>
+            </thead>
+            <tbody id="sellers-table-body">
+                <!-- Sellers will be injected here via JS -->
+                 <tr class="animate-pulse">
+                    <td colspan="5" class="px-6 py-20 text-center">
+                        <div class="flex flex-col items-center justify-center gap-4 text-text/40">
+                            <svg class="h-12 w-12 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span class="text-sm font-medium">Fetching sellers...</span>
+                        </div>
+                    </td>
+                 </tr>
+            </tbody>
+        </table>
+
+        <!-- Table Navigation / Pagination -->
+        <nav class="flex items-center flex-column flex-wrap md:flex-row justify-between p-6 border-t border-text/10 dark:border-white/10" aria-label="Table navigation">
+            <span class="text-xs font-bold uppercase tracking-wider text-text/50 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+                Showing <span class="text-text" id="pagination-range">1-0</span> of <span class="text-text" id="pagination-total">0</span>
+            </span>
+            <ul class="flex items-center -space-x-px h-10">
+                <li>
+                    <button id="prev-page" class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-text bg-background border border-text/10 rounded-s-xl hover:bg-black/5 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed dark:hover:bg-white/5">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/></svg>
+                    </button>
+                </li>
+                <div id="pagination-numbers" class="flex -space-x-px">
+                    <!-- Page buttons injection -->
+                </div>
+                <li>
+                    <button id="next-page" class="flex items-center justify-center px-4 h-10 leading-tight text-text bg-background border border-text/10 rounded-e-xl hover:bg-black/5 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed dark:hover:bg-white/5">
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+      </div>
+    </main>
+
+    <div id="menu-bottom-nav-root"></div>
+
+    <!-- Seller Row Template -->
+    <template id="tp-seller-row-template">
+      <tr class="bg-transparent border-b border-text/5 hover:bg-black/[0.02] transition dark:border-white/5 dark:hover:bg-white/[0.02]">
+          <td class="p-6">
+              <div class="flex items-center">
+                  <input data-seller-checkbox type="checkbox" class="w-5 h-5 cursor-pointer text-primary border-text/20 rounded-lg bg-background focus:ring-2 focus:ring-primary/40 focus:ring-offset-0 transition dark:border-white/20">
+              </div>
+          </td>
+          <th scope="row" class="flex items-center px-6 py-5 text-gray-900 whitespace-nowrap dark:text-white">
+              <img data-seller-avatar class="w-12 h-12 rounded-2xl object-cover ring-2 ring-background border border-text/10" src="/assets/img/pos-logo.png" alt="">
+              <div class="ps-4">
+                  <div class="text-base font-bold text-text" data-seller-name>Neil Sims</div>
+                  <div class="font-medium text-xs text-text/50" data-seller-email>neil.sims@flowbite.com</div>
+              </div>  
+          </th>
+          <td class="px-6 py-5">
+              <span class="inline-flex items-center rounded-lg bg-black/5 px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-text/70 ring-1 ring-text/10 dark:bg-white/5 dark:text-text/80" data-seller-role>Seller</span>
+          </td>
+          <td class="px-6 py-5">
+              <div class="flex items-center">
+                  <div data-status-dot class="h-2.5 w-2.5 rounded-full bg-emerald-500 me-2.5 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                  <span class="font-bold text-xs uppercase tracking-wider" data-seller-status>Online</span>
+              </div>
+          </td>
+          <td class="px-6 py-5">
+              <button type="button" data-seller-edit class="font-bold text-xs uppercase tracking-widest text-primary hover:underline underline-offset-4 cursor-pointer">Edit user</button>
+          </td>
+      </tr>
+    </template>
+  </body>
+</html>

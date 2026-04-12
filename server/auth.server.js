@@ -6,7 +6,9 @@ function normalizeUser(row) {
     email: row.email,
     role: row.role ?? "Seller",
     full_name: row.full_name ?? "User",
+    username: row.username ?? "",
     profile_image: row.profile_image ?? "",
+    status: row.status ?? "Offline",
   };
 }
 
@@ -31,15 +33,17 @@ export async function loginWithPostgres(email, password) {
   const authUser = authRows[0];
   let profile = {};
   try {
+    // Update status to Online
+    await sql`UPDATE public.users SET status = 'Online' WHERE user_id = ${authUser.id}`;
     const profileRows = await sql`
-      select role, full_name, profile_image
+      select role, full_name, username, profile_image, status
       from public.users
-      where id = ${authUser.id}
+      where user_id = ${authUser.id}
       limit 1
     `;
     profile = profileRows[0] || {};
-  } catch {
-    // Keep login working even if public.users table is absent.
+  } catch (err) {
+    console.warn("Could not update user status to Online:", err);
     profile = {};
   }
 
@@ -50,23 +54,34 @@ export async function loginWithPostgres(email, password) {
       email: authUser.email,
       role: profile.role,
       full_name: profile.full_name,
+      username: profile.username,
       profile_image: profile.profile_image,
+      status: "Online"
     }),
   };
+}
+
+export async function logout(userId) {
+  try {
+    await sql`UPDATE public.users SET status = 'Offline' WHERE user_id = ${userId}`;
+  } catch (err) {
+    console.warn("Could not update user status to Offline:", err);
+  }
+  return { success: true };
 }
 
 export async function getUserProfileFromUsersTable({ id = "", email = "" }) {
   let profileRows = [];
   if (id) {
     profileRows = await sql`
-      select id, email, role, full_name, profile_image
+      select user_id as id, email, role, full_name, username, profile_image, status
       from public.users
-      where id = ${id}
+      where user_id = ${id}
       limit 1
     `;
   } else if (email) {
     profileRows = await sql`
-      select id, email, role, full_name, profile_image
+      select user_id as id, email, role, full_name, username, profile_image, status
       from public.users
       where lower(email) = lower(${email})
       limit 1

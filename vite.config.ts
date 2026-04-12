@@ -116,6 +116,7 @@ export default defineConfig({
         index: resolve(__dirname, "index.html"),
         menu: resolve(__dirname, "pages/menu/index.html"),
         products: resolve(__dirname, "pages/products/index.html"),
+        sellers: resolve(__dirname, "pages/sellers/index.html"),
       },
     },
   },

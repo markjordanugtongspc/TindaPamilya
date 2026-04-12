@@ -8,6 +8,7 @@ import {
 import * as auth from "./modules/auth.js";
 import { initMenuPage } from "./modules/menu.js";
 import { initProductsPage } from "./modules/products.js";
+import { initSellersPage } from "./modules/sellers.js";
 import {
   saveEncryptedCredentials,
   loadEncryptedCredentials,
@@ -17,7 +18,7 @@ import { initFlowbite } from "flowbite";
 import { initBarcodeScanner } from "./modules/barcode-scanner.js";
 
 const DEV_DEBUG = false;
-const APP_VERSION = "0.5.80";
+const APP_VERSION = "0.5.90";
 // Use data-tp-version on <html> — NOT data-app-version — or injectAppVersionLabels would
 // match <html> and setting textContent would wipe the entire document.
 document.documentElement.dataset.tpVersion = APP_VERSION;
@@ -350,7 +351,9 @@ const isMenuPage =
   pathname.endsWith("/pages/menu/") || pathname.endsWith("/pages/menu/index.html");
 const isProductsPage =
   pathname.endsWith("/pages/products/") || pathname.endsWith("/pages/products/index.html");
-debugLog("boot route detection", { pathname, isMenuPage, isProductsPage });
+const isSellersPage =
+  pathname.endsWith("/pages/sellers/") || pathname.endsWith("/pages/sellers/index.html");
+debugLog("boot route detection", { pathname, isMenuPage, isProductsPage, isSellersPage });
 if (isMenuPage) {
   initMenuPage()
     .then(() => debugLog("initMenuPage: OK"))
@@ -362,6 +365,10 @@ if (isMenuPage) {
       initProductImageZoom();
     })
     .catch((error) => console.error("initProductsPage failed", error));
+} else if (isSellersPage) {
+  initSellersPage()
+    .then(() => debugLog("initSellersPage: OK"))
+    .catch((error) => console.error("initSellersPage failed", error));
 } else {
   ensureLoginPageVisibleFallback();
   handleLoginPage()
