@@ -309,6 +309,36 @@ export function initBarcodeScanner() {
     }
   });
 
+  // Touch-to-Focus: Force hardware refocus when user taps the viewport (just like native apps)
+  if (viewport) {
+    viewport.addEventListener('click', async () => {
+      try {
+        const track = Quagga.CameraAccess.getActiveTrack();
+        if (!track || typeof track.getCapabilities !== 'function') return;
+
+        const capabilities = track.getCapabilities();
+        if (capabilities.focusMode) {
+          setStatus("Refocusing...", false);
+          
+          // Re-applying 'continuous' focus mode often triggers a native refocus cycle
+          await track.applyConstraints({
+            advanced: [{ focusMode: 'continuous' }]
+          });
+
+          // Brief success feedback then back to scanning status
+          setSuccess("Focusing...");
+          setTimeout(() => setStatus("Scanning for barcodes..."), 1000);
+        }
+      } catch (err) {
+        console.warn("Manual focus trigger failed", err);
+      }
+    });
+    
+    // Also style the viewport to show it's interactable
+    viewport.classList.add('cursor-pointer');
+    viewport.title = "Tap to focus";
+  }
+
   // Auto-open scanner if navigated with ?scan=true
   if (window.location.search.includes('scan=true')) {
     // Small delay to ensure modal and DOM are fully ready
