@@ -34,15 +34,17 @@ export function initDarkMode() {
   applyStoredTheme();
   syncToggleUi();
 
-  document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
-    btn.addEventListener("click", () => {
+  // Use event delegation on document so that buttons in dynamic components (like sidebar) work immediately
+  document.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-theme-toggle]");
+    if (btn) {
       document.documentElement.classList.toggle("dark");
       const mode = document.documentElement.classList.contains("dark")
         ? "dark"
         : "light";
       setThemePreference(mode);
       syncToggleUi();
-    });
+    }
   });
 
   window

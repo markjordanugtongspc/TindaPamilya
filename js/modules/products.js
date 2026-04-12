@@ -123,10 +123,16 @@ export function renderProductCard(product, customCardTemplate = null) {
   });
 
   const productImg = node.querySelector("[data-product-image]");
-  if (productImg && product.image) {
-    productImg.src = product.image;
-    if (!product.image.includes("logo-store-dark.svg")) {
-      // Remove all typical placeholder classes
+  if (productImg) {
+    const isPlaceholder = !product.image || product.image.includes("logo") || product.image.endsWith(".svg");
+    const imgPath = isPlaceholder ? "/assets/img/pos-logo.png" : product.image;
+    
+    productImg.src = imgPath;
+    
+    if (isPlaceholder) {
+      productImg.classList.add("opacity-90");
+    } else {
+      // Remove all typical placeholder classes if it's a real product image
       productImg.classList.remove("h-10", "w-10", "h-12", "w-12", "h-20", "w-20", "md:h-12", "md:w-12", "md:h-28", "md:w-28", "opacity-90", "dark:brightness-0", "dark:invert");
       // Scale to cover the container
       productImg.classList.add("h-full", "w-full", "object-cover");
@@ -195,10 +201,13 @@ export function showDeleteToast(message) {
         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
         <span class="sr-only">Error icon</span>
     </div>
-    <div class="ms-3 whitespace-nowrap text-sm font-bold">${message}</div>
-    <button type="button" class="ms-auto flex items-center justify-center text-text/40 hover:text-text bg-transparent rounded-lg text-sm h-8 w-8 focus:outline-none transition-colors" data-dismiss-target="#${id}" aria-label="Close">
+    <div class="ml-3 text-sm font-normal">
+      <div class="font-bold text-red-800 dark:text-red-300">Product removed</div>
+      <div class="text-xs opacity-80">${message}</div>
+    </div>
+    <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-secondary text-text/40 hover:text-text rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-black/5 inline-flex items-center justify-center h-8 w-8 dark:bg-transparent dark:hover:bg-white/10" data-dismiss-target="#${id}" aria-label="Close">
         <span class="sr-only">Close</span>
-        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
     </button>
   `;
 
