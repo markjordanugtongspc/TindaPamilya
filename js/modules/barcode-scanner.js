@@ -157,6 +157,33 @@ export function initBarcodeScanner() {
     scannerModal.hide();
   }
 
+  // Torch / Flashlight functionality
+  let isTorchOn = false;
+  window.toggleQuaggaTorch = async function() {
+    const track = Quagga.CameraAccess.getActiveTrack();
+
+    if (track && typeof track.getCapabilities === 'function') {
+      const capabilities = track.getCapabilities();
+      
+      if (capabilities.torch) {
+        isTorchOn = !isTorchOn;
+        try {
+          await track.applyConstraints({
+            advanced: [{ torch: isTorchOn }]
+          });
+        } catch (e) {
+          console.error("Torch error:", e);
+          setStatus("Error toggling torch", true);
+        }
+      } else {
+        console.warn("Torch not supported on this camera.");
+        setStatus("Flashlight not supported", true);
+        // Put the warning back to default status after a bit
+        setTimeout(() => setStatus("Scanning for barcodes..."), 2000);
+      }
+    }
+  };
+
   // Handle Static Image Uploads via File Input
   const fileInput = document.getElementById("tp-scanner-upload");
   if (fileInput) {
