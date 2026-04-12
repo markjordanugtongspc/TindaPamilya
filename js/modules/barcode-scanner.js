@@ -162,25 +162,40 @@ export function initBarcodeScanner() {
   window.toggleQuaggaTorch = async function() {
     const track = Quagga.CameraAccess.getActiveTrack();
 
-    if (track && typeof track.getCapabilities === 'function') {
-      const capabilities = track.getCapabilities();
-      
-      if (capabilities.torch) {
-        isTorchOn = !isTorchOn;
-        try {
-          await track.applyConstraints({
-            advanced: [{ torch: isTorchOn }]
-          });
-        } catch (e) {
-          console.error("Torch error:", e);
-          setStatus("Error toggling torch", true);
-        }
-      } else {
-        console.warn("Torch not supported on this camera.");
-        setStatus("Flashlight not supported", true);
-        // Put the warning back to default status after a bit
+    if (!track) {
+      console.error("No active camera track found.");
+      setStatus("Camera not ready", true);
+      return;
+    }
+
+    // Diagnostic logging
+    const capabilities = typeof track.getCapabilities === 'function' ? track.getCapabilities() : {};
+    console.log("Scanner Capabilities:", capabilities);
+
+    if (capabilities.torch) {
+      isTorchOn = !isTorchOn;
+      try {
+        await track.applyConstraints({
+          advanced: [{ torch: isTorchOn }]
+        });
+        setSuccess(isTorchOn ? "Flashlight: ON" : "Flashlight: OFF");
         setTimeout(() => setStatus("Scanning for barcodes..."), 2000);
+      } catch (e) {
+        console.error("Torch error:", e);
+        setStatus("Error toggling torch", true);
       }
+    } else {
+      console.warn("Torch not supported on this camera.");
+      
+      // Specific check for HTTPS (Secure Context)
+      if (!window.isSecureContext) {
+        setStatus("HTTPS Required for Flash", true);
+        console.error("Flashlight/Torch requires a secure context (HTTPS).");
+      } else {
+        setStatus("Flashlight not supported", true);
+      }
+      
+      setTimeout(() => setStatus("Scanning for barcodes..."), 2500);
     }
   };
 
