@@ -323,6 +323,32 @@
   html:not(.dark) .tp-nav-link {
     color: #111827;
   }
+
+  /* Professional Retail Optic Filters for monochrome SVGs */
+  .amber-filter {
+    filter: brightness(0) saturate(100%) invert(77%) sepia(42%) saturate(4649%) hue-rotate(345deg) brightness(101%) contrast(93%);
+  }
+  .sky-filter {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(90%) saturate(1378%) hue-rotate(167deg) brightness(97%) contrast(93%);
+  }
+  .violet-filter {
+    filter: brightness(0) saturate(100%) invert(43%) sepia(99%) saturate(1512%) hue-rotate(240deg) brightness(101%) contrast(97%);
+  }
+  .rose-filter {
+    filter: brightness(0) saturate(100%) invert(35%) sepia(99%) saturate(4171%) hue-rotate(334deg) brightness(99%) contrast(94%);
+  }
+  .emerald-filter {
+    filter: brightness(0) saturate(100%) invert(58%) sepia(74%) saturate(614%) hue-rotate(113deg) brightness(96%) contrast(92%);
+  }
+
+  /* Adaptive Dark Mode overrides: white icons on dark surfaces */
+  .dark .amber-filter,
+  .dark .sky-filter,
+  .dark .violet-filter,
+  .dark .rose-filter,
+  .dark .emerald-filter {
+    filter: brightness(0) invert(1);
+  }
 }
 
 @keyframes tp-success-check-in {

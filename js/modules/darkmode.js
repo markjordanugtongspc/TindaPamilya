@@ -6,8 +6,7 @@
  */
 import { getThemePreference, setThemePreference } from "./db-manager.js";
 
-const LOGO_LIGHT_MODE_SRC = "/assets/svg/logo-store-dark.svg";
-const LOGO_DARK_MODE_SRC = "/assets/svg/logo-store-light.svg";
+
 
 function applyStoredTheme() {
   const root = document.documentElement;
@@ -29,17 +28,11 @@ function syncToggleUi() {
   });
 }
 
-function syncLogos() {
-  const isDark = document.documentElement.classList.contains("dark");
-  document.querySelectorAll("[data-logo-theme]").forEach((img) => {
-    img.setAttribute("src", isDark ? LOGO_DARK_MODE_SRC : LOGO_LIGHT_MODE_SRC);
-  });
-}
+
 
 export function initDarkMode() {
   applyStoredTheme();
   syncToggleUi();
-  syncLogos();
 
   document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -49,7 +42,6 @@ export function initDarkMode() {
         : "light";
       setThemePreference(mode);
       syncToggleUi();
-      syncLogos();
     });
   });
 
@@ -59,7 +51,6 @@ export function initDarkMode() {
       if (!getThemePreference()) {
         applyStoredTheme();
         syncToggleUi();
-        syncLogos();
       }
     });
 }

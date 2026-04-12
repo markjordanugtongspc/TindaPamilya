@@ -289,6 +289,54 @@ async function initMenuProducts() {
   }
 }
 
+function initStoreStatusToggle() {
+  const btn = document.getElementById("tp-store-toggle-btn");
+  const badge = document.getElementById("tp-store-status-badge");
+  const icon = document.getElementById("tp-store-toggle-icon");
+  const title = document.getElementById("tp-store-toggle-title");
+  const desc = document.getElementById("tp-store-toggle-desc");
+
+  if (!btn || !badge) return;
+
+  btn.addEventListener("click", () => {
+    const isOpen = btn.dataset.storeOpen === "true";
+    const newState = !isOpen;
+    btn.dataset.storeOpen = String(newState);
+
+    if (newState) {
+      // Store is now OPEN
+      badge.textContent = "Open";
+      badge.className = "rounded-full bg-emerald-500/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-emerald-600 ring-1 ring-emerald-500/25 dark:bg-emerald-500/20 dark:text-emerald-400";
+      
+      title.textContent = "End of day";
+      title.className = "block text-sm font-bold text-rose-900 dark:text-rose-100";
+      
+      desc.textContent = "Close & report";
+      desc.className = "mt-0.5 block text-xs text-rose-900/70 dark:text-rose-100/75";
+
+      btn.className = "group flex cursor-pointer flex-col items-start gap-3 rounded-tl-none rounded-2xl border border-rose-300/35 bg-rose-100/75 p-4 text-left shadow-sm ring-1 ring-rose-400/20 transition hover:-translate-y-0.5 hover:bg-rose-100 dark:bg-rose-300/20 dark:hover:bg-rose-300/30";
+      
+      icon.src = "/assets/svg/store-close.svg";
+      icon.className = "h-7 w-7 transition-all duration-300 group-hover:scale-110 rose-filter";
+    } else {
+      // Store is now CLOSED
+      badge.textContent = "Closed";
+      badge.className = "rounded-full bg-red-500/15 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-red-600 ring-1 ring-red-500/25 dark:bg-red-500/20 dark:text-red-400";
+      
+      title.textContent = "Open Store";
+      title.className = "block text-sm font-bold text-emerald-900 dark:text-emerald-100";
+      
+      desc.textContent = "Resume register";
+      desc.className = "mt-0.5 block text-xs text-emerald-900/70 dark:text-emerald-100/75";
+
+      btn.className = "group flex cursor-pointer flex-col items-start gap-3 rounded-tl-none rounded-2xl border border-emerald-300/35 bg-emerald-100/75 p-4 text-left shadow-sm ring-1 ring-emerald-400/20 transition hover:-translate-y-0.5 hover:bg-emerald-100 dark:bg-emerald-300/20 dark:hover:bg-emerald-300/30";
+      
+      icon.src = "/assets/svg/store-open.svg";
+      icon.className = "h-7 w-7 transition-all duration-300 group-hover:scale-110 emerald-filter";
+    }
+  });
+}
+
 export async function initMenuPage() {
   const status = await auth.isAuthenticated();
   if (!status.authenticated) {
@@ -333,6 +381,7 @@ export async function initMenuPage() {
   initMenuKpiAnimations();
   initMobileKpiCarousel();
   initMenuProducts();
+  initStoreStatusToggle();
   revealMenuDashboard();
 
   const logoutButton = document.getElementById("logout-button");

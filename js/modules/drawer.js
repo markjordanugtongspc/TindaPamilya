@@ -264,11 +264,11 @@ function initProductInfoDrawer() {
     // Handling Image
     const cover = root.querySelector("[data-pi-cover]");
     if (cover) {
-       cover.src = data.image || "/assets/svg/logo-store-dark.svg";
-       if (data.image && !data.image.includes("logo-store-dark.svg")) {
-          cover.classList.remove("dark:brightness-0", "dark:invert", "brightness-0", "invert", "opacity-90");
+       cover.src = data.image || "/assets/img/pos-logo.png";
+       if (data.image && !data.image.includes("pos-logo.png")) {
+          cover.classList.remove("opacity-90");
        } else {
-          cover.classList.add("dark:brightness-0", "dark:invert", "brightness-0", "invert", "opacity-90");
+          cover.classList.add("opacity-90");
        }
     }
 
