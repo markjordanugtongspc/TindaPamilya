@@ -89,7 +89,8 @@ export function initBarcodeScanner() {
           width: { ideal: 1280 }, // HD Upgrade
           height: { ideal: 720 }, // HD Upgrade
           facingMode: "environment",
-          aspectRatio: { ideal: 1.7777777778 } // 16:9 HD
+          aspectRatio: { ideal: 1.7777777778 }, // 16:9 HD
+          focusMode: "continuous" // Request continuous autofocus
         }
       },
       decoder: {
@@ -124,6 +125,24 @@ export function initBarcodeScanner() {
       
       setStatus("Scanning for barcodes...");
       Quagga.start();
+
+      // After start, attempt to explicitly lock-in continuous focus if track supports it
+      setTimeout(async () => {
+         try {
+            const track = Quagga.CameraAccess.getActiveTrack();
+            if (track && typeof track.getCapabilities === 'function') {
+               const capabilities = track.getCapabilities();
+               if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
+                  await track.applyConstraints({
+                     advanced: [{ focusMode: 'continuous' }]
+                  });
+                  console.log("Scanner: Continuous autofocus enabled");
+               }
+            }
+         } catch (e) {
+            console.warn("Autofocus setting failed", e);
+         }
+      }, 500);
     });
 
     let scanCounts = {};
