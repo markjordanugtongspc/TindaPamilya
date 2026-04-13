@@ -68,37 +68,38 @@ class ProductManager {
        const barcode = (e.detail?.barcode || "").trim();
        if (barcode) {
           const restore = localStorage.getItem("tp_add_product_drawer_restore");
-          if (!restore) return; // Only handle if we are in Add Product context
+          if (!restore) return; // Only process if the scanner was opened from the 'Add Product' context
 
-          // 1. Validation: Check if product already exists
+          // 1. Anti-Duplicate Validation: Check if product already exists
           const existingProduct = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
+          
           if (existingProduct) {
-             showErrorToast(`Product already exists: ${existingProduct.name}`);
-             
-             // Restore the drawer so user can see what happened
-             if (restore === "right") this.rightDrawerInstance.show();
-             if (restore === "bottom") this.bottomDrawerInstance.show();
+             // If found, show error toast and KEEP THE DRAWER HIDDEN (Clean up restore state)
+             showErrorToast(`There is already an existing product: "${existingProduct.name}"`);
              localStorage.removeItem("tp_add_product_drawer_restore");
              return; 
           }
 
-          // 2. Insert barcode into form fields (we must check both drawer instances as they are clones)
+          // 2. Success Path: Product is new, automatically insert barcode
+          // We query all instances because the form is cloned into mobile (bottom) and desktop (right) drawers
           const forms = document.querySelectorAll("#tp-add-product-form");
           forms.forEach(form => {
              const input = form.querySelector("#ap-barcode");
              if (input) {
                 input.value = barcode;
-                // Trigger input event for any reactive logic
+                // Trigger input event to ensure any dynamic UI updates occur
                 input.dispatchEvent(new Event("input", { bubbles: true }));
              }
           });
 
-          // 3. Restore the correct drawer
+          // 3. Restore the correct drawer view (Desktop/Right or Mobile/Bottom)
           if (restore === "right") this.rightDrawerInstance.show();
           if (restore === "bottom") this.bottomDrawerInstance.show();
+          
+          // Cleanup restore flag after successful navigation back to the drawer
           localStorage.removeItem("tp_add_product_drawer_restore");
           
-          showSuccessToast("Barcode inserted successfully.");
+          showSuccessToast(`Barcode ${barcode} inserted.`);
        }
     });
     
