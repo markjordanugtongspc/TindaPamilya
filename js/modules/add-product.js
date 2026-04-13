@@ -64,18 +64,41 @@ class ProductManager {
       }
     });
 
-    window.addEventListener("tp:scanner-result", (e) => {
-       const barcode = e.detail?.barcode;
+    window.addEventListener("tp:barcode-scanned", (e) => {
+       const barcode = (e.detail?.barcode || "").trim();
        if (barcode) {
-          const form = document.getElementById("tp-add-product-form");
-          if (form) {
-             const input = form.querySelector("#ap-barcode");
-             if (input) input.value = barcode;
-             const restore = localStorage.getItem("tp_add_product_drawer_restore");
+          const restore = localStorage.getItem("tp_add_product_drawer_restore");
+          if (!restore) return; // Only handle if we are in Add Product context
+
+          // 1. Validation: Check if product already exists
+          const existingProduct = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
+          if (existingProduct) {
+             showErrorToast(`Product already exists: ${existingProduct.name}`);
+             
+             // Restore the drawer so user can see what happened
              if (restore === "right") this.rightDrawerInstance.show();
              if (restore === "bottom") this.bottomDrawerInstance.show();
              localStorage.removeItem("tp_add_product_drawer_restore");
+             return; 
           }
+
+          // 2. Insert barcode into form fields (we must check both drawer instances as they are clones)
+          const forms = document.querySelectorAll("#tp-add-product-form");
+          forms.forEach(form => {
+             const input = form.querySelector("#ap-barcode");
+             if (input) {
+                input.value = barcode;
+                // Trigger input event for any reactive logic
+                input.dispatchEvent(new Event("input", { bubbles: true }));
+             }
+          });
+
+          // 3. Restore the correct drawer
+          if (restore === "right") this.rightDrawerInstance.show();
+          if (restore === "bottom") this.bottomDrawerInstance.show();
+          localStorage.removeItem("tp_add_product_drawer_restore");
+          
+          showSuccessToast("Barcode inserted successfully.");
        }
     });
     

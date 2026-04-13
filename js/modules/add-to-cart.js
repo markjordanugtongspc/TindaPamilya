@@ -21,6 +21,11 @@ export class CartManager {
       const barcode = (e.detail.barcode || "").trim();
       if (!barcode) return;
 
+      // EXCLUSIVE: If we are in the middle of an "Add Product" flow, ignore this in the Cart / Search context
+      if (localStorage.getItem("tp_add_product_drawer_restore")) {
+         return;
+      }
+
       // Handle simple scan in desktop POS if it's visible
       const desktopSearch = document.getElementById("products-search-input");
       if (desktopSearch && document.body.contains(desktopSearch)) {

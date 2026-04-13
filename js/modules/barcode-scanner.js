@@ -269,7 +269,7 @@ export function initBarcodeScanner() {
             if (resultDisplay) resultDisplay.textContent = code;
             
             setTimeout(() => {
-              window.dispatchEvent(new CustomEvent('tp-barcode-scanned', { detail: { code } }));
+              window.dispatchEvent(new CustomEvent('tp:barcode-scanned', { detail: { barcode: code } }));
             }, 500);
             
           } else {
