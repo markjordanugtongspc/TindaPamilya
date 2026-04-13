@@ -26,19 +26,17 @@ export class CartManager {
          return;
       }
 
-      // Handle simple scan in desktop POS if it's visible
-      const desktopSearch = document.getElementById("products-search-input");
-      if (desktopSearch && document.body.contains(desktopSearch)) {
-         if (window.location.pathname.includes("/products/")) {
-            desktopSearch.value = barcode;
-            desktopSearch.dispatchEvent(new Event("input", { bubbles: true }));
-            return; // Skip POS logic
-         }
-      }
-
       const product = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
       
       if (product) {
+        // 1. Logic for search input (Sync UI if on products page)
+        const desktopSearch = document.getElementById("products-search-input");
+        if (desktopSearch && document.body.contains(desktopSearch)) {
+           desktopSearch.value = barcode;
+           desktopSearch.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+
+        // 2. Add to Cart
         showSuccessToast("Found: " + product.name);
         this.addItem({
           barcode: product.barcode,
@@ -47,12 +45,16 @@ export class CartManager {
           quantity: 1
         });
 
-        // Automatically open the Orders drawer to show the cart
+        // 3. Automatically open the Orders ("Current Sale") drawer to show the cart
         setTimeout(() => {
+           // Desktop right drawer or mobile bottom drawer trigger
            document.getElementById("tp-view-orders-btn")?.click();
+           // Also try the mobile specific bottom-nav orders button if needed
+           document.querySelector('[data-bottom-nav-link="orders"]')?.click();
         }, 300);
+
       } else {
-        showErrorToast("Not Found: " + barcode);
+        showErrorToast("Product not registered: " + barcode);
       }
     });
   }
