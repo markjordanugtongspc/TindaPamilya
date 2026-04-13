@@ -91,26 +91,17 @@ function apiPlugin() {
   };
 }
 
-function copyPagesComponentsPlugin() {
-  return {
-    name: "copy-pages-components-plugin",
-    closeBundle() {
-      const src = resolve(__dirname, "pages/components");
-      const dest = resolve(__dirname, "dist/pages/components");
-      if (!existsSync(src)) return;
-      cpSync(src, dest, { recursive: true });
-    },
-  };
-}
 
 export default defineConfig({
-  plugins: [tailwindcss(), apiPlugin(), copyPagesComponentsPlugin()],
+  base: "./",
+  plugins: [tailwindcss(), apiPlugin()],
   server: {
     // Increase stability for local SSR loads
     hmr: { overlay: true },
     cors: true
   },
   build: {
+    emptyOutDir: true,
     rollupOptions: {
       input: {
         index: resolve(__dirname, "index.html"),

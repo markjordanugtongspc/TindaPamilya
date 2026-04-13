@@ -1,19 +1,21 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": true,
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },
     {
-      "source": "/pages/menu/",
+      "source": "/pages/menu",
       "destination": "/pages/menu/index.html"
     },
     {
-      "source": "/pages/products/",
+      "source": "/pages/products",
       "destination": "/pages/products/index.html"
     },
     {
-      "source": "/pages/sellers/",
+      "source": "/pages/sellers",
       "destination": "/pages/sellers/index.html"
     }
   ],

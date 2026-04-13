@@ -5,22 +5,27 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "clean": "powershell -Command \"Remove-Item -Recurse -Force dist, node_modules, package-lock.json\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "reinstall": "npm run clean && npm i",
+    "start": "node server.js",
+    "prod": "npm run build && npm start"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "dotenv": "^17.4.2",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "@tailwindcss/vite": "^4.2.2",
-    "dotenv": "^17.4.1",
     "vite": "^6.2.0"
   },
   "dependencies": {
     "@ericblade/quagga2": "^1.12.1",
     "@supabase/supabase-js": "^2.49.1",
+    "express": "^5.2.1",
     "flowbite": "^4.0.1",
     "postgres": "^3.4.9",
     "sweetalert2": "^11.26.24",
