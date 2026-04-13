@@ -68,46 +68,50 @@ class ProductManager {
        const barcode = (e.detail?.barcode || "").trim();
        if (barcode) {
           const restore = localStorage.getItem("tp_add_product_drawer_restore");
-          if (!restore) return; // Only process if the scanner was opened from the 'Add Product' context
+          
+          // CRITICAL: If we are not in 'Add Product' mode, let other modules handle it
+          if (!restore) return; 
 
-          // 1. Anti-Duplicate Validation: Check if product already exists
+          // 1. Anti-Duplicate Validation
           const existingProduct = GLOBAL_PRODUCTS.find(p => p.barcode === barcode);
           
           if (existingProduct) {
-             // If found, show error toast and KEEP THE DRAWER HIDDEN (Clean up restore state)
-             showErrorToast(`There is already an existing product: "${existingProduct.name}"`);
+             showErrorToast(`Already exists: "${existingProduct.name}"`);
+             // Clear flag so we don't try to restore again on modal hide
              localStorage.removeItem("tp_add_product_drawer_restore");
              return; 
           }
 
-          // 2. Success Path: Product is new, automatically insert barcode
-          // We query all instances because the form is cloned into mobile (bottom) and desktop (right) drawers
-          const forms = document.querySelectorAll("#tp-add-product-form");
-          forms.forEach(form => {
-             const input = form.querySelector("#ap-barcode");
-             if (input) {
-                input.value = barcode;
-                // Trigger input event to ensure any dynamic UI updates occur
-                input.dispatchEvent(new Event("input", { bubbles: true }));
-             }
+          // 2. Insert barcode into ALL matching inputs (one in each cloned form)
+          // Using unique IDs within clones works if we scope correctly
+          const barcodeInputs = document.querySelectorAll("#ap-barcode");
+          barcodeInputs.forEach(input => {
+             input.value = barcode;
+             input.dispatchEvent(new Event("input", { bubbles: true }));
           });
 
-          // 3. Restore the correct drawer view (Desktop/Right or Mobile/Bottom)
+          // 3. Restore the correct drawer view
           if (restore === "right") this.rightDrawerInstance.show();
           if (restore === "bottom") this.bottomDrawerInstance.show();
           
-          // Cleanup restore flag after successful navigation back to the drawer
+          // Clear flag AFTER we've successfully restored the drawer
           localStorage.removeItem("tp_add_product_drawer_restore");
           
           showSuccessToast(`Barcode ${barcode} inserted.`);
        }
     });
-    
+
+    // Modal close event (fallback for when user cancels or scan fails)
     window.addEventListener("tp:scanner-modal-close", () => {
-      const restore = localStorage.getItem("tp_add_product_drawer_restore");
-      localStorage.removeItem("tp_add_product_drawer_restore");
-      if (restore === "right" && this.mq.matches) this.rightDrawerInstance.show();
-      if (restore === "bottom" && !this.mq.matches) this.bottomDrawerInstance.show();
+      // Small delay to allow the 'tp:barcode-scanned' event to process FIRST
+      setTimeout(() => {
+        const restore = localStorage.getItem("tp_add_product_drawer_restore");
+        if (restore) {
+           localStorage.removeItem("tp_add_product_drawer_restore");
+           if (restore === "right" && this.mq.matches) this.rightDrawerInstance.show();
+           if (restore === "bottom" && !this.mq.matches) this.bottomDrawerInstance.show();
+        }
+      }, 100);
     });
 
     // Listen for Edit requests from Product Info Drawers

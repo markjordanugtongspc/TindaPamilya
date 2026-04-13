@@ -172,9 +172,9 @@ export function initBarcodeScanner() {
             
             setTimeout(() => {
               isVerifying = false;
-              closeScanner();
-              // Standardized Event dispatch
+              // Dispatch event FIRST so listeners can see the current state (like 'restore' flags)
               window.dispatchEvent(new CustomEvent('tp:barcode-scanned', { detail: { barcode: code } }));
+              closeScanner();
             }, 600); // reduced close delay
           }, 350); // reduced verify delay
         }
